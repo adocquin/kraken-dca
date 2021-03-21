@@ -1,22 +1,23 @@
 import os
-from kraken_api import KrakenApi
+from kraken_dca import KrakenApi, unix_time_datetime, current_datetime, DCA
 
 
-def print_hi():
+if __name__ == '__main__':
     api_key = os.environ.get("KRAKEN_API_KEY")
     api_private_key = os.environ.get("KRAKEN_PRIVATE_KEY")
     ka = KrakenApi(api_key, api_private_key)
 
     kraken_time = ka.get_time()
-    print(f"Hi, it's {kraken_time} on Kraken.")
-    kraken_balance = ka.get_balance()
-    print(kraken_balance)
-    kraken_trade_balance = ka.get_trade_balance()
-    print(kraken_trade_balance)
+    kraken_date = unix_time_datetime(kraken_time)
+    current_date = current_datetime()
+    print(f"Hi, it's {kraken_date} on Kraken, {current_date} on computer.")
 
+    balance = ka.get_balance()
+    print(balance)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi()
+    trade_balance = ka.get_trade_balance()
+    print(trade_balance)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    dca = DCA(ka)
+    dca.get_daily_orders()
+

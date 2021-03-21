@@ -1,6 +1,6 @@
 import time
 import base64
-import ast
+import json
 import hashlib
 import hmac
 from urllib.request import Request, urlopen
@@ -41,36 +41,39 @@ class KrakenApi:
         return api_path
 
     @staticmethod
-    def create_api_post_data(api_nonce: str) -> bytes:
+    def create_api_post_data(api_nonce: str, post_inputs: dict) -> bytes:
         """
         Create api post data for private user methods.
 
         :param api_nonce: Unique API call identifier as string.
+        :param post_inputs: POST inputs as dict.
         :return: API post data.
         """
-        api_post_data = {"nonce": api_nonce}
-        api_post_data = urlencode(api_post_data)
-        api_post_data = api_post_data.encode("ascii")
+        if post_inputs:
+            post_inputs.update({"nonce": api_nonce})
+        else:
+            post_inputs = {"nonce": api_nonce}
+        api_post_data = urlencode(post_inputs).encode()
         return api_post_data
 
-    def create_api_signature(self, api_nonce: str, api_method: str) -> str:
+    def create_api_signature(self, api_nonce: str, api_post_data: bytes, api_method: str) -> str:
         """
         Create api signature for private user methods.
 
         :param api_nonce: Unique API call identifier as string.
+        :param api_post_data: Bytes encoded API POST data.
         :param api_method: API method to call.
         :return: API signature to use as HTTP header.
         """
-        api_post = "nonce=" + api_nonce
         # Cryptographic hash algorithms
         api_sha256 = hashlib.sha256(
-            api_nonce.encode("utf-8") + api_post.encode("utf-8")
+            api_nonce.encode() + api_post_data
         )
         # Decode API private key from base64 format displayed in account management
         api_secret = base64.b64decode(self.api_private_key)
         api_hmac = hmac.new(
             api_secret,
-            f"/0/private/{api_method}".encode("utf-8") + api_sha256.digest(),
+            f"/0/private/{api_method}".encode() + api_sha256.digest(),
             hashlib.sha512,
         )
         # Encode signature into base64 format used in API-Sign value
@@ -86,17 +89,20 @@ class KrakenApi:
 
         :return: Request response data as dict
         """
-        data = data.decode("UTF-8")
-        data = ast.literal_eval(data)
+        data = data.decode()
+        data = json.loads(data)
         data = data.get("error")[0] if data.get("error") else data.get("result")
         return data
 
-    def request(self, public_method: bool, api_method: str) -> dict:
+    def request(
+        self, public_method: bool, api_method: str, post_inputs: dict = None
+    ) -> dict:
         """
         Given a method, request the Kraken api and return the result data.
 
         :param public_method: Is the method a public market data.
         :param api_method: API method as string.
+        :param post_inputs: POST inputs as dict.
         :return: Result as python dictionary.
         """
         api_path = KrakenApi.create_api_path(public_method, api_method)
@@ -106,11 +112,11 @@ class KrakenApi:
         else:  # Handle API authentication for private user methods
             api_nonce = str(int(time.time() * 1000))
             # Create POST data
-            api_post_data = self.create_api_post_data(api_nonce)
+            api_post_data = self.create_api_post_data(api_nonce, post_inputs)
             # Generate the request
             request = Request(api_path, data=api_post_data)
             # Adding HTTP headers to request
-            api_signature = self.create_api_signature(api_nonce, api_method)
+            api_signature = self.create_api_signature(api_nonce, api_post_data, api_method)
             request.add_header("API-Sign", api_signature)
             request.add_header("API-Key", self.api_key)
 
@@ -120,7 +126,7 @@ class KrakenApi:
         data = self.extract_response_data(data)
         return data
 
-    def get_time(self) -> str:
+    def get_time(self) -> int:
         """
         Return current Kraken time as string.
 
@@ -128,7 +134,7 @@ class KrakenApi:
         """
 
         data = self.request(True, "Time")
-        kraken_time = data.get("rfc1123")
+        kraken_time = data.get("unixtime")
         return kraken_time
 
     def get_balance(self) -> dict:
@@ -147,4 +153,28 @@ class KrakenApi:
         :return: Dict of asset names and balance amount.
         """
         data = self.request(False, "TradeBalance")
+        return data
+
+    def get_open_orders(self) -> dict:
+        """
+        Return current Kraken open orders.
+
+        :return: Dict of open orders txid as the key.
+        """
+        data = self.request(False, "OpenOrders")
+        data = data.get("open")
+        return data
+
+    def get_closed_orders(self, post_inputs: dict = None) -> dict:
+        """
+        Return current Kraken closed orders.
+
+        :param post_inputs: POST inputs as dict.
+        :return: Dict of closed orders txid as the key.
+        """
+        data = self.request(False, "ClosedOrders", post_inputs)
+        try:
+            data = data.get("closed")
+        except AttributeError:
+            pass
         return data

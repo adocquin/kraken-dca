@@ -8,14 +8,20 @@ class DCA:
     """
 
     ka: KrakenApi
+    pair: str
+    amount: float
 
-    def __init__(self, ka: KrakenApi):
+    def __init__(self, ka: KrakenApi, pair: str, amount: float):
         """
         Initialize the DCA object.
 
         :param ka: KrakenApi object.
+        :param pair: Pair to dollar cost average as string.
+        :param amount: Amount to dollar cost average as float.
         """
         self.ka = ka
+        self.pair = pair
+        self.amount = amount
 
     def get_daily_orders(self):
         open_orders = self.ka.get_open_orders()

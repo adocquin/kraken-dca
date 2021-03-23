@@ -23,12 +23,42 @@ class DCA:
         self.pair = pair
         self.amount = amount
 
-    def get_daily_orders(self):
+    @staticmethod
+    def get_pair_orders(orders: dict, pair: str):
+        """
+        Filter orders passed as dict parameters on specific pair and return the dictionary.
+
+        :param orders: Orders as dictionary.
+        :param pair: Specific pair to filter on.
+        :return: Filtered orders dictionary on specific pair.
+        """
+        pair_orders = {
+            order_id: order_infos
+            for order_id, order_infos in orders.items()
+            if order_infos.get("descr").get("pair") == pair
+        }
+        return pair_orders
+
+    def count_pair_daily_orders(self):
+        """
+        Count current day open and closed orders for the DCA pair.
+
+        :return: Count of daily orders for the dollar cost averaged pair.
+        """
+        # Get current open orders.
         open_orders = self.ka.get_open_orders()
-        print(open_orders)
+        daily_open_orders = len(self.get_pair_orders(open_orders, self.pair))
+
+        # Get daily closed orders
         current_date = current_datetime()
-        current_day_datetime = current_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        current_day_datetime = current_date.replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
         current_day_unix = int(current_day_datetime.timestamp())
-        closed_orders = self.ka.get_closed_orders({"start": current_day_unix,
-                                                   "closetime": "open"})
-        print(closed_orders)
+        closed_orders = self.ka.get_closed_orders(
+            {"start": current_day_unix, "closetime": "open"}
+        )
+        daily_closed_orders = len(self.get_pair_orders(closed_orders, self.pair))
+        # Sum the count of closed and daily open orders for the DCA pair.
+        pair_daily_orders = daily_closed_orders + daily_open_orders
+        return pair_daily_orders

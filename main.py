@@ -37,4 +37,4 @@ if __name__ == "__main__":
         print(trade_balance)
 
         dca = DCA(ka, args.pair, args.amount)
-        dca.get_daily_orders()
+        print(dca.count_pair_daily_orders())

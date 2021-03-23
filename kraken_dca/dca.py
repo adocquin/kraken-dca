@@ -24,7 +24,7 @@ class DCA:
         self.amount = amount
 
     @staticmethod
-    def get_pair_orders(orders: dict, pair: str):
+    def get_pair_orders(orders: dict, pair: str) -> dict:
         """
         Filter orders passed as dict parameters on specific pair and return the dictionary.
 
@@ -39,7 +39,7 @@ class DCA:
         }
         return pair_orders
 
-    def count_pair_daily_orders(self):
+    def count_pair_daily_orders(self) -> int:
         """
         Count current day open and closed orders for the DCA pair.
 

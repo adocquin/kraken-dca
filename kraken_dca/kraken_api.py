@@ -1,3 +1,4 @@
+import binascii
 import time
 import base64
 import json
@@ -13,17 +14,17 @@ class KrakenApi:
     Easily requests Kraken's api endpoints.
     """
 
-    api_key: str
+    api_public_key: str
     api_private_key: str
 
-    def __init__(self, api_key: str, api_private_key: str):
+    def __init__(self, api_public_key: str, api_private_key: str):
         """
         Initialize the KrakenAPI object.
 
-        :param api_key: Kraken api key.
+        :param api_public_key: Kraken api key.
         :param api_private_key: Kraken api secret key.
         """
-        self.api_key = api_key
+        self.api_public_key = api_public_key
         self.api_private_key = api_private_key
 
     @staticmethod
@@ -70,7 +71,10 @@ class KrakenApi:
             api_nonce.encode() + api_post_data
         )
         # Decode API private key from base64 format displayed in account management
-        api_secret = base64.b64decode(self.api_private_key)
+        try:
+            api_secret = base64.b64decode(self.api_private_key)
+        except binascii.Error as e:
+            raise ValueError(f"Incorrect Kraken API private key: {e}")
         api_hmac = hmac.new(
             api_secret,
             f"/0/private/{api_method}".encode() + api_sha256.digest(),
@@ -122,7 +126,7 @@ class KrakenApi:
             # Adding HTTP headers to request
             api_signature = self.create_api_signature(api_nonce, api_post_data, api_method)
             request.add_header("API-Sign", api_signature)
-            request.add_header("API-Key", self.api_key)
+            request.add_header("API-Key", self.api_public_key)
 
         # Request the api
         data = urlopen(request).read()
@@ -189,10 +193,7 @@ class KrakenApi:
         :return: Dict of closed orders txid as the key.
         """
         data = self.request(False, "ClosedOrders", post_inputs)
-        try:
-            data = data.get("closed")
-        except AttributeError:
-            pass
+        data = data.get("closed")
         return data
 
     def get_pair_ticker(self, pair: str) -> dict:

@@ -5,8 +5,8 @@ class Config:
     """
     Configuration file object based on config.yaml.
     """
-    api_key: str
-    api_secret: str
+    api_public_key: str
+    api_private_key: str
     pair: str
     amount: float
 
@@ -26,18 +26,18 @@ class Config:
             with open("config.yaml", "r") as stream:
                 try:
                     config = yaml.load(stream, Loader=yaml.SafeLoader)
-                    self.api_key = config.get("api").get("key")
-                    self.api_secret = config.get("api").get("secret")
+                    self.api_public_key = config.get("api").get("public_key")
+                    self.api_private_key = config.get("api").get("private_key")
                     self.pair = config.get("dca").get("pair")
                     self.amount = config.get("dca").get("amount")
                 except (AttributeError, yaml.YAMLError) as e:
                     raise ValueError(f"config.yaml file incorrectly formatted: {e}")
         except EnvironmentError:
             raise FileNotFoundError("config.yaml file not found.")
-        if not self.api_key:
-            raise TypeError("Please provide you Kraken API key.")
-        elif not self.api_secret:
-            raise TypeError("Please provide you Kraken private key.")
+        if not self.api_public_key:
+            raise TypeError("Please provide you Kraken API public key.")
+        elif not self.api_private_key:
+            raise TypeError("Please provide you Kraken API private key.")
         elif not self.pair:
             raise TypeError("Please provide the pair to dollar cost average.")
         elif not self.amount or self.amount <= 0:

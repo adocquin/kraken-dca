@@ -1,9 +1,9 @@
-# Kraken's API key and secret
+# Kraken's API public and private keys.
 api:
-  key: "KRAKEN_API_KEY"
-  secret: "KRAKEN_API_SECRET"
+  public_key: "KRAKEN_API_PUBLIC_KEY"
+  private_key: "KRAKEN_API_PRIVATE_KEY"
 
-# Pair to DCA and corresponding amount per day
+# Pair to DCA and corresponding amount per day.
 dca:
   pair: "XETHZEUR"
   amount: 20

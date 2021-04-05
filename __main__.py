@@ -6,7 +6,7 @@ if __name__ == "__main__":
         # Check configuration file.
         config = Config()
         # Initialize the KrakenAPI object.
-        ka = KrakenApi(config.api_key, config.api_secret)
+        ka = KrakenApi(config.api_public_key, config.api_private_key)
         # Initialize the DCA object.
         dca = DCA(ka, config.pair, config.amount)
         # Execute DCA logic.

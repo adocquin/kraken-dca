@@ -5,6 +5,7 @@ class Config:
     """
     Configuration file object based on config.yaml.
     """
+
     api_public_key: str
     api_private_key: str
     pair: str
@@ -41,4 +42,6 @@ class Config:
         elif not self.pair:
             raise TypeError("Please provide the pair to dollar cost average.")
         elif not self.amount or self.amount <= 0:
-            raise TypeError("Please provide an amount > 0 to daily dollar cost average.")
+            raise TypeError(
+                "Please provide an amount > 0 to daily dollar cost average."
+            )

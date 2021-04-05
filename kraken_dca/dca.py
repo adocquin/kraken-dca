@@ -1,5 +1,10 @@
 from .kraken_api import KrakenApi
-from .utils import unix_time_datetime, current_datetime, current_day_datetime, datetime_as_unix
+from .utils import (
+    unix_time_datetime,
+    current_datetime,
+    current_day_datetime,
+    datetime_as_unix,
+)
 import math
 
 
@@ -7,6 +12,7 @@ class DCA:
     """
     Dollar Cost Averaging encapsulation.
     """
+
     ka: KrakenApi
     pair: str
     amount: float
@@ -27,7 +33,9 @@ class DCA:
         self.ka = ka
         self.pair = pair
         self.amount = amount
-        print(f"Hi, current configuration: DCA pair: {self.pair}, DCA amount: {self.amount}.")
+        print(
+            f"Hi, current configuration: DCA pair: {self.pair}, DCA amount: {self.amount}."
+        )
 
     def handle_dca_logic(self):
         """
@@ -65,7 +73,9 @@ class DCA:
         }
         if not pair_information:
             available_pairs = [pair for pair in asset_pairs]
-            raise ValueError(f"Pair not available on Kraken. Available pairs: {available_pairs}.")
+            raise ValueError(
+                f"Pair not available on Kraken. Available pairs: {available_pairs}."
+            )
         pair_information = pair_information.get(self.pair)
         self.pair_base = pair_information.get("base")
         self.pair_quote = pair_information.get("quote")
@@ -83,9 +93,11 @@ class DCA:
         kraken_date = unix_time_datetime(kraken_time)
         current_date = current_datetime()
         print(f"It's {kraken_date} on Kraken, {current_date} on system.")
-        lag = (current_date-kraken_date).seconds
+        lag = (current_date - kraken_date).seconds
         if lag > 1:
-            raise OSError("Too much lag: Check your internet connection speed or synchronize your system time.")
+            raise OSError(
+                "Too much lag: Check your internet connection speed or synchronize your system time."
+            )
 
     def check_account_balance(self):
         """
@@ -99,9 +111,13 @@ class DCA:
         balance = self.ka.get_balance()
         pair_base_balance = balance.get(self.pair_base)
         pair_quote_balance = float(balance.get(self.pair_quote))
-        print(f"Pair balances: {pair_quote_balance} {self.pair_quote}, {pair_base_balance} {self.pair_base}.")
+        print(
+            f"Pair balances: {pair_quote_balance} {self.pair_quote}, {pair_base_balance} {self.pair_base}."
+        )
         if pair_quote_balance < self.amount:
-            raise ValueError(f"Insufficient funds to buy {self.amount} {self.pair_quote} of {self.pair_base}")
+            raise ValueError(
+                f"Insufficient funds to buy {self.amount} {self.pair_quote} of {self.pair_base}"
+            )
 
     @staticmethod
     def get_pair_orders(orders: dict, pair: str) -> dict:
@@ -158,8 +174,8 @@ class DCA:
         :param pair_price: Pair price.
         :return: Order volume as flat.
         """
-        decimals = 10**self.lot_decimals
-        return math.floor(amount/pair_price*decimals)/decimals
+        decimals = 10 ** self.lot_decimals
+        return math.floor(amount / pair_price * decimals) / decimals
 
     def set_order_price(self, volume: float, pair_price: float) -> float:
         """
@@ -169,9 +185,9 @@ class DCA:
         :param pair_price: Pair price.
         :return: Order price as float.
         """
-        decimals = 10**self.pair_decimals
-        return math.ceil(volume*pair_price*decimals)/decimals
-    
+        decimals = 10 ** self.pair_decimals
+        return math.ceil(volume * pair_price * decimals) / decimals
+
     def create_buy_limit_order(self, pair_price: float):
         """
         Create a limit order for specified dca pair and amount.
@@ -180,8 +196,12 @@ class DCA:
         """
         volume = self.set_order_volume(self.amount, pair_price)
         price = self.set_order_price(volume, pair_price)
-        print(f"Create a buy limit order of {volume} {self.pair_base} for {price} {self.pair_quote} at {pair_price}.")
+        print(
+            f"Create a buy limit order of {volume} {self.pair_base} for {price} {self.pair_quote} at {pair_price}."
+        )
         if volume < self.order_min:
-            raise ValueError(f"Too low volume to buy {self.pair_base}: current {volume}, minimum {self.order_min}.")
+            raise ValueError(
+                f"Too low volume to buy {self.pair_base}: current {volume}, minimum {self.order_min}."
+            )
         order = self.ka.create_limit_order(self.pair, True, pair_price, volume)
         print(order)

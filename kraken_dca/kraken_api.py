@@ -57,7 +57,9 @@ class KrakenApi:
         api_post_data = urlencode(post_inputs).encode()
         return api_post_data
 
-    def create_api_signature(self, api_nonce: str, api_post_data: bytes, api_method: str) -> str:
+    def create_api_signature(
+        self, api_nonce: str, api_post_data: bytes, api_method: str
+    ) -> str:
         """
         Create api signature for private user methods.
 
@@ -67,9 +69,7 @@ class KrakenApi:
         :return: API signature to use as HTTP header.
         """
         # Cryptographic hash algorithms
-        api_sha256 = hashlib.sha256(
-            api_nonce.encode() + api_post_data
-        )
+        api_sha256 = hashlib.sha256(api_nonce.encode() + api_post_data)
         # Decode API private key from base64 format displayed in account management
         try:
             api_secret = base64.b64decode(self.api_private_key)
@@ -124,7 +124,9 @@ class KrakenApi:
             # Generate the request
             request = Request(api_path, data=api_post_data)
             # Adding HTTP headers to request
-            api_signature = self.create_api_signature(api_nonce, api_post_data, api_method)
+            api_signature = self.create_api_signature(
+                api_nonce, api_post_data, api_method
+            )
             request.add_header("API-Sign", api_signature)
             request.add_header("API-Key", self.api_public_key)
 
@@ -207,7 +209,9 @@ class KrakenApi:
         data = self.request(True, "Ticker", post_inputs)
         return data
 
-    def create_limit_order(self, pair: str, buy: bool, price: float, volume: float) -> dict:
+    def create_limit_order(
+        self, pair: str, buy: bool, price: float, volume: float
+    ) -> dict:
         """
         Create a limit order.
 
@@ -218,6 +222,12 @@ class KrakenApi:
         :return: Pair ticker information as dict.
         """
         order_type = "buy" if buy else "sell"
-        post_inputs = {"pair": pair, "type": order_type, "ordertype": "limit", "price": price, "volume": volume}
+        post_inputs = {
+            "pair": pair,
+            "type": order_type,
+            "ordertype": "limit",
+            "price": price,
+            "volume": volume,
+        }
         data = self.request(False, "AddOrder", post_inputs)
         return data

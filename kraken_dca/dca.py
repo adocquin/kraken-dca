@@ -29,6 +29,28 @@ class DCA:
         self.amount = amount
         print(f"Hi, current configuration: DCA pair: {self.pair}, DCA amount: {self.amount}.")
 
+    def handle_dca_logic(self):
+        """
+        Handle DCA logic.
+
+        :return: None
+        """
+        # Get DCA pair information.
+        self.get_dca_pair_information()
+        # Check current system time.
+        self.check_system_time()
+        # Check Kraken account balance.
+        self.check_account_balance()
+        # Create a buy limit order for specified pair and quote amount if didn't DCA today.
+        daily_pair_orders = self.count_pair_daily_orders()
+        if daily_pair_orders == 0:
+            print("Didn't DCA already today.")
+            pair_ask_price = self.get_pair_ask_price()
+            print(f"Current {self.pair} ask price: {pair_ask_price}.")
+            self.create_buy_limit_order(pair_ask_price)
+        else:
+            print("Already DCA today.")
+
     def get_dca_pair_information(self):
         """
         Get DCA pair specified in configuration file information or raise an error if not available on Kraken.

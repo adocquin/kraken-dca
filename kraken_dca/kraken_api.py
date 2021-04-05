@@ -41,7 +41,7 @@ class KrakenApi:
         return api_path
 
     @staticmethod
-    def create_api_post_data(api_nonce: str, post_inputs: dict) -> bytes:
+    def create_api_post_data(post_inputs: dict, api_nonce: str = "") -> bytes:
         """
         Create api post data for private user methods.
 
@@ -49,9 +49,9 @@ class KrakenApi:
         :param post_inputs: POST inputs as dict.
         :return: API post data.
         """
-        if post_inputs:
+        if post_inputs and api_nonce:
             post_inputs.update({"nonce": api_nonce})
-        else:
+        elif api_nonce:
             post_inputs = {"nonce": api_nonce}
         api_post_data = urlencode(post_inputs).encode()
         return api_post_data
@@ -107,12 +107,16 @@ class KrakenApi:
         """
         api_path = KrakenApi.create_api_path(public_method, api_method)
 
-        if public_method:
+        if public_method and post_inputs:
+            # Create POST data
+            api_post_data = self.create_api_post_data(post_inputs)
+            request = Request(api_path, data=api_post_data)
+        elif public_method:
             request = Request(api_path)
         else:  # Handle API authentication for private user methods
             api_nonce = str(int(time.time() * 1000))
             # Create POST data
-            api_post_data = self.create_api_post_data(api_nonce, post_inputs)
+            api_post_data = self.create_api_post_data(post_inputs, api_nonce)
             # Generate the request
             request = Request(api_path, data=api_post_data)
             # Adding HTTP headers to request
@@ -177,4 +181,30 @@ class KrakenApi:
             data = data.get("closed")
         except AttributeError:
             pass
+        return data
+
+    def get_pair_ticker(self, pair: str) -> dict:
+        """
+        Return pair ticker information.
+
+        :param pair: Pair to get ticker information.
+        :return: Pair ticker information as dict.
+        """
+        post_inputs = {"pair": pair}
+        data = self.request(True, "Ticker", post_inputs)
+        return data
+
+    def create_limit_order(self, pair: str, buy: bool, price: float, volume: float) -> dict:
+        """
+        Create a limit order.
+
+        :param pair: Pair to get ticker information.
+        :param buy: Boolean to buy if true else sell.
+        :param price: Price to buy the pair.
+        :param volume: Order volume in lots.
+        :return: Pair ticker information as dict.
+        """
+        type = "buy" if buy else "sell"
+        post_inputs = {"pair": pair, "type": type, "ordertype": "limit", "price": price, "volume": volume}
+        data = self.request(False, "AddOrder", post_inputs)
         return data

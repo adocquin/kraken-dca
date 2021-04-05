@@ -128,6 +128,18 @@ class KrakenApi:
         data = urlopen(request).read()
         # Decode the API response
         data = self.extract_response_data(data)
+        # Raise an error if Kraken response is a string
+        if type(data) == str:
+            raise ValueError(f"Kraken API error -> {data}")
+        return data
+
+    def get_asset_pairs(self) -> dict:
+        """
+        Return current Kraken account trade balance.
+
+        :return: Dict of available asset pairs and their information.
+        """
+        data = self.request(True, "AssetPairs")
         return data
 
     def get_time(self) -> int:
@@ -204,7 +216,7 @@ class KrakenApi:
         :param volume: Order volume in lots.
         :return: Pair ticker information as dict.
         """
-        type = "buy" if buy else "sell"
-        post_inputs = {"pair": pair, "type": type, "ordertype": "limit", "price": price, "volume": volume}
+        order_type = "buy" if buy else "sell"
+        post_inputs = {"pair": pair, "type": order_type, "ordertype": "limit", "price": price, "volume": volume}
         data = self.request(False, "AddOrder", post_inputs)
         return data

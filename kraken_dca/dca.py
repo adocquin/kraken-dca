@@ -1,5 +1,5 @@
 from .kraken_api import KrakenApi
-from .utils import current_datetime
+from .utils import unix_time_datetime, current_datetime, current_day_datetime, datetime_as_unix
 import math
 
 
@@ -7,10 +7,14 @@ class DCA:
     """
     Dollar Cost Averaging encapsulation.
     """
-
     ka: KrakenApi
     pair: str
     amount: float
+    pair_base: str
+    pair_quote: str
+    pair_decimals: int
+    lot_decimals: int
+    order_min: float
 
     def __init__(self, ka: KrakenApi, pair: str, amount: float):
         """
@@ -23,7 +27,59 @@ class DCA:
         self.ka = ka
         self.pair = pair
         self.amount = amount
-        print(f"DCA pair: {self.pair}, DCA amount: {self.amount}")
+        print(f"Hi, current configuration: DCA pair: {self.pair}, DCA amount: {self.amount}.")
+
+    def get_dca_pair_information(self):
+        """
+        Get DCA pair specified in configuration file information or raise an error if not available on Kraken.
+
+        :return: None
+        """
+        asset_pairs = self.ka.get_asset_pairs()
+        pair_information = {
+            pair_id: pair_infos
+            for pair_id, pair_infos in asset_pairs.items()
+            if pair_id == self.pair
+        }
+        if not pair_information:
+            available_pairs = [pair for pair in asset_pairs]
+            raise ValueError(f"Pair not available on Kraken. Available pairs: {available_pairs}.")
+        pair_information = pair_information.get(self.pair)
+        self.pair_base = pair_information.get("base")
+        self.pair_quote = pair_information.get("quote")
+        self.pair_decimals = pair_information.get("pair_decimals")
+        self.lot_decimals = pair_information.get("lot_decimals")
+        self.order_min = float(pair_information.get("ordermin"))
+
+    def check_system_time(self):
+        """
+        Compare system and Kraken time and raise an error if too much difference (1sc).
+
+        :return: None
+        """
+        kraken_time = self.ka.get_time()
+        kraken_date = unix_time_datetime(kraken_time)
+        current_date = current_datetime()
+        print(f"It's {kraken_date} on Kraken, {current_date} on system.")
+        lag = (current_date-kraken_date).seconds
+        if lag > 1:
+            raise OSError("Too much lag: Check your internet connection speed or synchronize your system time.")
+
+    def check_account_balance(self):
+        """
+        Check account trade balance, pair base and pair quote balances and raise an error if quote pair balance
+        is too low to DCA specified amount.
+
+        :return: None
+        """
+        trade_balance = self.ka.get_trade_balance().get("eb")
+        print(f"Current trade balance: {trade_balance} ZUSD.")
+        balance = self.ka.get_balance()
+        pair_base_balance = balance.get(self.pair_base)
+        pair_quote_balance = float(balance.get(self.pair_quote))
+        print(f"Pair balances: {pair_quote_balance} {self.pair_quote}, {pair_base_balance} {self.pair_base}.")
+        if pair_quote_balance < self.amount:
+            raise ValueError(f"Insufficient funds to buy {self.amount} {self.pair_quote} of {self.pair_base}")
 
     @staticmethod
     def get_pair_orders(orders: dict, pair: str) -> dict:
@@ -52,11 +108,8 @@ class DCA:
         daily_open_orders = len(self.get_pair_orders(open_orders, self.pair))
 
         # Get daily closed orders
-        current_date = current_datetime()
-        current_day_datetime = current_date.replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
-        current_day_unix = int(current_day_datetime.timestamp())
+        day_datetime = current_day_datetime()
+        current_day_unix = datetime_as_unix(day_datetime)
         closed_orders = self.ka.get_closed_orders(
             {"start": current_day_unix, "closetime": "open"}
         )
@@ -65,7 +118,7 @@ class DCA:
         pair_daily_orders = daily_closed_orders + daily_open_orders
         return pair_daily_orders
 
-    def get_pair_ask_price(self):
+    def get_pair_ask_price(self) -> float:
         """
         Get pair ask price from Kraken ticker.
 
@@ -75,36 +128,38 @@ class DCA:
         pair_ask_price = float(pair_ticker_information.get(self.pair).get("a")[0])
         return pair_ask_price
 
-    @staticmethod
-    def get_order_volume(amount: float, pair_price: float):
+    def set_order_volume(self, amount: float, pair_price: float) -> float:
         """
-        Return order volume for specified DCA amount and pair price.
+        Define order volume for specified DCA amount, pair price and pair decimals based on Kraken lot decimals.
 
         :param amount: DCA amount.
         :param pair_price: Pair price.
-        :return: Order volume.
+        :return: Order volume as flat.
         """
-        return math.floor(amount/pair_price*100000)/100000
+        decimals = 10**self.lot_decimals
+        return math.floor(amount/pair_price*decimals)/decimals
 
-    @staticmethod
-    def get_order_price(volume: float, pair_price: float):
+    def set_order_price(self, volume: float, pair_price: float) -> float:
         """
-        Return order price for specified order volume and pair price.
+        Define order price for specified order volume and pair price based on Kraken pair decimals.
 
         :param volume: Order volume.
         :param pair_price: Pair price.
-        :return: Order price.
+        :return: Order price as float.
         """
-        return volume*pair_price
+        decimals = 10**self.pair_decimals
+        return math.ceil(volume*pair_price*decimals)/decimals
     
-    def create_dca_pair_limit_order(self, pair_price: float):
+    def create_buy_limit_order(self, pair_price: float):
         """
         Create a limit order for specified dca pair and amount.
 
-        :return: DCA pair ask price.
+        :return: None.
         """
-        volume = self.get_order_volume(self.amount, pair_price)
-        price = self.get_order_price(volume, pair_price)
-        print(f"Create a {self.pair} buy limit order of {volume} for {price} at {pair_price}")
+        volume = self.set_order_volume(self.amount, pair_price)
+        price = self.set_order_price(volume, pair_price)
+        print(f"Create a buy limit order of {volume} {self.pair_base} for {price} {self.pair_quote} at {pair_price}.")
+        if volume < self.order_min:
+            raise ValueError(f"Too low volume to buy {self.pair_base}: current {volume}, minimum {self.order_min}.")
         order = self.ka.create_limit_order(self.pair, True, pair_price, volume)
         print(order)

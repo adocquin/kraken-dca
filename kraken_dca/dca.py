@@ -93,7 +93,7 @@ class DCA:
 
         :param volume: Order volume.
         :param pair_price: Pair price.
-        :return: order price.
+        :return: Order price.
         """
         return volume*pair_price
     

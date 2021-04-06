@@ -74,7 +74,7 @@ class KrakenApi:
         try:
             api_secret = base64.b64decode(self.api_private_key)
         except binascii.Error as e:
-            raise ValueError(f"Incorrect Kraken API private key: {e}")
+            raise ValueError(f"Incorrect Kraken API private key -> {e}")
         api_hmac = hmac.new(
             api_secret,
             f"/0/private/{api_method}".encode() + api_sha256.digest(),

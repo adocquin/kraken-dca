@@ -1,7 +1,7 @@
 # Kraken DCA
 
-Kraken DCA is a python program to do daily 
-[Dollar Cost averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp) on [Kraken](https://kraken.com) exchange.<br>
+Kraken DCA is a python program to automate
+[Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp) on [Kraken](https://kraken.com) exchange.<br>
 At every launch, the program will check if an order was already passed in the current day for the specified pair in the configuration file.
 If not, it will buy the specified amount.
 

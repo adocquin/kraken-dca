@@ -1,9 +1,9 @@
 from .kraken_api import KrakenApi
 from .utils import (
-    unix_time_datetime,
-    current_datetime,
-    current_day_datetime,
-    datetime_as_unix,
+    utc_unix_time_datetime,
+    current_utc_datetime,
+    current_utc_day_datetime,
+    datetime_as_utc_unix,
 )
 import math
 
@@ -90,8 +90,8 @@ class DCA:
         :return: None
         """
         kraken_time = self.ka.get_time()
-        kraken_date = unix_time_datetime(kraken_time)
-        current_date = current_datetime()
+        kraken_date = utc_unix_time_datetime(kraken_time)
+        current_date = current_utc_datetime()
         print(f"It's {kraken_date} on Kraken, {current_date} on system.")
         lag = (current_date - kraken_date).seconds
         if lag > 1:
@@ -146,8 +146,8 @@ class DCA:
         daily_open_orders = len(self.get_pair_orders(open_orders, self.pair))
 
         # Get daily closed orders
-        day_datetime = current_day_datetime()
-        current_day_unix = datetime_as_unix(day_datetime)
+        day_datetime = current_utc_day_datetime()
+        current_day_unix = datetime_as_utc_unix(day_datetime)
         closed_orders = self.ka.get_closed_orders(
             {"start": current_day_unix, "closetime": "open"}
         )

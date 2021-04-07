@@ -109,8 +109,14 @@ class DCA:
         trade_balance = self.ka.get_trade_balance().get("eb")
         print(f"Current trade balance: {trade_balance} ZUSD.")
         balance = self.ka.get_balance()
-        pair_base_balance = balance.get(self.pair_base)
-        pair_quote_balance = float(balance.get(self.pair_quote))
+        try:
+            pair_base_balance = balance.get(self.pair_base)
+        except TypeError:  # When there is no pair base balance on Kraken account
+            pair_base_balance = 0
+        try:
+            pair_quote_balance = float(balance.get(self.pair_quote))
+        except TypeError:  # When there is no pair quote balance on Kraken account
+            pair_quote_balance = 0
         print(
             f"Pair balances: {pair_quote_balance} {self.pair_quote}, {pair_base_balance} {self.pair_base}."
         )

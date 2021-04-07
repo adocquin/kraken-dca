@@ -42,7 +42,16 @@ class KrakenApi:
         return api_path
 
     @staticmethod
-    def create_api_post_data(post_inputs: dict, api_nonce: str = "") -> bytes:
+    def create_api_nonce() -> str:
+        """
+        Create a unique number identifier as string used for each private REST API endpoints.
+        :return: A unique number identifier as string
+        """
+        api_nonce = str(int(time.time() * 1000))
+        return api_nonce
+
+    @staticmethod
+    def create_api_post_data(post_inputs: dict = None, api_nonce: str = "") -> bytes:
         """
         Create api post data for private user methods.
 
@@ -54,7 +63,10 @@ class KrakenApi:
             post_inputs.update({"nonce": api_nonce})
         elif api_nonce:
             post_inputs = {"nonce": api_nonce}
-        api_post_data = urlencode(post_inputs).encode()
+        try:
+            api_post_data = urlencode(post_inputs).encode()
+        except TypeError as e:
+            raise TypeError(f"API Post with missing post inputs and nonce -> {e}")
         return api_post_data
 
     def create_api_signature(
@@ -94,7 +106,10 @@ class KrakenApi:
         :return: Request response data as dict
         """
         data = data.decode()
-        data = json.loads(data)
+        try:
+            data = json.loads(data)
+        except json.decoder.JSONDecodeError as e:
+            raise ValueError(f"Response received from API was wrongly formatted -> {e}")
         data = data.get("error")[0] if data.get("error") else data.get("result")
         return data
 
@@ -118,7 +133,7 @@ class KrakenApi:
         elif public_method:
             request = Request(api_path)
         else:  # Handle API authentication for private user methods
-            api_nonce = str(int(time.time() * 1000))
+            api_nonce = self.create_api_nonce()
             # Create POST data
             api_post_data = self.create_api_post_data(post_inputs, api_nonce)
             # Generate the request
@@ -134,7 +149,7 @@ class KrakenApi:
         data = urlopen(request).read()
         # Decode the API response
         data = self.extract_response_data(data)
-        # Raise an error if Kraken response is a string
+        # Raise an error if Kraken extracted response is a string
         if type(data) == str:
             raise ValueError(f"Kraken API error -> {data}")
         return data
@@ -192,7 +207,7 @@ class KrakenApi:
         Return current Kraken closed orders.
 
         :param post_inputs: POST inputs as dict.
-        :return: Dict of closed orders txid as the key.
+        :return: Dict of closed orders with txid as the key.
         """
         data = self.request(False, "ClosedOrders", post_inputs)
         data = data.get("closed")

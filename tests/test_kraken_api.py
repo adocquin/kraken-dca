@@ -1,6 +1,7 @@
 from kraken_dca import KrakenApi
 from freezegun import freeze_time
 import pytest
+from urllib.request import Request
 
 # KrakenAPI object for public API endpoints
 ka_public = KrakenApi("api_public_key", "api_private_key")
@@ -106,3 +107,55 @@ def test_extract_response_data():
     data = ka_public.extract_response_data(data)
     assert data == "EOrder:Insufficient funds"
 
+
+@freeze_time("2012-01-13 23:10:34.069731")
+def test_create_api_request():
+    # Test from public method with post inputs
+    post_inputs = {"pair": "XETHZUSD"}
+    request = ka_public.create_api_request(True, "Ticker", post_inputs)
+    assert type(request) == Request
+    assert request.data == b"pair=XETHZUSD"
+    assert request.full_url == "https://api.kraken.com/0/public/Ticker"
+    assert request.host == "api.kraken.com"
+    assert request.origin_req_host == "api.kraken.com"
+    assert request.selector == "/0/public/Ticker"
+    assert request.type == "https"
+
+    # Test from public method without post inputs
+    request = ka_public.create_api_request(True, "Time")
+    assert type(request) == Request
+    assert request.data is None
+    assert request.full_url == "https://api.kraken.com/0/public/Time"
+    assert request.host == "api.kraken.com"
+    assert request.origin_req_host == "api.kraken.com"
+    assert request.selector == "/0/public/Time"
+    assert request.type == "https"
+
+    # Test from private method with post inputs
+    post_inputs = {"pair": "XETHZUSD"}
+    request = ka_private.create_api_request(False, "ClosedOrders", post_inputs)
+    assert type(request) == Request
+    assert request.data == b"pair=XETHZUSD&nonce=1326496234069"
+    assert request.full_url == "https://api.kraken.com/0/private/ClosedOrders"
+    assert request.host == "api.kraken.com"
+    assert request.origin_req_host == "api.kraken.com"
+    assert request.selector == "/0/private/ClosedOrders"
+    assert request.type == "https"
+    api_sign = "UTq1QrYgqyXh7pa4UtSVeGe28oCcOMUci0CA3j8bQ+S5nvs7PDhUklSdfmjYd+qBbnEH9BGsKUEksRQFQOkS6w=="
+    assert request.headers.get("Api-sign") == api_sign
+    api_key = "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ"
+    assert request.headers.get("Api-key") == api_key
+
+    # Test from private method without post inputs
+    request = ka_private.create_api_request(False, "TradeBalance")
+    assert type(request) == Request
+    assert request.data == b"nonce=1326496234069"
+    assert request.full_url == "https://api.kraken.com/0/private/TradeBalance"
+    assert request.host == "api.kraken.com"
+    assert request.origin_req_host == "api.kraken.com"
+    assert request.selector == "/0/private/TradeBalance"
+    assert request.type == "https"
+    api_sign = "o4flfJB00EwybhqfMjQ0LFnGp88pTpW1gN5xNDfIATu59sD5TsxeVHND9wH5Wq2vdA9qGF1idb5wnF4QVuvU6Q=="
+    assert request.headers.get("Api-sign") == api_sign
+    api_key = "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ"
+    assert request.headers.get("Api-key") == api_key

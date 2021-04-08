@@ -113,19 +113,18 @@ class KrakenApi:
         data = data.get("error")[0] if data.get("error") else data.get("result")
         return data
 
-    def request(
+    def create_api_request(
         self, public_method: bool, api_method: str, post_inputs: dict = None
-    ) -> dict:
+    ) -> Request:
         """
-        Given a method, request the Kraken api and return the result data.
+        Given a method, create a request object to send to Kraken API.
 
         :param public_method: Is the method a public market data.
         :param api_method: API method as string.
         :param post_inputs: POST inputs as dict.
-        :return: Result as python dictionary.
+        :return: Request object.
         """
         api_path = KrakenApi.create_api_path(public_method, api_method)
-
         if public_method and post_inputs:
             # Create POST data
             api_post_data = self.create_api_post_data(post_inputs)
@@ -144,7 +143,15 @@ class KrakenApi:
             )
             request.add_header("API-Sign", api_signature)
             request.add_header("API-Key", self.api_public_key)
+        return request
 
+    def send_api_request(self, request: Request) -> dict:
+        """
+        Given a method, request the Kraken api and return the response data.
+
+        :param request: Request object to send to Kraken API
+        :return: Kraken API's response as dict.
+        """
         # Request the api
         data = urlopen(request).read()
         # Decode the API response
@@ -160,7 +167,8 @@ class KrakenApi:
 
         :return: Dict of available asset pairs and their information.
         """
-        data = self.request(True, "AssetPairs")
+        request = self.create_api_request(True, "AssetPairs")
+        data = self.send_api_request(request)
         return data
 
     def get_time(self) -> int:
@@ -170,7 +178,8 @@ class KrakenApi:
         :return: Kraken time as string.
         """
 
-        data = self.request(True, "Time")
+        request = self.create_api_request(True, "Time")
+        data = self.send_api_request(request)
         kraken_time = data.get("unixtime")
         return kraken_time
 
@@ -180,7 +189,8 @@ class KrakenApi:
 
         :return: Dict of asset names and balance amount.
         """
-        data = self.request(False, "Balance")
+        request = self.create_api_request(False, "Balance")
+        data = self.send_api_request(request)
         return data
 
     def get_trade_balance(self) -> dict:
@@ -189,7 +199,8 @@ class KrakenApi:
 
         :return: Dict of asset names and balance amount.
         """
-        data = self.request(False, "TradeBalance")
+        request = self.create_api_request(False, "TradeBalance")
+        data = self.send_api_request(request)
         return data
 
     def get_open_orders(self) -> dict:
@@ -198,7 +209,8 @@ class KrakenApi:
 
         :return: Dict of open orders txid as the key.
         """
-        data = self.request(False, "OpenOrders")
+        request = self.create_api_request(False, "OpenOrders")
+        data = self.send_api_request(request)
         data = data.get("open")
         return data
 
@@ -209,7 +221,8 @@ class KrakenApi:
         :param post_inputs: POST inputs as dict.
         :return: Dict of closed orders with txid as the key.
         """
-        data = self.request(False, "ClosedOrders", post_inputs)
+        request = self.create_api_request(False, "ClosedOrders", post_inputs)
+        data = self.send_api_request(request)
         data = data.get("closed")
         return data
 
@@ -221,7 +234,8 @@ class KrakenApi:
         :return: Pair ticker information as dict.
         """
         post_inputs = {"pair": pair}
-        data = self.request(True, "Ticker", post_inputs)
+        request = self.create_api_request(True, "Ticker", post_inputs)
+        data = self.send_api_request(request)
         return data
 
     def create_limit_order(
@@ -244,5 +258,6 @@ class KrakenApi:
             "price": price,
             "volume": volume,
         }
-        data = self.request(False, "AddOrder", post_inputs)
+        request = self.create_api_request(False, "AddOrder", post_inputs)
+        data = self.send_api_request(request)
         return data

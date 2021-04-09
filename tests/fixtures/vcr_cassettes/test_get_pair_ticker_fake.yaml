@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: pair=Fake
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '9'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/public/Ticker
+  response:
+    body:
+      string: '{"error":["EQuery:Unknown asset pair"]}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 63d6ea5b8cc7085b-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 09 Apr 2021 21:44:13 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d56d1bb91ebc88ea249db08ab7e69f5881618004653; expires=Sun, 09-May-21
+        21:44:13 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=bbaba8578a73c03c8f54929042b7c52d3d08fe49-1618004653-1800-AVhf67vvWYz6JeABUr6TreSPcUni2+jj1YEL8kKVJLyMr4oIa+IkVueBZvWJJ8oPmyBaLvOcjYX9qlckkQr8WG0=;
+        path=/; expires=Fri, 09-Apr-21 22:14:13 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - no-cache,max-age=0
+      cf-request-id:
+      - 095a30cd380000085b14975000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

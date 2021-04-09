@@ -1,0 +1,51 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection:
+      - close
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: GET
+    uri: https://api.kraken.com/0/public/Time
+  response:
+    body:
+      string: '{"error":[],"result":{"unixtime":1618001260,"rfc1123":"Fri,  9 Apr
+        21 20:47:40 +0000"}}'
+    headers:
+      CF-Cache-Status:
+      - MISS
+      CF-RAY:
+      - 63d69786697fcd97-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 09 Apr 2021 20:47:40 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d3cbc7e7c1f8ca0cd182f4b272905183d1618001260; expires=Sun, 09-May-21
+        20:47:40 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=20e3bee8b10ab2d7ca3ce32c771eeab8b584c9a2-1618001260-1800-AUzF8lQ0BDY57Y1WoeBPut/vfThwWJpiR9WeMEX6isa5F3k13QQ8COqFIFqutFAvoobMME3wjC5iv6+ZHQkMo24=;
+        path=/; expires=Fri, 09-Apr-21 21:17:40 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - no-cache,max-age=0
+      cf-request-id:
+      - 0959fd08040000cd9785318000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

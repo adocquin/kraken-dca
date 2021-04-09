@@ -2,6 +2,7 @@ from kraken_dca import KrakenApi
 from freezegun import freeze_time
 import pytest
 from urllib.request import Request
+import vcr
 
 # KrakenAPI object for public API endpoints
 ka_public = KrakenApi("api_public_key", "api_private_key")
@@ -159,3 +160,40 @@ def test_create_api_request():
     assert request.headers.get("Api-sign") == api_sign
     api_key = "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ"
     assert request.headers.get("Api-key") == api_key
+
+
+@vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_asset_pairs.yaml")
+def test_get_asset_pairs():
+    data = ka_public.get_asset_pairs()
+    assert type(data) == dict
+    assert len(data) == 304
+    for key, value in data.items():
+        assert type(key) == str
+        assert type(value) == dict
+
+
+@vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml")
+def test_get_time():
+    data = ka_public.get_time()
+    assert type(data) == int
+    assert data == 1618001260
+
+
+def test_get_pair_ticker():
+    # Test with existing pair
+    pair = "XETHZEUR"
+    with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_pair_ticker_xethzeur.yaml"):
+        data = ka_public.get_pair_ticker(pair)
+    assert type(data) == dict
+    key = next(iter(data))
+    assert type(key) == str
+    assert key == "XETHZEUR"
+    value = next(iter(data.values()))
+    assert type(value) == dict
+
+    # Test with fake pair
+    pair = "Fake"
+    with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_pair_ticker_fake.yaml"):
+        with pytest.raises(ValueError) as e_info:
+            ka_public.get_pair_ticker(pair)
+        assert "Kraken API error -> EQuery:Unknown asset pair" in str(e_info.value)

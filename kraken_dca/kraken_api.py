@@ -163,7 +163,7 @@ class KrakenApi:
 
     def get_asset_pairs(self) -> dict:
         """
-        Return current Kraken account trade balance.
+        Return Kraken trading pairs.
 
         :return: Dict of available asset pairs and their information.
         """
@@ -182,6 +182,18 @@ class KrakenApi:
         data = self.send_api_request(request)
         kraken_time = data.get("unixtime")
         return kraken_time
+
+    def get_pair_ticker(self, pair: str) -> dict:
+        """
+        Return pair ticker information.
+
+        :param pair: Pair to get ticker information.
+        :return: Pair ticker information as dict.
+        """
+        post_inputs = {"pair": pair}
+        request = self.create_api_request(True, "Ticker", post_inputs)
+        data = self.send_api_request(request)
+        return data
 
     def get_balance(self) -> dict:
         """
@@ -224,18 +236,6 @@ class KrakenApi:
         request = self.create_api_request(False, "ClosedOrders", post_inputs)
         data = self.send_api_request(request)
         data = data.get("closed")
-        return data
-
-    def get_pair_ticker(self, pair: str) -> dict:
-        """
-        Return pair ticker information.
-
-        :param pair: Pair to get ticker information.
-        :return: Pair ticker information as dict.
-        """
-        post_inputs = {"pair": pair}
-        request = self.create_api_request(True, "Ticker", post_inputs)
-        data = self.send_api_request(request)
         return data
 
     def create_limit_order(

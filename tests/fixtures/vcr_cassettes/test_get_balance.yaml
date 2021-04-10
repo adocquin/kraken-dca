@@ -1,0 +1,52 @@
+interactions:
+- request:
+    body: nonce=1618082416300
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '19'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/private/Balance
+  response:
+    body:
+      string: '{"error":[],"result":{"ZEUR":"600.0000","XXBT":"0.0000002600","XETH":"0.0000008020","ADA":"0.00000001","XTZ":"0.00000080","LINK":"0.0000000000","YFI":"0.0000000100","UNI":"0.0000000000","AAVE":"0.0000000400","ETH2.S":"6.6236700000","ETH2":"0.0254277790","GRT":"0.0000000000"}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 63de54de1e4d32aa-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 10 Apr 2021 19:20:16 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d4fd5587dcab0c1547efd6a83305327591618082416; expires=Mon, 10-May-21
+        19:20:16 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=524654b27a9ad4eef377385b3cdaeff4136b1600-1618082416-1800-AVQS0fn92FCbgCcJ1bu+gLY+EJVRydSragf/59hMRDajp6Q6hzvZwTAns2zIhYQBUj5FY/5SqMSf4fqcBeJa0vI=;
+        path=/; expires=Sat, 10-Apr-21 19:50:16 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 095ed35ed1000032aae43a0000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

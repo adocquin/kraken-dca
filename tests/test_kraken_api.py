@@ -199,10 +199,10 @@ def test_get_pair_ticker():
     assert "Kraken API error -> EQuery:Unknown asset pair" in str(e_info.value)
 
 
+@vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_balance.yaml",
+                  filter_headers=["API-Key", "API-Sign"])
 def test_get_balance():
-    with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_balance.yaml",
-                          filter_headers=["API-Key", "API-Sign"]):
-        data = ka_private.get_balance()
+    data = ka_private.get_balance()
     assert type(data) == dict
     key = next(iter(data))
     assert type(key) == str
@@ -212,10 +212,10 @@ def test_get_balance():
     assert value == "600.0000"
 
 
+@vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_trade_balance.yaml",
+                  filter_headers=["API-Key", "API-Sign"])
 def test_get_trade_balance():
-    with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_trade_balance.yaml",
-                          filter_headers=["API-Key", "API-Sign"]):
-        data = ka_private.get_trade_balance()
+    data = ka_private.get_trade_balance()
     assert type(data) == dict
     correct_keys = ['eb', 'tb', 'm', 'n', 'c', 'v', 'e', 'mf']
     keys = list(data.keys())

@@ -96,7 +96,7 @@ class DCA:
         lag = (current_date - kraken_date).seconds
         if lag > 1:
             raise OSError(
-                "Too much lag: Check your internet connection speed or synchronize your system time."
+                "Too much lag -> Check your internet connection speed or synchronize your system time."
             )
 
     def check_account_balance(self):
@@ -110,7 +110,7 @@ class DCA:
         print(f"Current trade balance: {trade_balance} ZUSD.")
         balance = self.ka.get_balance()
         try:
-            pair_base_balance = balance.get(self.pair_base)
+            pair_base_balance = float(balance.get(self.pair_base))
         except TypeError:  # When there is no pair base balance on Kraken account
             pair_base_balance = 0
         try:
@@ -172,26 +172,34 @@ class DCA:
         pair_ask_price = float(pair_ticker_information.get(self.pair).get("a")[0])
         return pair_ask_price
 
-    def set_order_volume(self, amount: float, pair_price: float) -> float:
+    @staticmethod
+    def set_order_volume(amount: float, pair_price: float, lot_decimals: float) -> float:
         """
         Define order volume for specified DCA amount, pair price and pair decimals based on Kraken lot decimals.
 
         :param amount: DCA amount.
         :param pair_price: Pair price.
+        :param lot_decimals: Lot decimals as float.
         :return: Order volume as flat.
         """
-        decimals = 10 ** self.lot_decimals
-        return math.floor(amount / pair_price * decimals) / decimals
+        decimals = 10 ** lot_decimals
+        try:
+            order_volume = math.floor(amount / pair_price * decimals) / decimals
+        except ZeroDivisionError:
+            raise ZeroDivisionError("DCA set_order_volume -> pair_price must not be 0.")
+        return order_volume
 
-    def set_order_price(self, volume: float, pair_price: float) -> float:
+    @staticmethod
+    def set_order_price(volume: float, pair_price: float, pair_decimals: float) -> float:
         """
         Define order price for specified order volume and pair price based on Kraken pair decimals.
 
         :param volume: Order volume.
         :param pair_price: Pair price.
+        :param pair_decimals: Pair decimals as floar.
         :return: Order price as float.
         """
-        decimals = 10 ** self.pair_decimals
+        decimals = 10 ** pair_decimals
         return math.ceil(volume * pair_price * decimals) / decimals
 
     def create_buy_limit_order(self, pair_price: float):
@@ -200,8 +208,8 @@ class DCA:
 
         :return: None.
         """
-        volume = self.set_order_volume(self.amount, pair_price)
-        price = self.set_order_price(volume, pair_price)
+        volume = self.set_order_volume(self.amount, pair_price, self.lot_decimals)
+        price = self.set_order_price(volume, pair_price, self.pair_decimals)
         print(
             f"Create a buy limit order of {volume} {self.pair_base} for {price} {self.pair_quote} at {pair_price}."
         )

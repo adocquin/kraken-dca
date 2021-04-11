@@ -16,7 +16,7 @@ interactions:
     uri: https://api.kraken.com/0/private/TradeBalance
   response:
     body:
-      string: '{"error":[],"result":{"eb":"14397.0337","tb":"726.0172","m":"0.0000","n":"0.0000","c":"0.0000","v":"0.0000","e":"726.0172","mf":"726.0172"}}'
+      string: '{"error":[],"result":{"eb":"197.0337","tb":"6.0172","m":"0.0000","n":"0.0000","c":"0.0000","v":"0.0000","e":"6.0172","mf":"6.0172"}}'
     headers:
       CF-Cache-Status:
       - DYNAMIC

@@ -15,7 +15,7 @@ def get_correct_config() -> str:
 
 
 def test_config_is_correct():
-    # Test if config.yaml has changed
+    # Test if config.yaml has changed.
     correct_config = get_correct_config()
     with open("config.yaml", "r") as stream:
         config = stream.read()
@@ -23,7 +23,7 @@ def test_config_is_correct():
 
 
 def test_config_properties():
-    # Test object properties are correctly assigned
+    # Test object properties are correctly assigned.
     config = Config.read_config_file("config.yaml")
     assert type(config.api_public_key) == str
     assert config.api_public_key
@@ -54,43 +54,43 @@ def mock_config_error(config: str, error_type: type) -> str:
 
 
 def test_config_errors():
-    # Load test config.yaml file
+    # Load test config.yaml file.
     correct_config = get_correct_config()
 
-    # Test raise FileNotFoundError
+    # Test raise FileNotFoundError.
     e_info_value = mock_config_error(correct_config, FileNotFoundError)
     assert "config.yaml file not found." in e_info_value
 
-    # Test missing public key
+    # Test missing public key.
     config_empty_api_public_key = correct_config.replace(
         'public_key: "KRAKEN_API_PUBLIC_KEY"', ""
     )
     e_info_value = mock_config_error(config_empty_api_public_key, TypeError)
     assert "Please provide your Kraken API public key." in e_info_value
 
-    # Test missing private key
+    # Test missing private key.
     config_empty_api_private_key = correct_config.replace(
         'private_key: "KRAKEN_API_PRIVATE_KEY"', ""
     )
     e_info_value = mock_config_error(config_empty_api_private_key, TypeError)
     assert "Please provide your Kraken API private key." in e_info_value
 
-    # Test missing pair
+    # Test missing pair.
     config_empty_pair = correct_config.replace('pair: "XETHZEUR"', "")
     e_info_value = mock_config_error(config_empty_pair, TypeError)
     assert "Please provide the pair to dollar cost average." in e_info_value
 
-    # Test missing amount
+    # Test missing amount.
     config_missing_amount = correct_config.replace("amount: 20", "")
     e_info_value = mock_config_error(config_missing_amount, ValueError)
     assert "config.yaml file incorrectly formatted:" in e_info_value
 
-    # Test amount = 0
+    # Test amount = 0.
     config_zero_amount = correct_config.replace("amount: 20", "amount: 0")
     e_info_value = mock_config_error(config_zero_amount, TypeError)
     assert "Please provide an amount > 0 to daily dollar cost average." in e_info_value
 
-    # Test amount < 0
+    # Test amount < 0.
     config_below_zero_amount = correct_config.replace("amount: 20", "amount: -100")
     e_info_value = mock_config_error(config_below_zero_amount, TypeError)
     assert "Please provide an amount > 0 to daily dollar cost average." in e_info_value

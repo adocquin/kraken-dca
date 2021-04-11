@@ -6,9 +6,9 @@ import vcr
 
 # Todo: send_api_request, get_open_order, get_closed_orders, create_limit_order
 
-# KrakenAPI object for public API endpoints
+# KrakenAPI object for public API endpoints.
 ka_public = KrakenApi("api_public_key", "api_private_key")
-# KrakenAPI object for private API endpoints - Fake keys
+# KrakenAPI object for private API endpoints - Fake keys.
 ka_private = KrakenApi(
     "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ",
     "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY18UQEgOHzBIEsqg78BZJCEhvFIzw1Q==",
@@ -16,11 +16,11 @@ ka_private = KrakenApi(
 
 
 def test_create_api_path():
-    # Test public API endpoint path
+    # Test public API endpoint path.
     api_path = ka_public.create_api_path(True, "Time")
     assert api_path == "https://api.kraken.com/0/public/Time"
 
-    # Test private API endpoint path
+    # Test private API endpoint path.
     api_path = ka_public.create_api_path(False, "Balance")
     assert api_path == "https://api.kraken.com/0/private/Balance"
 
@@ -32,23 +32,23 @@ def test_create_api_nonce():
 
 
 def test_create_api_post_data():
-    # Test with post inputs and api nonce
+    # Test with post inputs and api nonce.
     post_inputs = {"start": 1617753600, "closetime": "open"}
     api_nonce = "1326496234069"
     api_post_data = ka_public.create_api_post_data(post_inputs, api_nonce)
     assert api_post_data == b"start=1617753600&closetime=open&nonce=1326496234069"
 
-    # Test with only post inputs
+    # Test with only post inputs.
     post_inputs = {"pair": "XETHZEUR"}
     api_post_data = ka_public.create_api_post_data(post_inputs)
     assert api_post_data == b"pair=XETHZEUR"
 
-    # Test with only api_nonce
+    # Test with only api_nonce.
     api_nonce = "1617824500528"
     api_post_data = ka_public.create_api_post_data(None, api_nonce)
     assert api_post_data == b"nonce=1617824500528"
 
-    # Should raise a TypeError if post inputs and api nonce are missing
+    # Should raise a TypeError if post inputs and api nonce are missing.
     with pytest.raises(TypeError) as e_info:
         ka_public.create_api_post_data()
     assert "API Post with missing post inputs and nonce ->" in str(e_info.value)
@@ -58,7 +58,7 @@ def test_create_api_signature():
     api_nonce = "1617828062628"
 
     # Test signature with method with only nonce as parameters,
-    # using an incorrectly and correctly formatted API keys
+    # using an incorrectly and correctly formatted API keys.
     api_method = "TradeBalance"
     api_post_data = b"nonce=1617828062628"
     with pytest.raises(ValueError) as e_info:
@@ -71,7 +71,7 @@ def test_create_api_signature():
     assert api_signature == correct_api_signature
 
     # Test signature with method using start,
-    # closedtime and nonce as parameters
+    # closedtime and nonce as parameters.
     api_method = "ClosedOrders"
     api_post_data = b"start=1617753600&closetime=open&nonce=1617828329075"
     api_signature = ka_private.create_api_signature(
@@ -81,7 +81,7 @@ def test_create_api_signature():
     assert api_signature == correct_api_signature
 
     # Test signature with method using pair, type,
-    # ordertype, price, volume and nonce as parameters
+    # ordertype, price, volume and nonce as parameters.
     api_method = "AddOrder"
     api_post_data = b"pair=XETHZUSD&type=buy&ordertype=limit&price=1985.42&volume=0.00755507&nonce=1617828386991"
     api_signature = ka_private.create_api_signature(
@@ -92,20 +92,20 @@ def test_create_api_signature():
 
 
 def test_extract_response_data():
-    # Raise error when wrong data format received
+    # Raise error when wrong data format received.
     data = b"Wrong data"
     with pytest.raises(ValueError) as e_info:
         ka_public.extract_response_data(data)
     assert "Response received from API was wrongly formatted ->" in str(e_info.value)
 
     # Test extract data from Kraken API as dict from bytes
-    # with format {"error": list, result: dit}
+    # with format {"error": list, result: dit}.
     data = b'{"error":[],"result":{"unixtime":1617831335,"rfc1123":"Wed,  7 Apr 21 21:35:35 +0000"}}'
     data = ka_public.extract_response_data(data)
     correct_data = {"unixtime": 1617831335, "rfc1123": "Wed,  7 Apr 21 21:35:35 +0000"}
     assert data == correct_data
 
-    # Extract error message when received one
+    # Extract error message when received one.
     data = b'{"error":["EOrder:Insufficient funds"]}'
     data = ka_public.extract_response_data(data)
     assert data == "EOrder:Insufficient funds"
@@ -113,7 +113,7 @@ def test_extract_response_data():
 
 @freeze_time("2012-01-13 23:10:34.069731")
 def test_create_api_request():
-    # Test from public method with post inputs
+    # Test from public method with post inputs.
     post_inputs = {"pair": "XETHZUSD"}
     request = ka_public.create_api_request(True, "Ticker", post_inputs)
     assert type(request) == Request
@@ -124,7 +124,7 @@ def test_create_api_request():
     assert request.selector == "/0/public/Ticker"
     assert request.type == "https"
 
-    # Test from public method without post inputs
+    # Test from public method without post inputs.
     request = ka_public.create_api_request(True, "Time")
     assert type(request) == Request
     assert request.data is None
@@ -134,7 +134,7 @@ def test_create_api_request():
     assert request.selector == "/0/public/Time"
     assert request.type == "https"
 
-    # Test from private method with post inputs
+    # Test from private method with post inputs.
     post_inputs = {"pair": "XETHZUSD"}
     request = ka_private.create_api_request(False, "ClosedOrders", post_inputs)
     assert type(request) == Request
@@ -149,7 +149,7 @@ def test_create_api_request():
     api_key = "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ"
     assert request.headers.get("Api-key") == api_key
 
-    # Test from private method without post inputs
+    # Test from private method without post inputs.
     request = ka_private.create_api_request(False, "TradeBalance")
     assert type(request) == Request
     assert request.data == b"nonce=1326496234069"
@@ -182,7 +182,7 @@ def test_get_time():
 
 
 def test_get_pair_ticker():
-    # Test with existing pair
+    # Test with existing pair.
     pair = "XETHZEUR"
     with vcr.use_cassette(
         "tests/fixtures/vcr_cassettes/test_get_pair_ticker_xethzeur.yaml"
@@ -195,7 +195,7 @@ def test_get_pair_ticker():
     value = next(iter(data.values()))
     assert type(value) == dict
 
-    # Test with fake pair
+    # Test with fake pair.
     pair = "Fake"
     with vcr.use_cassette(
         "tests/fixtures/vcr_cassettes/test_get_pair_ticker_fake.yaml"
@@ -217,7 +217,7 @@ def test_get_balance():
     assert key == "ZEUR"
     value = next(iter(data.values()))
     assert type(value) == str
-    assert value == "600.0000"
+    assert value == "60.0000"
 
 
 @vcr.use_cassette(
@@ -232,4 +232,14 @@ def test_get_trade_balance():
     assert keys == correct_keys
     value = next(iter(data.values()))
     assert type(value) == str
-    assert value == "14397.0337"
+    assert value == "197.0337"
+
+
+def test_send_api_request():
+    request = ka_public.create_api_request(True, "Time")
+    with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml"):
+        data = ka_public.send_api_request(request)
+    assert type(data) == dict
+    assert data.get("unixtime") == 1618001260
+    assert data.get("rfc1123") == "Fri,  9 Apr 21 20:47:40 +0000"
+

@@ -75,6 +75,3 @@ def test_check_account_balance():
     with pytest.raises(ValueError) as e_info:
         dca.check_account_balance()
     assert "Insufficient funds to buy 20 ZEUR of XETH" in str(e_info.value)
-
-
-

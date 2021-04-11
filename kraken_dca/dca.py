@@ -16,6 +16,7 @@ class DCA:
     ka: KrakenApi
     pair: str
     amount: float
+    pair_altname: str
     pair_base: str
     pair_quote: str
     pair_decimals: int
@@ -77,6 +78,7 @@ class DCA:
                 f"Pair not available on Kraken. Available pairs: {available_pairs}."
             )
         pair_information = pair_information.get(self.pair)
+        self.pair_altname = pair_information.get("altname")
         self.pair_base = pair_information.get("base")
         self.pair_quote = pair_information.get("quote")
         self.pair_decimals = pair_information.get("pair_decimals")
@@ -126,18 +128,20 @@ class DCA:
             )
 
     @staticmethod
-    def get_pair_orders(orders: dict, pair: str) -> dict:
+    def get_pair_orders(orders: dict, pair: str, pair_altname: str) -> dict:
         """
         Filter orders passed as dict parameters on specific pair and return the dictionary.
 
         :param orders: Orders as dictionary.
         :param pair: Specific pair to filter on.
+        :param pair_altname: Specific pair altname to filter on.
         :return: Filtered orders dictionary on specific pair.
         """
         pair_orders = {
             order_id: order_infos
             for order_id, order_infos in orders.items()
             if order_infos.get("descr").get("pair") == pair
+            or order_infos.get("descr").get("pair") == pair_altname
         }
         return pair_orders
 
@@ -149,7 +153,7 @@ class DCA:
         """
         # Get current open orders.
         open_orders = self.ka.get_open_orders()
-        daily_open_orders = len(self.get_pair_orders(open_orders, self.pair))
+        daily_open_orders = len(self.get_pair_orders(open_orders, self.pair, self.pair_altname))
 
         # Get daily closed orders
         day_datetime = current_utc_day_datetime()
@@ -157,7 +161,7 @@ class DCA:
         closed_orders = self.ka.get_closed_orders(
             {"start": current_day_unix, "closetime": "open"}
         )
-        daily_closed_orders = len(self.get_pair_orders(closed_orders, self.pair))
+        daily_closed_orders = len(self.get_pair_orders(closed_orders, self.pair, self.pair_altname))
         # Sum the count of closed and daily open orders for the DCA pair.
         pair_daily_orders = daily_closed_orders + daily_open_orders
         return pair_daily_orders
@@ -173,7 +177,9 @@ class DCA:
         return pair_ask_price
 
     @staticmethod
-    def set_order_volume(amount: float, pair_price: float, lot_decimals: float) -> float:
+    def set_order_volume(
+        amount: float, pair_price: float, lot_decimals: float
+    ) -> float:
         """
         Define order volume for specified DCA amount, pair price and pair decimals based on Kraken lot decimals.
 
@@ -190,7 +196,9 @@ class DCA:
         return order_volume
 
     @staticmethod
-    def set_order_price(volume: float, pair_price: float, pair_decimals: float) -> float:
+    def set_order_price(
+        volume: float, pair_price: float, pair_decimals: float
+    ) -> float:
         """
         Define order price for specified order volume and pair price based on Kraken pair decimals.
 
@@ -218,4 +226,6 @@ class DCA:
                 f"Too low volume to buy {self.pair_base}: current {volume}, minimum {self.order_min}."
             )
         order = self.ka.create_limit_order(self.pair, True, pair_price, volume)
-        print(order)
+        txid = order.get("txid")[0]
+        description = order.get("descr").get("order")
+        print(f"Order successfully created.\nTXID: {txid}\nDescription: {description}")

@@ -17,7 +17,7 @@ class KrakenApi:
     api_public_key: str
     api_private_key: str
 
-    def __init__(self, api_public_key: str, api_private_key: str):
+    def __init__(self, api_public_key: str, api_private_key: str) -> None:
         """
         Initialize the KrakenAPI object.
 
@@ -64,7 +64,7 @@ class KrakenApi:
         elif api_nonce:
             post_inputs = {"nonce": api_nonce}
         try:
-            api_post_data = urlencode(post_inputs).encode()
+            api_post_data = urlencode(post_inputs, safe=",").encode()
         except TypeError as e:
             raise TypeError(f"API Post with missing post inputs and nonce -> {e}")
         return api_post_data
@@ -161,6 +161,16 @@ class KrakenApi:
             raise ValueError(f"Kraken API error -> {data}")
         return data
 
+    def get_assets(self) -> dict:
+        """
+        Return Kraken trading pairs.
+
+        :return: Dict of available asset pairs and their information.
+        """
+        request = self.create_api_request(True, "Assets")
+        data = self.send_api_request(request)
+        return data
+
     def get_asset_pairs(self) -> dict:
         """
         Return Kraken trading pairs.
@@ -238,25 +248,36 @@ class KrakenApi:
         data = data.get("closed")
         return data
 
-    def create_limit_order(
-        self, pair: str, buy: bool, price: float, volume: float
+    def create_order(
+        self,
+        pair: str,
+        type: str,
+        order_type: str,
+        price: float,
+        volume: float,
+        o_flags: str,
     ) -> dict:
         """
-        Create a limit order.
+        Create an order on kraken with passed arguments.
+        More information on Kraken documentation
+        (Add standard order):
+        https://www.kraken.com/en-us/features/api
 
-        :param pair: Pair to get ticker information.
-        :param buy: Boolean to buy if true else sell.
+        :param pair: Order pair.
+        :param type: Buy or sell order.
+        :param order_type: Order type.
         :param price: Price to buy the pair.
-        :param volume: Order volume in lots.
+        :param volume: Order volume.
+        :param o_flags: Order additional flags.
         :return: Pair ticker information as dict.
         """
-        order_type = "buy" if buy else "sell"
         post_inputs = {
             "pair": pair,
-            "type": order_type,
-            "ordertype": "limit",
+            "type": type,
+            "ordertype": order_type,
             "price": price,
             "volume": volume,
+            "oflags": o_flags,
         }
         request = self.create_api_request(False, "AddOrder", post_inputs)
         data = self.send_api_request(request)

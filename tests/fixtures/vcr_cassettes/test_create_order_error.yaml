@@ -1,0 +1,52 @@
+interactions:
+- request:
+    body: pair=XETHZEUR&type=buy&ordertype=limit&price=1796.16&volume=0.01113486&oflags=fciq&nonce=1618255112494
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '102'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/private/AddOrder
+  response:
+    body:
+      string: '{"error":["EOrder:Insufficient funds"]}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 63eecd15f9a608ab-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 12 Apr 2021 19:18:32 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d278ab562d2282057e26cb48fa612249f1618255112; expires=Wed, 12-May-21
+        19:18:32 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=ab2ad524fab15fb150cd863a2346e8b2665dcc9d-1618255112-1800-AdPXoMxeWfotNoDqgXU8m+VC7V5BVBlcUaosT0WNYzYMJL52my3DrHrJURj2mKM2cxyPdzzSieCAr3PWa7I40Go=;
+        path=/; expires=Mon, 12-Apr-21 19:48:32 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 09691e81bd000008ab503ff000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

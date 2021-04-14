@@ -24,7 +24,7 @@ def test_config_is_correct():
 
 def test_config_properties():
     # Test object properties are correctly assigned.
-    config = Config.read_config_file("config.yaml")
+    config = Config("config.yaml")
     assert type(config.api_public_key) == str
     assert config.api_public_key
     assert type(config.api_private_key) == str
@@ -48,7 +48,7 @@ def mock_config_error(config: str, error_type: type) -> str:
         if error_type == FileNotFoundError:
             mock_open.side_effect = FileNotFoundError()
         with pytest.raises(error_type) as e_info:
-            Config.read_config_file("config.yaml")
+            Config("config.yaml")
     e_info_value = str(e_info.value)
     return e_info_value
 

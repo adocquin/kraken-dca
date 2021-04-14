@@ -42,3 +42,20 @@ def datetime_as_utc_unix(date: datetime) -> int:
     :return: Date as int unix time.
     """
     return int(date.replace(tzinfo=timezone.utc).timestamp())
+
+
+def find_first_nested_dictionary(nested_dict: dict, elem: object):
+    """
+    Find first dictionary with key equals to elem in a nested dictionary.
+
+    :param nested_dict:  Nested dictionary to find the element.
+    :param elem: Key element to find.
+    :return: First dictionary found in the nested dictionary with key equals to elem.
+    """
+    nested_dictionary = {
+        elem_key: elem_dict
+        for elem_key, elem_dict in nested_dict.items()
+        if elem_key == elem
+    }
+    dictionary = nested_dictionary.get(elem)
+    return dictionary

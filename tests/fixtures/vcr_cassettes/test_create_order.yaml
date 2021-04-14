@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: pair=XETHZEUR&type=buy&ordertype=limit&price=1938.11&volume=0.01029256&oflags=fciq&nonce=1618428747681
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '102'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/private/AddOrder
+  response:
+    body:
+      string: '{"error":[],"result":{"descr":{"order":"buy 0.01029256 ETHEUR @ limit
+        1938.11"},"txid":["OUHXFN-RTP6W-ART4VP"]}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 63ff5c395b42b7d5-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 14 Apr 2021 19:32:27 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=df8ae934c22790e60e42e333759101eb21618428747; expires=Fri, 14-May-21
+        19:32:27 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=082be986752d3bb0c8ce0f3ca0be8f161fb54311-1618428747-1800-AUxnCJLKh7tkUbUkerX4fJOqNmR2s6kZHLIdMcDRvpgw6Bks7gG1N+LyOjcwKyWNoVkLKxrCLT8xyHWs0xeokow=;
+        path=/; expires=Wed, 14-Apr-21 20:02:27 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 097377f7d30000b7d5e10eb000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

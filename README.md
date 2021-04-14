@@ -1,18 +1,43 @@
 # Kraken DCA
-
 Kraken DCA is a python program to automate
 [Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp) on [Kraken](https://kraken.com) exchange.<br>
 At every launch, the program will check if an order was already passed in the current day for the specified pair in the configuration file.
 If not, it will buy the specified amount.
 
-To work properly, the program will need a public and private API key from Kraken with permissions to:
+To work properly, the program will need a Kraken public and private API key with permissions to:
 - Consult funds
 - View open orders & transactions
 - View closed orders & transactions
 - Create and modify orders
 
-You can create API keys from the [API page](https://www.kraken.com/u/security/api) in your Kraken account.
+API keys can be created from the [API page](https://www.kraken.com/u/security/api) of your Kraken account.
 
+# Orders
+The pair and the amount to DCA per day need to be specified in the configuration file.
+
+## What are the order settings ?
+A buy limit taker order is created by the program at its execution, 0.26% fee are assumed.<br>
+Orders are created only if no one were created during the current day for the specified pair and are immediately executed.<br>
+Pair quote asset are used to pay Kraken fee.
+
+## How are price, volume and fee computed ?
+**Limit price**: The pair ask price at the moment of the program execution.
+
+**Volume**: The order volume is the amount*price truncated down to the pair lot decimals, then adjusted to volume/1.0026 truncated down the pair lot decimals.<br>
+By adjusting the volume, the total price of the order with fee included doesn't exceed the configuration amount.<br>
+
+**Order price**: The order price is estimated as volume*pair_ask_price rounded to the quote asset decimals.
+
+**Fee**: Fee are included in the specified amount by adjusting down the order volume.
+0.26% taker fee are assumed and are estimated as the order_price*0.0026 round to the quote asset decimals.
+
+Kraken documentation:
+- [Kraken API documentation](https://www.kraken.com/en-us/features/api)
+- [Are internal calculations made in float point or with a fixed number of decimals? Are the values always rounded?](https://support.kraken.com/hc/en-us/articles/201988998-Are-internal-calculations-made-in-float-point-or-with-a-fixed-number-of-decimals-Are-the-values-always-rounded-)
+- [Assets info](https://api.kraken.com/0/public/Assets)
+- [Tradable asset paird](https://api.kraken.com/0/public/AssetPairs)
+
+# Setup
 ## Configuration file example
 ```yaml
 # Kraken's API public and private keys.
@@ -45,7 +70,7 @@ docker run -v CONFIGURATION_FILE_PATH:/app/config.yaml --name kraken-dca --resta
 ```
 **CONFIGURATION_FILE_PATH**: Full local configuraiton file (e.g., *~/dev/config.yaml*).
 
-To see program container logs:
+To see container logs:
 ```sh
 docker logs kraken-dca
 ```
@@ -68,7 +93,7 @@ python __main__.py
 ```
 ### Using cron
 You can automate the execution by using cron on unix systems.
-To execute the program every hour (it will only buy if no order was open during the current day) executes in a shell:
+To execute the program every hour (it will only buy if no order was open during the current day) run in a shell:
 ```sh
 crontab -e
 ```
@@ -86,7 +111,9 @@ To deactivate the cron job remove the line using again:
 crontab -e
 ```
 
-## How to contribute
+More crontab execution frequency options: https://crontab.guru/
+
+# How to contribute
 Thanks for your interest in contributing to the project. You can contribute freely to the project by creating an issue, a pull request or fork it.
 Before issuing a pull request, make sure the changes did not break any existing functionality by running unit tests in the *kraken-dca* folder:
 ```sh

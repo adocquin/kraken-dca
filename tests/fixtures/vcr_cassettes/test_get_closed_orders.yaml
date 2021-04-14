@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: start=1618185600&closetime=open&nonce=1618250923821
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '51'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/private/ClosedOrders
+  response:
+    body:
+      string: '{"error":[],"result":{"closed":{"OPHJMI-YDCPY-POU4AJ":{"refid":null,"userref":0,"status":"closed","reason":null,"opentm":1618211413.0554,"closetm":1618211434.2471,"starttm":0,"expiretm":0,"descr":{"pair":"ETHEUR","type":"buy","ordertype":"limit","price":"1831.26","price2":"0","leverage":"none","order":"buy
+        0.01092144 ETHEUR @ limit 1831.26","close":""},"vol":"0.01092144","vol_exec":"0.01092144","cost":"20.00","fee":"0.03","price":"1831.26","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq"}},"count":1}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 63ee66d23beccd9f-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 12 Apr 2021 18:08:44 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=db68c6dfba5ea2c54705f9bb80b05aa401618250923; expires=Wed, 12-May-21
+        18:08:43 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=e13c6d24d136fd44e29d1b44c143027df31e8870-1618250924-1800-AbYv6/63rMdSqlpx3J1znLFmWR1jsWEyICvHvnDN7DVg0mExYndPEmQsWNyporBFQaW0G9oScInqtak2W8qVMw8=;
+        path=/; expires=Mon, 12-Apr-21 18:38:44 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 0968de975f0000cd9fc6a26000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

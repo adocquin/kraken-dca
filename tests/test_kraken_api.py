@@ -4,7 +4,8 @@ import pytest
 from urllib.request import Request
 import vcr
 
-# Todo: send_api_request, get_open_order, get_closed_orders, create_limit_order
+# ToDo: send_api_request, get_open_order, get_closed_orders
+# ToDo: create_buy_limit_order, get_assets
 
 # KrakenAPI object for public API endpoints.
 ka_public = KrakenApi("api_public_key", "api_private_key")
@@ -198,7 +199,7 @@ def test_get_pair_ticker():
     # Test with fake pair.
     pair = "Fake"
     with vcr.use_cassette(
-        "tests/fixtures/vcr_cassettes/test_get_pair_ticker_fake.yaml"
+        "tests/fixtures/vcr_cassettes/test_get_pair_ticker_error.yaml"
     ):
         with pytest.raises(ValueError) as e_info:
             ka_public.get_pair_ticker(pair)

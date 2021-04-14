@@ -1,0 +1,52 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection:
+      - close
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: GET
+    uri: https://api.kraken.com/0/public/Assets
+  response:
+    body:
+      string: '{"error":[],"result":{"AAVE":{"aclass":"currency","altname":"AAVE","decimals":10,"display_decimals":5},"ADA":{"aclass":"currency","altname":"ADA","decimals":8,"display_decimals":6},"ALGO":{"aclass":"currency","altname":"ALGO","decimals":8,"display_decimals":5},"ANT":{"aclass":"currency","altname":"ANT","decimals":10,"display_decimals":5},"ATOM":{"aclass":"currency","altname":"ATOM","decimals":8,"display_decimals":6},"ATOM.S":{"aclass":"currency","altname":"ATOM.S","decimals":8,"display_decimals":6},"BAL":{"aclass":"currency","altname":"BAL","decimals":10,"display_decimals":5},"BAT":{"aclass":"currency","altname":"BAT","decimals":10,"display_decimals":5},"BCH":{"aclass":"currency","altname":"BCH","decimals":10,"display_decimals":5},"CHF":{"aclass":"currency","altname":"CHF","decimals":4,"display_decimals":2},"COMP":{"aclass":"currency","altname":"COMP","decimals":10,"display_decimals":5},"CRV":{"aclass":"currency","altname":"CRV","decimals":10,"display_decimals":5},"DAI":{"aclass":"currency","altname":"DAI","decimals":10,"display_decimals":5},"DASH":{"aclass":"currency","altname":"DASH","decimals":10,"display_decimals":5},"DOT":{"aclass":"currency","altname":"DOT","decimals":10,"display_decimals":8},"DOT.S":{"aclass":"currency","altname":"DOT.S","decimals":10,"display_decimals":8},"EOS":{"aclass":"currency","altname":"EOS","decimals":10,"display_decimals":5},"ETH2":{"aclass":"currency","altname":"ETH2","decimals":10,"display_decimals":5},"ETH2.S":{"aclass":"currency","altname":"ETH2.S","decimals":10,"display_decimals":5},"EUR.HOLD":{"aclass":"currency","altname":"EUR.HOLD","decimals":4,"display_decimals":2},"EUR.M":{"aclass":"currency","altname":"EUR.M","decimals":4,"display_decimals":4},"EWT":{"aclass":"currency","altname":"EWT","decimals":10,"display_decimals":5},"FIL":{"aclass":"currency","altname":"FIL","decimals":10,"display_decimals":6},"FLOW":{"aclass":"currency","altname":"FLOW","decimals":10,"display_decimals":6},"FLOW.S":{"aclass":"currency","altname":"FLOW.S","decimals":10,"display_decimals":6},"FLOWH":{"aclass":"currency","altname":"FLOWH","decimals":10,"display_decimals":6},"FLOWH.S":{"aclass":"currency","altname":"FLOWH.S","decimals":10,"display_decimals":6},"GNO":{"aclass":"currency","altname":"GNO","decimals":10,"display_decimals":5},"GRT":{"aclass":"currency","altname":"GRT","decimals":10,"display_decimals":5},"ICX":{"aclass":"currency","altname":"ICX","decimals":10,"display_decimals":5},"KAVA":{"aclass":"currency","altname":"KAVA","decimals":8,"display_decimals":6},"KAVA.S":{"aclass":"currency","altname":"KAVA.S","decimals":8,"display_decimals":6},"KEEP":{"aclass":"currency","altname":"KEEP","decimals":10,"display_decimals":5},"KFEE":{"aclass":"currency","altname":"FEE","decimals":2,"display_decimals":2},"KNC":{"aclass":"currency","altname":"KNC","decimals":10,"display_decimals":5},"KSM":{"aclass":"currency","altname":"KSM","decimals":10,"display_decimals":8},"KSM.S":{"aclass":"currency","altname":"KSM.S","decimals":10,"display_decimals":8},"LINK":{"aclass":"currency","altname":"LINK","decimals":10,"display_decimals":5},"LSK":{"aclass":"currency","altname":"LSK","decimals":10,"display_decimals":5},"MANA":{"aclass":"currency","altname":"MANA","decimals":10,"display_decimals":5},"NANO":{"aclass":"currency","altname":"NANO","decimals":10,"display_decimals":5},"OCEAN":{"aclass":"currency","altname":"OCEAN","decimals":10,"display_decimals":5},"OMG":{"aclass":"currency","altname":"OMG","decimals":10,"display_decimals":5},"OXT":{"aclass":"currency","altname":"OXT","decimals":10,"display_decimals":5},"PAXG":{"aclass":"currency","altname":"PAXG","decimals":10,"display_decimals":5},"QTUM":{"aclass":"currency","altname":"QTUM","decimals":10,"display_decimals":6},"REPV2":{"aclass":"currency","altname":"REPV2","decimals":10,"display_decimals":5},"SC":{"aclass":"currency","altname":"SC","decimals":10,"display_decimals":5},"SNX":{"aclass":"currency","altname":"SNX","decimals":10,"display_decimals":5},"STORJ":{"aclass":"currency","altname":"STORJ","decimals":10,"display_decimals":5},"TBTC":{"aclass":"currency","altname":"TBTC","decimals":10,"display_decimals":5},"TRX":{"aclass":"currency","altname":"TRX","decimals":8,"display_decimals":6},"UNI":{"aclass":"currency","altname":"UNI","decimals":10,"display_decimals":5},"USD.HOLD":{"aclass":"currency","altname":"USD.HOLD","decimals":4,"display_decimals":2},"USD.M":{"aclass":"currency","altname":"USD.M","decimals":4,"display_decimals":4},"USDC":{"aclass":"currency","altname":"USDC","decimals":8,"display_decimals":4},"USDT":{"aclass":"currency","altname":"USDT","decimals":8,"display_decimals":4},"WAVES":{"aclass":"currency","altname":"WAVES","decimals":10,"display_decimals":5},"XBT.M":{"aclass":"currency","altname":"XBT.M","decimals":10,"display_decimals":8},"XETC":{"aclass":"currency","altname":"ETC","decimals":10,"display_decimals":5},"XETH":{"aclass":"currency","altname":"ETH","decimals":10,"display_decimals":5},"XLTC":{"aclass":"currency","altname":"LTC","decimals":10,"display_decimals":5},"XMLN":{"aclass":"currency","altname":"MLN","decimals":10,"display_decimals":5},"XREP":{"aclass":"currency","altname":"REP","decimals":10,"display_decimals":5},"XTZ":{"aclass":"currency","altname":"XTZ","decimals":8,"display_decimals":6},"XTZ.S":{"aclass":"currency","altname":"XTZ.S","decimals":8,"display_decimals":6},"XXBT":{"aclass":"currency","altname":"XBT","decimals":10,"display_decimals":5},"XXDG":{"aclass":"currency","altname":"XDG","decimals":8,"display_decimals":2},"XXLM":{"aclass":"currency","altname":"XLM","decimals":8,"display_decimals":5},"XXMR":{"aclass":"currency","altname":"XMR","decimals":10,"display_decimals":5},"XXRP":{"aclass":"currency","altname":"XRP","decimals":8,"display_decimals":5},"XZEC":{"aclass":"currency","altname":"ZEC","decimals":10,"display_decimals":5},"YFI":{"aclass":"currency","altname":"YFI","decimals":10,"display_decimals":5},"ZAUD":{"aclass":"currency","altname":"AUD","decimals":4,"display_decimals":2},"ZCAD":{"aclass":"currency","altname":"CAD","decimals":4,"display_decimals":2},"ZEUR":{"aclass":"currency","altname":"EUR","decimals":4,"display_decimals":2},"ZGBP":{"aclass":"currency","altname":"GBP","decimals":4,"display_decimals":2},"ZJPY":{"aclass":"currency","altname":"JPY","decimals":2,"display_decimals":0},"ZUSD":{"aclass":"currency","altname":"USD","decimals":4,"display_decimals":2}}}'
+    headers:
+      Age:
+      - '61'
+      CF-Cache-Status:
+      - UPDATING
+      CF-RAY:
+      - 63ff4edcbfe2cddb-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 14 Apr 2021 19:23:20 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=da6e361d56fc100fc0712634d3668bd721618428200; expires=Fri, 14-May-21
+        19:23:20 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=fe879fdf19b29b2b9146e4a34d0c3428ee1a7ffc-1618428200-1800-AU8jsmgNHtKtsZPzuQTroYlhp+CB1WVkxJdSqmOYhosK5j00k8i+PQFtkHTsnlkjU3sElP7VdkbZmWrjNa6psTE=;
+        path=/; expires=Wed, 14-Apr-21 19:53:20 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - public,max-age=60,smaxage=60
+      cf-request-id:
+      - 09736f9df50000cddbebb32000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -16,7 +16,7 @@ dca = DCA(ka, pair, 20)
 
 
 @freeze_time("2012-01-13 23:10:34.069731")
-@vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml")
+@vcr.use_cassette("tests/fixtures/vcr_cassettes/test_check_system_time_error.yaml")
 def test_check_system_time():
     with pytest.raises(OSError) as e_info:
         dca.check_system_time()

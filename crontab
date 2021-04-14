@@ -1,2 +1,2 @@
-# Run python script every minutes
-* * * * * cd /app && /usr/local/bin/python __main__.py >> /proc/1/fd/1 2>/proc/1/fd/2
+# Run python script every hour
+0 * * * * cd /app && /usr/local/bin/python __main__.py >> /proc/1/fd/1 2>/proc/1/fd/2

@@ -3,7 +3,7 @@ import vcr
 import pytest
 from freezegun import freeze_time
 
-# ToDo: handle_dca_logic, get_pair_orders,
+# ToDo: handle_dca_logic, extract_pair_orders,
 # ToDo: count_pair_daily_orders, send_buy_limit_order
 
 # Initialize DCA test object - Fake keys.

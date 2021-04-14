@@ -106,11 +106,36 @@ class DCA:
                 f"Insufficient funds to buy {self.amount} {self.pair.quote} of {self.pair.base}"
             )
 
-    @staticmethod
-    def get_pair_orders(orders: dict, pair: str, pair_alt_name: str) -> dict:
+    def count_pair_daily_orders(self) -> int:
         """
-        Filter orders passed as dict parameters
-        on specific pair and return the dictionary.
+        Count current day open and closed orders for the DCA pair.
+
+        :return: Count of daily orders for the dollar cost averaged pair.
+        """
+        # Get current open orders.
+        open_orders = self.ka.get_open_orders()
+        daily_open_orders = len(
+            self.extract_pair_orders(open_orders, self.pair.name, self.pair.alt_name)
+        )
+
+        # Get daily closed orders
+        day_datetime = current_utc_day_datetime()
+        current_day_unix = datetime_as_utc_unix(day_datetime)
+        closed_orders = self.ka.get_closed_orders(
+            {"start": current_day_unix, "closetime": "open"}
+        )
+        daily_closed_orders = len(
+            self.extract_pair_orders(closed_orders, self.pair.name, self.pair.alt_name)
+        )
+        # Sum the count of closed and daily open orders for the DCA pair.
+        pair_daily_orders = daily_closed_orders + daily_open_orders
+        return pair_daily_orders
+
+    @staticmethod
+    def extract_pair_orders(orders: dict, pair: str, pair_alt_name: str) -> dict:
+        """
+        Filter orders passed as dictionary on specific
+        pair and return the nested dictionary.
 
         :param orders: Orders as dictionary.
         :param pair: Specific pair to filter on.
@@ -124,31 +149,6 @@ class DCA:
             or order_infos.get("descr").get("pair") == pair_alt_name
         }
         return pair_orders
-
-    def count_pair_daily_orders(self) -> int:
-        """
-        Count current day open and closed orders for the DCA pair.
-
-        :return: Count of daily orders for the dollar cost averaged pair.
-        """
-        # Get current open orders.
-        open_orders = self.ka.get_open_orders()
-        daily_open_orders = len(
-            self.get_pair_orders(open_orders, self.pair.name, self.pair.alt_name)
-        )
-
-        # Get daily closed orders
-        day_datetime = current_utc_day_datetime()
-        current_day_unix = datetime_as_utc_unix(day_datetime)
-        closed_orders = self.ka.get_closed_orders(
-            {"start": current_day_unix, "closetime": "open"}
-        )
-        daily_closed_orders = len(
-            self.get_pair_orders(closed_orders, self.pair.name, self.pair.alt_name)
-        )
-        # Sum the count of closed and daily open orders for the DCA pair.
-        pair_daily_orders = daily_closed_orders + daily_open_orders
-        return pair_daily_orders
 
     def send_buy_limit_order(self, order: Order) -> None:
         """

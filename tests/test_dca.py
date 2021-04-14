@@ -80,6 +80,7 @@ def test_extract_pair_orders():
     # Test with existing pair order
     pair_orders = dca.extract_pair_orders(orders, "XETHZEUR", "ETHEUR")
     assert type(pair_orders) == dict
+    assert len(pair_orders) == 1
     key = next(iter(pair_orders))
     assert type(key) == str
     assert key == "O7JHTY-754IO-YU46NZ"

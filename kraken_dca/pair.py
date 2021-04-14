@@ -1,6 +1,6 @@
 from typing import TypeVar
 from .kraken_api import KrakenApi
-from .utils import find_first_nested_dictionary
+from .utils import find_nested_dictionary
 
 T = TypeVar("T", bound="Pair")
 
@@ -89,7 +89,7 @@ class Pair:
         :return: Dict of pair information.
         """
         asset_pairs = ka.get_asset_pairs()
-        pair_information = find_first_nested_dictionary(asset_pairs, pair)
+        pair_information = find_nested_dictionary(asset_pairs, pair)
         if not pair_information:
             available_pairs = [pair for pair in asset_pairs]
             raise ValueError(
@@ -107,7 +107,7 @@ class Pair:
         :return: Dict of asset information.
         """
         assets = ka.get_assets()
-        asset_information = find_first_nested_dictionary(assets, asset)
+        asset_information = find_nested_dictionary(assets, asset)
         if not asset_information:
             available_assets = [asset for asset in assets]
             raise ValueError(

@@ -7,5 +7,5 @@ from .utils import (
     current_utc_datetime,
     current_utc_day_datetime,
     datetime_as_utc_unix,
-    find_first_nested_dictionary,
+    find_nested_dictionary,
 )

@@ -7,6 +7,7 @@ from .utils import (
     current_utc_day_datetime,
     datetime_as_utc_unix,
 )
+from datetime import datetime
 
 
 class DCA:
@@ -41,7 +42,7 @@ class DCA:
         :return: None
         """
         # Check current system time.
-        self.check_system_time()
+        current_date = self.get_system_time()
         # Check Kraken account balance.
         self.check_account_balance()
         # Create a buy limit order for specified
@@ -52,6 +53,7 @@ class DCA:
             pair_ask_price = self.pair.get_pair_ask_price(self.ka, self.pair.name)
             print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
             order = Order.buy_limit_order(
+                current_date,
                 self.pair.name,
                 self.amount,
                 pair_ask_price,
@@ -62,7 +64,7 @@ class DCA:
         else:
             print("Already DCA today.")
 
-    def check_system_time(self) -> None:
+    def get_system_time(self) -> datetime:
         """
         Compare system and Kraken time.
         Raise an error if too much difference (1sc).
@@ -78,6 +80,7 @@ class DCA:
             raise OSError(
                 "Too much lag -> Check your internet connection speed or synchronize your system time."
             )
+        return current_date
 
     def check_account_balance(self) -> None:
         """

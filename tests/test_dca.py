@@ -2,6 +2,7 @@ from kraken_dca import DCA, KrakenApi, Pair
 import vcr
 import pytest
 from freezegun import freeze_time
+from datetime import datetime
 
 # ToDo: handle_dca_logic, send_buy_limit_order
 
@@ -16,13 +17,20 @@ pair = Pair.get_pair_from_kraken(ka, "XETHZEUR")
 dca = DCA(ka, pair, 20)
 
 
-@freeze_time("2012-01-13 23:10:34.069731")
-@vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml")
 def test_check_system_time():
-    with pytest.raises(OSError) as e_info:
-        dca.check_system_time()
+    # Test with system time in the past
+    with freeze_time("2012-01-13 23:10:34.069731"):
+        with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml"):
+            with pytest.raises(OSError) as e_info:
+                dca.get_system_time()
     error_message = "Too much lag -> Check your internet connection speed or synchronize your system time."
     assert error_message in str(e_info.value)
+    # Test with correct system time
+    test_date = datetime.strptime("2021-04-09 20:47:40", '%Y-%m-%d %H:%M:%S')
+    with freeze_time(test_date):
+        with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml"):
+            date = dca.get_system_time()
+    assert date == test_date
 
 
 @vcr.use_cassette(

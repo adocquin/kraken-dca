@@ -1,5 +1,6 @@
 import math
 from typing import TypeVar
+from datetime import datetime
 from .kraken_api import KrakenApi
 
 T = TypeVar("T", bound="Order")
@@ -10,6 +11,7 @@ class Order:
     Kraken order encapsulation.
     """
 
+    date: datetime
     pair: str
     volume: float
     price: float
@@ -24,6 +26,7 @@ class Order:
 
     def __init__(
         self,
+        date: datetime,
         pair: str,
         pair_price: float,
         volume: float,
@@ -39,6 +42,7 @@ class Order:
         (Add standard order):
         https://www.kraken.com/en-us/features/api
 
+        :param date: Order date as datetime.
         :param pair: Order pair.
         :param volume: Order volume.
         :param price: Order price.
@@ -48,6 +52,7 @@ class Order:
         :param order_type: Order type.
         :param o_flags: Order additional flags.
         """
+        self.date = date
         self.pair = pair
         self.pair_price = pair_price
         self.volume = volume
@@ -61,6 +66,7 @@ class Order:
     @classmethod
     def buy_limit_order(
         cls,
+        date: datetime,
         pair: str,
         amount: float,
         pair_price: float,
@@ -70,6 +76,7 @@ class Order:
         """
         Create a limit order for specified dca pair and amount.
 
+        :param date: Order date as datetime.
         :param pair: Asset pair.
         :param amount: Amount to buy,
         :param pair_price: Limit order pair price.
@@ -84,7 +91,9 @@ class Order:
         order_type = "limit"
         # Pay fee in quote asset.
         o_flags = "fciq"
-        return cls(pair, pair_price, volume, price, fee, type, order_type, o_flags)
+        return cls(
+            date, pair, pair_price, volume, price, fee, type, order_type, o_flags
+        )
 
     def send_order(self, ka: KrakenApi) -> None:
         """

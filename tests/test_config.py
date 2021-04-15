@@ -14,7 +14,7 @@ def get_correct_config() -> str:
     return correct_config
 
 
-def test_config_is_correct():
+def test_default_config_file_is_correct():
     # Test if config.yaml has changed.
     correct_config = get_correct_config()
     with open("config.yaml", "r") as stream:

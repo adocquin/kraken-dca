@@ -4,7 +4,7 @@ import pytest
 from urllib.request import Request
 import vcr
 
-# ToDo: send_api_request, get_open_order, get_closed_orders
+# ToDo: init, send_api_request, get_open_order, get_closed_orders
 # ToDo: create_buy_limit_order, get_assets
 
 # KrakenAPI object for public API endpoints.
@@ -186,7 +186,7 @@ def test_get_pair_ticker():
     # Test with existing pair.
     pair = "XETHZEUR"
     with vcr.use_cassette(
-        "tests/fixtures/vcr_cassettes/test_get_pair_ticker_xethzeur.yaml"
+        "tests/fixtures/vcr_cassettes/test_get_pair_ticker.yaml"
     ):
         data = ka_public.get_pair_ticker(pair)
     assert type(data) == dict
@@ -243,4 +243,3 @@ def test_send_api_request():
     assert type(data) == dict
     assert data.get("unixtime") == 1618001260
     assert data.get("rfc1123") == "Fri,  9 Apr 21 20:47:40 +0000"
-

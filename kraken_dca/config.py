@@ -39,4 +39,3 @@ class Config:
             raise TypeError(
                 "Please provide an amount > 0 to daily dollar cost average."
             )
-

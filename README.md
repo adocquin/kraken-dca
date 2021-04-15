@@ -4,6 +4,8 @@ Kraken DCA is a python program to automate
 At every launch, the program will check if an order was already passed in the current day for the specified pair in the configuration file.
 If not, it will buy the specified amount.
 
+Orders history is saved in CSV format
+
 To work properly, the program will need a Kraken public and private API key with permissions to:
 - Consult funds
 - View open orders & transactions
@@ -37,6 +39,24 @@ Kraken documentation:
 - [Assets info](https://api.kraken.com/0/public/Assets)
 - [Tradable asset paird](https://api.kraken.com/0/public/AssetPairs)
 
+## How is order history saved ?
+
+Order history is saved in CSV format with following information per order:
+- **date**: Order date.
+- **pair**: Order pair, the configured DCA pair.
+- **type**: Buy or sell order, *buy* in this case.
+- **order_type**: Order type, *limit* in this case.
+- **o_flags**: Order additional flag, *fciq* in this case to pay fee in pair quote asset.
+- **pair_price**: Limit order pair price. Pair ask price at the moment of the DCA.
+- **volume**: Order volume.
+- **price**: Order price in pair quote asset.
+- **fee**: Order fee in pair quote asset.
+- **total_price**: price + fee
+- **txid**: TXID of the order.
+- **description**: Descrption of the order from Kraken.
+
+Order history is by default saved in *orders.csv*, the output file can be changed through docker image execution as described below.
+
 # Setup
 ## Configuration file example
 ```yaml
@@ -64,11 +84,12 @@ You can download the image directly from [Docker Hub](https://hub.docker.com/) u
 docker pull adocquin/kraken-dca:latest
 ```
 The program will be executed every hour as a cron job in a container.<br>
-To start the container, send your configuration file, name the container as kraken-dca and restart it on failure or at system reboot:
+To start the container, send your configuration and orders output files, name the container as kraken-dca and restart it on failure or at system reboot:
 ```sh
-docker run -v CONFIGURATION_FILE_PATH:/app/config.yaml --name kraken-dca --restart=on-failure adocquin/kraken-dca
+docker run -v CONFIGURATION_FILE_PATH:/app/config.yaml ORDERS_FILE_PATH:/app/orders.csv --name kraken-dca --restart=on-failure adocquin/kraken-dca
 ```
-**CONFIGURATION_FILE_PATH**: Full local configuraiton file (e.g., *~/dev/config.yaml*).
+- **CONFIGURATION_FILE_PATH**: Configuration folder filepath (e.g., *~/dev/config.yaml*).
+- **ORDERS_FILE_PATH**: Order history saved as CSV format filepath (e.g., *~/dev/orders.csv*).
 
 To see container logs:
 ```sh
@@ -101,8 +122,8 @@ And add:
 ```
 0 * * * * cd PROGRAM_ROOT_FOLDER && $(which python3) kraken-dca >> OUTPUT_FILE 2>&1
 ```
-**PROGRAM_ROOT_FOLDER**: Folder where you downloaded the repository (e.g., *~/dev*).<br>
-**OUTPUT_FILE**: File to log the program outputs (e.g., *~/cron.log*).<br>
+- **PROGRAM_ROOT_FOLDER**: Folder where you downloaded the repository (e.g., *~/dev*).<br>
+- **OUTPUT_FILE**: Program outputs log file (e.g., *~/cron.log*).<br>
 
 Program outputs will be available in your output file.
 

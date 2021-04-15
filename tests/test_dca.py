@@ -17,7 +17,7 @@ pair = Pair.get_pair_from_kraken(ka, "XETHZEUR")
 dca = DCA(ka, pair, 20)
 
 
-def test_check_system_time():
+def test_get_system_time():
     # Test with system time in the past
     with freeze_time("2012-01-13 23:10:34.069731"):
         with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml"):

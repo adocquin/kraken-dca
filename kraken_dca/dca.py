@@ -50,8 +50,10 @@ class DCA:
         daily_pair_orders = self.count_pair_daily_orders()
         if daily_pair_orders == 0:
             print("Didn't DCA already today.")
+            # Get current pair ask price
             pair_ask_price = self.pair.get_pair_ask_price(self.ka, self.pair.name)
             print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
+            # Create the Order object
             order = Order.buy_limit_order(
                 current_date,
                 self.pair.name,
@@ -60,7 +62,11 @@ class DCA:
                 self.pair.lot_decimals,
                 self.pair.quote_decimals,
             )
+            # Send the buyorder to Kraken API and print information
             self.send_buy_limit_order(order)
+            # Save order information to CSV file
+            order.save_order_csv()
+            print("Order information saved to CSV.")
         else:
             print("Already DCA today.")
 

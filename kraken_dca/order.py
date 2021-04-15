@@ -1,6 +1,7 @@
 import math
 from typing import TypeVar
 from datetime import datetime
+import pandas as pd
 from .kraken_api import KrakenApi
 
 T = TypeVar("T", bound="Order")
@@ -13,14 +14,14 @@ class Order:
 
     date: datetime
     pair: str
+    type: str
+    order_type: str
+    o_flags: str
+    pair_price: float
     volume: float
     price: float
     fee: float
     total_price: float
-    pair_price: float
-    type: str
-    order_type: str
-    o_flags: str
     txid: str
     description: str
 
@@ -28,13 +29,13 @@ class Order:
         self,
         date: datetime,
         pair: str,
+        type: str,
+        order_type: str,
+        o_flags: str,
         pair_price: float,
         volume: float,
         price: float,
         fee: float,
-        type: str,
-        order_type: str,
-        o_flags: str = "",
     ) -> None:
         """
         Initialize the Order object.
@@ -44,24 +45,24 @@ class Order:
 
         :param date: Order date as datetime.
         :param pair: Order pair.
+        :param type: Buy or sell order.
+        :param order_type: Order type.
+        :param o_flags: Order additional flags.
         :param volume: Order volume.
         :param price: Order price.
         :param fee: Order fee.
         :param pair_price: Order pair price.
-        :param type: Buy or sell order.
-        :param order_type: Order type.
-        :param o_flags: Order additional flags.
         """
         self.date = date
         self.pair = pair
+        self.type = type
+        self.order_type = order_type
+        self.o_flags = o_flags
         self.pair_price = pair_price
         self.volume = volume
         self.price = price
         self.fee = fee
         self.total_price = price + fee
-        self.type = type
-        self.order_type = order_type
-        self.o_flags = o_flags
 
     @classmethod
     def buy_limit_order(
@@ -92,7 +93,7 @@ class Order:
         # Pay fee in quote asset.
         o_flags = "fciq"
         return cls(
-            date, pair, pair_price, volume, price, fee, type, order_type, o_flags
+            date, pair, type, order_type, o_flags, pair_price, volume, price, fee
         )
 
     def send_order(self, ka: KrakenApi) -> None:
@@ -113,6 +114,19 @@ class Order:
         )
         self.txid = response.get("txid")[0]
         self.description = response.get("descr").get("order")
+
+    def save_order_csv(self) -> None:
+        """
+        Save Order object attributes to orders.csv.
+
+        :return: None
+        """
+        try:
+            history = pd.read_csv("orders.csv")
+            history = history.append(self.__dict__, ignore_index=True)
+        except FileNotFoundError:
+            history = pd.DataFrame(self.__dict__, index=[0])
+        history.to_csv("orders.csv", index=False)
 
     @staticmethod
     def set_order_volume(

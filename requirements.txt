@@ -3,7 +3,9 @@ freezegun==1.1.0
 idna==3.1
 iniconfig==1.1.1
 multidict==5.1.0
+numpy==1.20.2
 packaging==20.9
+pandas==1.2.4
 pip==21.0.1
 pluggy==0.13.1
 py==1.10.0

@@ -5,8 +5,6 @@ import pandas as pd
 import os
 import pytest
 
-# ToDo: estimate_order_price, estimate_order_fee
-
 
 class TestOrder:
     order: Order

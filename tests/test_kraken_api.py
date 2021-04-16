@@ -18,7 +18,7 @@ class TestKrakenAPI:
         self.ka_public = KrakenApi("api_public_key", "api_private_key")
         self.ka_private = KrakenApi(
             fake_public_key,
-            "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY18UQEgOHzBIEsqg78BZJCEhvFIzw1Q==",
+            fake_private_key,
         )
 
     def test_init(self):

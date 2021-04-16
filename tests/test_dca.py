@@ -3,7 +3,6 @@ import vcr
 import pytest
 from freezegun import freeze_time
 from datetime import datetime
-import pandas as pd
 import os
 
 
@@ -48,18 +47,8 @@ class TestDCA:
             "20.0ZEUR.\nOrder successfully created.\nTXID: OCYS4K-OILOE-36HPAE\nDescription: buy 0.00957589 "
             "ETHEUR @ limit 2083.16\nOrder information saved to CSV.\n"
         )
-        assert captured.out == test_output
-
-        # Test order history CSV saving
-        with vcr.use_cassette(
-            "tests/fixtures/vcr_cassettes/test_handle_dca_logic.yaml",
-            filter_headers=["API-Key", "API-Sign"],
-        ):
-            self.dca.handle_dca_logic()
-        history = pd.read_csv("tests/fixtures/orders.csv")
-        test_history = pd.read_csv("tests/fixtures/test_handle_dca_logic.csv")
-        assert history.equals(test_history)
         os.remove(self.test_orders_filepath)
+        assert captured.out == test_output
 
     @freeze_time("2021-04-16 18:54:53.069731")
     def test_handle_dca_logic_error(self, capfd):
@@ -149,10 +138,10 @@ class TestDCA:
         key = next(iter(pair_orders))
         assert type(key) == str
         assert key == "O7JHTY-754IO-YU46NZ"
-
-        # Test with non-existing pair order
         value = next(iter(pair_orders.values()))
         assert type(value) == dict
+
+        # Test with non-existing pair order
         pair_orders = self.dca.extract_pair_orders(orders, "XETHZUSD", "ETHUSD")
         assert type(pair_orders) == dict
         assert len(pair_orders) == 0

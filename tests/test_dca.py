@@ -175,27 +175,6 @@ class TestDCA:
         error_message = "Too low volume to buy XETH: current 0.001, minimum 0.005."
         assert error_message in str(e_info.value)
 
-        # Test Kraken API insuffiant funds error
-        order = Order(
-            datetime.strptime("2021-03-11 23:33:28", "%Y-%m-%d %H:%M:%S"),
-            "XETHZEUR",
-            "buy",
-            "limit",
-            "fciq",
-            1960.86,
-            1,
-            1960.86,
-            5.19,
-        )
-        with vcr.use_cassette(
-            "tests/fixtures/vcr_cassettes/test_create_order_error.yaml",
-            filter_headers=["API-Key", "API-Sign"],
-        ):
-            with pytest.raises(ValueError) as e_info:
-                self.dca.send_buy_limit_order(order)
-        error_message = "Kraken API error -> EOrder:Insufficient funds"
-        assert error_message in str(e_info.value)
-
     @vcr.use_cassette(
         "tests/fixtures/vcr_cassettes/test_create_order.yaml",
         filter_headers=["API-Key", "API-Sign"],

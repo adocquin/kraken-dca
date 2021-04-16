@@ -115,18 +115,18 @@ class Order:
         self.txid = response.get("txid")[0]
         self.description = response.get("descr").get("order")
 
-    def save_order_csv(self) -> None:
+    def save_order_csv(self, orders_filepath: str = "orders.csv") -> None:
         """
         Save Order object attributes to orders.csv.
 
         :return: None
         """
         try:
-            history = pd.read_csv("orders.csv")
+            history = pd.read_csv(orders_filepath)
             history = history.append(self.__dict__, ignore_index=True)
         except FileNotFoundError:
             history = pd.DataFrame(self.__dict__, index=[0])
-        history.to_csv("orders.csv", index=False)
+        history.to_csv(orders_filepath, index=False)
 
     @staticmethod
     def set_order_volume(

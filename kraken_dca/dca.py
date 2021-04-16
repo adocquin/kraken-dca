@@ -18,9 +18,15 @@ class DCA:
     ka: KrakenApi
     pair: Pair
     amount: float
-    pair_quote_balance: float
+    orders_filepath: str
 
-    def __init__(self, ka: KrakenApi, pair: Pair, amount: float) -> None:
+    def __init__(
+        self,
+        ka: KrakenApi,
+        pair: Pair,
+        amount: float,
+        orders_filepath: str = "orders.csv",
+    ) -> None:
         """
         Initialize the DCA object.
 
@@ -30,7 +36,8 @@ class DCA:
         """
         self.ka = ka
         self.pair = pair
-        self.amount = amount
+        self.amount = float(amount)
+        self.orders_filepath = orders_filepath
         print(
             f"Hi, current configuration: DCA pair: {self.pair.name}, DCA amount: {self.amount}."
         )
@@ -65,7 +72,7 @@ class DCA:
             # Send the buyorder to Kraken API and print information
             self.send_buy_limit_order(order)
             # Save order information to CSV file
-            order.save_order_csv()
+            order.save_order_csv(self.orders_filepath)
             print("Order information saved to CSV.")
         else:
             print("Already DCA today.")
@@ -104,13 +111,13 @@ class DCA:
         except TypeError:  # When there is no pair base balance on Kraken account
             pair_base_balance = 0
         try:
-            self.pair_quote_balance = float(balance.get(self.pair.quote))
+            pair_quote_balance = float(balance.get(self.pair.quote))
         except TypeError:  # When there is no pair quote balance on Kraken account
-            self.pair_quote_balance = 0
+            pair_quote_balance = 0
         print(
-            f"Pair balances: {self.pair_quote_balance} {self.pair.quote}, {pair_base_balance} {self.pair.base}."
+            f"Pair balances: {pair_quote_balance} {self.pair.quote}, {pair_base_balance} {self.pair.base}."
         )
-        if self.pair_quote_balance < self.amount:
+        if pair_quote_balance < self.amount:
             raise ValueError(
                 f"Insufficient funds to buy {self.amount} {self.pair.quote} of {self.pair.base}"
             )

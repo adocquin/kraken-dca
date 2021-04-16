@@ -53,7 +53,7 @@ Order history is saved in CSV format with following information per order:
 - **fee**: Order fee in pair quote asset.
 - **total_price**: price + fee
 - **txid**: TXID of the order.
-- **description**: Descrption of the order from Kraken.
+- **description**: Description of the order from Kraken.
 
 Order history is by default saved in *orders.csv*, the output file can be changed through docker image execution as described below.
 

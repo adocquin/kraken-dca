@@ -92,7 +92,7 @@ You must provide an empty order history CSV file at first launch. You can create
 ```sh
 touch orders.csv
 ```
-To start the container use:
+To start the container with restart as system reboot use:
 ```sh
 docker run -v CONFIGURATION_FILE_PATH:/app/config.yaml \
  ORDERS_FILE_PATH:/app/orders.csv \
@@ -147,7 +147,7 @@ More crontab execution frequency options: https://crontab.guru/
 
 # How to contribute
 Thanks for your interest in contributing to the project. You can contribute freely to the project by creating an issue, 
-a pull request or fork it.
+fork it or create a pull request.
 Before issuing a pull request, make sure the changes did not break any existing functionality by running unit tests in 
 the Kraken-DCA base directory:
 ```sh

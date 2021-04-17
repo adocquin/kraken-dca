@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/futurbroke/kraken-dca/kraken-dca:${{ env.IMAGE_TAG }} ghcr.io/futurbroke/kraken-dca/kraken-dca:latest
+          tags: ghcr.io/futurbroke/kraken-dca/kraken-dca:${{ env.IMAGE_TAG }}, ghcr.io/futurbroke/kraken-dca/kraken-dca:latest
 
       # Push to DockerHub
       - name: Login to DockerHub
@@ -46,7 +46,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: futurbroke/kraken-dca:${{ env.IMAGE_TAG }} futurbroke/kraken-dca:latest
+          tags: futurbroke/kraken-dca:${{ env.IMAGE_TAG }}, futurbroke/kraken-dca:latest
 
       # Image digest
       - name: Image digest

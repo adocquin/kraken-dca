@@ -95,7 +95,7 @@ touch orders.csv
 To start the container with restart as system reboot use:
 ```sh
 docker run -v CONFIGURATION_FILE_PATH:/app/config.yaml \
- ORDERS_FILE_PATH:/app/orders.csv \
+ -v ORDERS_FILE_PATH:/app/orders.csv \
  --name kraken-dca \
  --restart=on-failure futurbroke/kraken-dca
 ```

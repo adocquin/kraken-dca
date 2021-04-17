@@ -115,7 +115,7 @@ class Order:
         self.txid = response.get("txid")[0]
         self.description = response.get("descr").get("order")
 
-    def save_order_csv(self, orders_filepath: str = "orders.csv") -> None:
+    def save_order_csv(self, orders_filepath: str) -> None:
         """
         Save Order object attributes to orders.csv.
 
@@ -124,8 +124,12 @@ class Order:
         try:
             history = pd.read_csv(orders_filepath)
             history = history.append(self.__dict__, ignore_index=True)
-        except FileNotFoundError:
+        # No order history yet
+        except (FileNotFoundError, pd.errors.EmptyDataError):
             history = pd.DataFrame(self.__dict__, index=[0])
+        # Bad history file format
+        except (pd.errors.ParserError, IsADirectoryError) as e:
+            raise ValueError(f"Can't save order history ->  {e}")
         history.to_csv(orders_filepath, index=False)
 
     @staticmethod

@@ -7,8 +7,8 @@ import os
 
 
 class TestDCA:
-    test_orders_filepath = "tests/fixtures/orders.csv"
     dca: DCA
+    test_orders_filepath = "tests/fixtures/orders.csv"
 
     def setup(self):
         # Initialize DCA test object - Fake keys.

@@ -1,12 +1,13 @@
 # Kraken DCA
 Kraken DCA is a python program to automate
-[Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp) on [Kraken](https://kraken.com) exchange.<br>
-At every launch, the program will check if an order was already passed in the current day for the specified pair in the configuration file.
-If not, it will buy the specified amount.
+[Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp) on 
+[Kraken](https://kraken.com) exchange.<br>
+At every launch, if no DCA pair order was already passed in the current day for the specified pair in the configuration 
+file, it will create a buy limit order at current pair ask price for the specified amount in configurationn file.
 
-Orders history is saved in CSV format
+Order history is saved in CSV format
 
-To work properly, the program will need a Kraken public and private API key with permissions to:
+The program will need a Kraken public and private API key with permissions to:
 - Consult funds
 - View open orders & transactions
 - View closed orders & transactions
@@ -15,17 +16,19 @@ To work properly, the program will need a Kraken public and private API key with
 API keys can be created from the [API page](https://www.kraken.com/u/security/api) of your Kraken account.
 
 # Orders
-The pair and the amount to DCA per day need to be specified in the configuration file.
+The pair and the amount to DCA per day need to be specified in configuration file.
 
 ## What are the order settings ?
 A buy limit taker order is created by the program at its execution, 0.26% fee are assumed.<br>
-Orders are created only if no one were created during the current day for the specified pair and are immediately executed.<br>
+Orders are created only if no one were created during the current day for the specified pair and are immediately 
+executed.<br>
 Pair quote asset are used to pay Kraken fee.
 
 ## How are price, volume and fee computed ?
 **Limit price**: The pair ask price at the moment of the program execution.
 
-**Volume**: The order volume is the amount*price truncated down to the pair lot decimals, then adjusted to volume/1.0026 truncated down the pair lot decimals.<br>
+**Volume**: The order volume is the amount*price truncated down to the pair lot decimals, then adjusted to volume/1.0026
+truncated down the pair lot decimals.<br>
 By adjusting the volume, the total price of the order with fee included doesn't exceed the configuration amount.<br>
 
 **Order price**: The order price is estimated as volume*pair_ask_price rounded to the quote asset decimals.
@@ -55,10 +58,13 @@ Order history is saved in CSV format with following information per order:
 - **txid**: TXID of the order.
 - **description**: Description of the order from Kraken.
 
-Order history is by default saved in *orders.csv*, the output file can be changed through docker image execution as described below.
+Order history is by default saved in *orders.csv* in kraken-dca base directory, 
+the output file can be changed through docker image execution as described below.
 
-# Setup
-## Configuration file example
+# Usage
+## Configuration file
+If you don't use docker you must edit the default *config.yaml* file.
+
 ```yaml
 # Kraken's API public and private keys.
 api:
@@ -71,25 +77,29 @@ dca:
   amount: 20
 ```
 - Available pairs for pair field can be found [here](https://api.kraken.com/0/public/AssetPairs) on *altname*.
-- The *amount* field is the amount of *quote* pair to spend to buy *base* pair in the above link.
+- Amount of quote asset to sell to buy base asset.
 
 More information on [Kraken API official documentation](https://support.kraken.com/hc/en-us/articles/360000920306-Ticker-pairs).
 
-Depending on your usage, you will need to pass your configuration file with the docker run command or edit the
-*config.yaml* file.
-
-## Usage with Docker
+## Docker image
 You can download the image directly from [Docker Hub](https://hub.docker.com/) using:
 ```sh
 docker pull adocquin/kraken-dca:latest
 ```
 The program will be executed every hour as a cron job in a container.<br>
-To start the container, send your configuration and orders output files, name the container as kraken-dca and restart it on failure or at system reboot:
+You must provide an empty order history CSV file at first launch. You can create one on unix system using:
 ```sh
-docker run -v CONFIGURATION_FILE_PATH:/app/config.yaml ORDERS_FILE_PATH:/app/orders.csv --name kraken-dca --restart=on-failure adocquin/kraken-dca
+touch orders.csv
+```
+To start the container use:
+```sh
+docker run -v CONFIGURATION_FILE_PATH:/app/config.yaml \
+ ORDERS_FILE_PATH:/app/orders.csv \
+ --name kraken-dca \
+ --restart=on-failure adocquin/kraken-dca
 ```
 - **CONFIGURATION_FILE_PATH**: Configuration folder filepath (e.g., *~/dev/config.yaml*).
-- **ORDERS_FILE_PATH**: Order history saved as CSV format filepath (e.g., *~/dev/orders.csv*).
+- **ORDERS_FILE_PATH**: Order history CSV filepath (e.g., *~/dev/orders.csv*).
 
 To see container logs:
 ```sh
@@ -103,7 +113,7 @@ docker rm kraken-dca
 
 ## Usage without Docker
 You must specify your configuration in a *config.yaml* file in the *kraken-dca* root folder.
-### From shell
+### Launch kraken-dca
 You can launch the program from the folder where you downloaded the repository folder using:
 ```sh
 python kraken-dca
@@ -112,9 +122,9 @@ Or inside *kraken-dca* root folder using:
 ```sh
 python __main__.py
 ```
-### Using cron
+### Automate DCA through cron
 You can automate the execution by using cron on unix systems.
-To execute the program every hour (it will only buy if no order was open during the current day) run in a shell:
+To execute the program every hour (it will only buy if no DCA air order was done the current day) run in a shell:
 ```sh
 crontab -e
 ```
@@ -125,7 +135,7 @@ And add:
 - **PROGRAM_ROOT_FOLDER**: Folder where you downloaded the repository (e.g., *~/dev*).<br>
 - **OUTPUT_FILE**: Program outputs log file (e.g., *~/cron.log*).<br>
 
-Program outputs will be available in your output file.
+Program outputs will be available in your output file, order history in *orders.csv* in kraken-dca base directory.
 
 To deactivate the cron job remove the line using again:
 ```sh

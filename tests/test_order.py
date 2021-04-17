@@ -8,6 +8,7 @@ import pytest
 
 class TestOrder:
     order: Order
+    test_orders_filepath = "tests/fixtures/orders.csv"
 
     def setup(self):
         self.order = Order(
@@ -90,16 +91,23 @@ class TestOrder:
         assert self.order.description == "buy 0.01029256 ETHEUR @ limit 1938.11"
 
     def test_save_order_csv(self):
-        # Test order history CSV saving
         self.order.txid = "OCYS4K-OILOE-36HPAE"
         self.order.description = "buy 0.00957589 ETHEUR @ limit 2083.16"
 
-        self.order.save_order_csv("tests/fixtures/orders.csv")
-        self.order.save_order_csv("tests/fixtures/orders.csv")
-        history = pd.read_csv("tests/fixtures/orders.csv")
+        # Test order history CSV saving
+        self.order.save_order_csv(self.test_orders_filepath)
+        self.order.save_order_csv(self.test_orders_filepath)
+        history = pd.read_csv(self.test_orders_filepath)
         test_history = pd.read_csv("tests/fixtures/test_handle_dca_logic.csv")
-        os.remove("tests/fixtures/orders.csv")
+        os.remove(self.test_orders_filepath)
         assert history.equals(test_history)
+
+        # Test with bad order history file type
+        os.mkdir(self.test_orders_filepath)
+        with pytest.raises(ValueError) as e_info:
+            self.order.save_order_csv(self.test_orders_filepath)
+        os.rmdir(self.test_orders_filepath)
+        assert "Can't save order history ->" in str(e_info.value)
 
     def test_set_order_volume(self):
         # Test with valid parameters

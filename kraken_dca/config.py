@@ -26,9 +26,9 @@ class Config:
                     self.pair = config.get("dca").get("pair")
                     self.amount = float(config.get("dca").get("amount"))
                 except (TypeError, AttributeError, yaml.YAMLError) as e:
-                    raise ValueError(f"config.yaml file incorrectly formatted: {e}")
+                    raise ValueError(f"Configuration file incorrectly formatted: {e}")
         except EnvironmentError:
-            raise FileNotFoundError("config.yaml file not found.")
+            raise FileNotFoundError("Configuration file not found.")
         if not self.api_public_key:
             raise TypeError("Please provide your Kraken API public key.")
         elif not self.api_private_key:

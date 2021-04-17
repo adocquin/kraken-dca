@@ -15,6 +15,9 @@ COPY kraken_dca/ kraken_dca/
 COPY config.yaml config.yaml
 COPY __main__.py __main__.py
 
+# Create order history file
+RUN sh -c "touch orders.csv"
+
 # Copy and install crontab command
 COPY crontab /etc/cron.d/crontab
 RUN chmod 0644 /etc/cron.d/crontab

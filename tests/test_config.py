@@ -59,7 +59,7 @@ def test_config_errors():
 
     # Test raise FileNotFoundError.
     e_info_value = mock_config_error(correct_config, FileNotFoundError)
-    assert "config.yaml file not found." in e_info_value
+    assert "Configuration file not found." in e_info_value
 
     # Test missing public key.
     config_empty_api_public_key = correct_config.replace(
@@ -83,7 +83,7 @@ def test_config_errors():
     # Test missing amount.
     config_missing_amount = correct_config.replace("amount: 20", "")
     e_info_value = mock_config_error(config_missing_amount, ValueError)
-    assert "config.yaml file incorrectly formatted:" in e_info_value
+    assert "Configuration file incorrectly formatted:" in e_info_value
 
     # Test amount = 0.
     config_zero_amount = correct_config.replace("amount: 20", "amount: 0")

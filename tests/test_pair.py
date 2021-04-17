@@ -2,9 +2,6 @@ from kraken_dca import Pair, KrakenApi
 import vcr
 import pytest
 
-# ToDo: init, get_pair_from_kraken, get_pair_information
-# ToDo: get_asset_information, get_pair_ask_price
-
 
 class TestPair:
     pair: Pair
@@ -42,7 +39,7 @@ class TestPair:
         self.assert_xethzeur_pair(pair)
 
     def test_get_pair_information(self):
-        # Test with existing pair
+        # Test with existing pair.
         with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_asset_pairs.yaml"):
             pair_information = Pair.get_pair_information(self.ka, "XETHZEUR")
         test_pair_information = {
@@ -88,7 +85,7 @@ class TestPair:
         assert type(pair_information) == dict
         assert pair_information == test_pair_information
 
-        # Test with fake pair
+        # Test with fake pair.
         with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_asset_pairs.yaml"):
             with pytest.raises(ValueError) as e_info:
                 Pair.get_pair_information(self.ka, "Fake")
@@ -96,7 +93,7 @@ class TestPair:
         assert error_message in str(e_info.value)
 
     def test_get_asset_information(self):
-        # Test with existing asset
+        # Test with existing asset.
         with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_assets.yaml"):
             asset = Pair.get_asset_information(self.ka, "XETH")
         test_asset = {
@@ -108,7 +105,7 @@ class TestPair:
         assert type(asset) == dict
         assert asset == test_asset
 
-        # Test with fake asset
+        # Test with fake asset.
         with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_assets.yaml"):
             with pytest.raises(ValueError) as e_info:
                 Pair.get_asset_information(self.ka, "Fake")
@@ -116,13 +113,13 @@ class TestPair:
         assert error_message in str(e_info.value)
 
     def test_get_ask_price(self):
-        # Test with existing pair
+        # Test with existing pair.
         with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_pair_ticker.yaml"):
             pair_ask_price = Pair.get_pair_ask_price(self.ka, "XETHZEUR")
         assert type(pair_ask_price) == float
         assert pair_ask_price == 1749.76
 
-        # Test with fake pair
+        # Test with fake pair.
         with vcr.use_cassette(
             "tests/fixtures/vcr_cassettes/test_get_pair_ticker_error.yaml"
         ):

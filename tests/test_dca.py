@@ -16,9 +16,9 @@ class TestDCA:
             "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ",
             "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY18UQEgOHzBIEsqg78BZJCEhvFIzw1Q==",
         )
-        # Initialize the Pair object
+        # Initialize the Pair object.
         pair = Pair("XETHZEUR", "ETHEUR", "XETH", "ZEUR", 2, 8, 4, 0.005)
-        # Initialize the DCA object
+        # Initialize the DCA object.
         self.dca = DCA(ka, pair, 20, self.test_orders_filepath)
 
     def test_init(self):
@@ -51,7 +51,7 @@ class TestDCA:
 
     @freeze_time("2021-04-16 18:54:53.069731")
     def test_handle_dca_logic_error(self, capfd):
-        # Test execution while already DCA
+        # Test execution while already DCA.
         with vcr.use_cassette(
             "tests/fixtures/vcr_cassettes/test_handle_dca_logic_error.yaml",
             filter_headers=["API-Key", "API-Sign"],
@@ -66,7 +66,7 @@ class TestDCA:
         assert captured.out == test_output
 
     def test_get_system_time(self):
-        # Test with system time in the past
+        # Test with system time in the past.
         with freeze_time("2012-01-13 23:10:34.069731"):
             with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml"):
                 with pytest.raises(OSError) as e_info:
@@ -130,7 +130,7 @@ class TestDCA:
             }
         }
 
-        # Test with existing pair order
+        # Test with existing pair order.
         pair_orders = self.dca.extract_pair_orders(orders, "XETHZEUR", "ETHEUR")
         assert type(pair_orders) == dict
         assert len(pair_orders) == 1
@@ -140,13 +140,13 @@ class TestDCA:
         value = next(iter(pair_orders.values()))
         assert type(value) == dict
 
-        # Test with non-existing pair order
+        # Test with non-existing pair order.
         pair_orders = self.dca.extract_pair_orders(orders, "XETHZUSD", "ETHUSD")
         assert type(pair_orders) == dict
         assert len(pair_orders) == 0
 
     def test_send_buy_limit_order_error(self):
-        # Test error with order volume < pair minimum volume
+        # Test error with order volume < pair minimum volume.
         order = Order(
             datetime.strptime("2021-03-11 23:33:28", "%Y-%m-%d %H:%M:%S"),
             "XETHZEUR",

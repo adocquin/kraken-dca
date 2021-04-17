@@ -1,5 +1,5 @@
-# Kraken DCA
-Kraken DCA is a python program to automate
+# Kraken-DCA
+Kraken-DCA is a python program to automate
 [Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp) on 
 [Kraken](https://kraken.com) exchange.<br>
 At every launch, if no DCA pair order was already passed in the current day for the specified pair in the configuration 
@@ -58,7 +58,7 @@ Order history is saved in CSV format with following information per order:
 - **txid**: TXID of the order.
 - **description**: Description of the order from Kraken.
 
-Order history is by default saved in *orders.csv* in kraken-dca base directory, 
+Order history is by default saved in *orders.csv* in Kraken-DCA base directory, 
 the output file can be changed through docker image execution as described below.
 
 # Usage
@@ -79,12 +79,13 @@ dca:
 - Available pairs for pair field can be found [here](https://api.kraken.com/0/public/AssetPairs) on *altname*.
 - Amount of quote asset to sell to buy base asset.
 
-More information on [Kraken API official documentation](https://support.kraken.com/hc/en-us/articles/360000920306-Ticker-pairs).
+More information on 
+[Kraken API official documentation](https://support.kraken.com/hc/en-us/articles/360000920306-Ticker-pairs).
 
 ## Docker image
 You can download the image directly from [Docker Hub](https://hub.docker.com/) using:
 ```sh
-docker pull adocquin/kraken-dca:latest
+docker pull futurbroke/kraken-dca:latest
 ```
 The program will be executed every hour as a cron job in a container.<br>
 You must provide an empty order history CSV file at first launch. You can create one on unix system using:
@@ -96,7 +97,7 @@ To start the container use:
 docker run -v CONFIGURATION_FILE_PATH:/app/config.yaml \
  ORDERS_FILE_PATH:/app/orders.csv \
  --name kraken-dca \
- --restart=on-failure adocquin/kraken-dca
+ --restart=on-failure futurbroke/kraken-dca
 ```
 - **CONFIGURATION_FILE_PATH**: Configuration folder filepath (e.g., *~/dev/config.yaml*).
 - **ORDERS_FILE_PATH**: Order history CSV filepath (e.g., *~/dev/orders.csv*).
@@ -112,13 +113,13 @@ docker rm kraken-dca
 ```
 
 ## Usage without Docker
-You must specify your configuration in a *config.yaml* file in the *kraken-dca* root folder.
-### Launch kraken-dca
+You must specify your configuration in a *config.yaml* file in the *Kraken-DCA* root folder.
+### Launch Kraken-DCA
 You can launch the program from the folder where you downloaded the repository folder using:
 ```sh
 python kraken-dca
 ```
-Or inside *kraken-dca* root folder using:
+Or inside Kraken-DCA base directory using:
 ```sh
 python __main__.py
 ```
@@ -135,7 +136,7 @@ And add:
 - **PROGRAM_ROOT_FOLDER**: Folder where you downloaded the repository (e.g., *~/dev*).<br>
 - **OUTPUT_FILE**: Program outputs log file (e.g., *~/cron.log*).<br>
 
-Program outputs will be available in your output file, order history in *orders.csv* in kraken-dca base directory.
+Program outputs will be available in your output file, order history in *orders.csv* in Kraken-DCA base directory.
 
 To deactivate the cron job remove the line using again:
 ```sh
@@ -145,8 +146,10 @@ crontab -e
 More crontab execution frequency options: https://crontab.guru/
 
 # How to contribute
-Thanks for your interest in contributing to the project. You can contribute freely to the project by creating an issue, a pull request or fork it.
-Before issuing a pull request, make sure the changes did not break any existing functionality by running unit tests in the *kraken-dca* folder:
+Thanks for your interest in contributing to the project. You can contribute freely to the project by creating an issue, 
+a pull request or fork it.
+Before issuing a pull request, make sure the changes did not break any existing functionality by running unit tests in 
+the Kraken-DCA base directory:
 ```sh
 pytest
 ```

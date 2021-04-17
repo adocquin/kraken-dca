@@ -94,7 +94,7 @@ class TestOrder:
         self.order.txid = "OCYS4K-OILOE-36HPAE"
         self.order.description = "buy 0.00957589 ETHEUR @ limit 2083.16"
 
-        # Test order history CSV saving
+        # Test order history CSV saving.
         self.order.save_order_csv(self.test_orders_filepath)
         self.order.save_order_csv(self.test_orders_filepath)
         history = pd.read_csv(self.test_orders_filepath)
@@ -102,7 +102,7 @@ class TestOrder:
         os.remove(self.test_orders_filepath)
         assert history.equals(test_history)
 
-        # Test with bad order history file type
+        # Test with bad order history file type.
         os.mkdir(self.test_orders_filepath)
         with pytest.raises(ValueError) as e_info:
             self.order.save_order_csv(self.test_orders_filepath)
@@ -110,7 +110,7 @@ class TestOrder:
         assert "Can't save order history ->" in str(e_info.value)
 
     def test_set_order_volume(self):
-        # Test with valid parameters
+        # Test with valid parameters.
         order_volume = Order.set_order_volume(20, 1802.82, 8)
         assert type(order_volume) == float
         assert order_volume == 0.01106496
@@ -122,13 +122,13 @@ class TestOrder:
         )
 
     def test_estimate_order_price(self):
-        # Test with valid parameters
+        # Test with valid parameters.
         order_price = Order.estimate_order_price(0.01105373, 1802.82, 2)
         assert type(order_price) == float
         assert order_price == 19.93
 
     def test_estimate_order_fee(self):
-        # Test with valid parameters
+        # Test with valid parameters.
         order_fee = Order.estimate_order_fee(0.01105373, 1802.82, 2)
         assert type(order_fee) == float
         assert order_fee == 0.05

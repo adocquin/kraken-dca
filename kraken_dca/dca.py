@@ -57,10 +57,10 @@ class DCA:
         daily_pair_orders = self.count_pair_daily_orders()
         if daily_pair_orders == 0:
             print("Didn't DCA already today.")
-            # Get current pair ask price
+            # Get current pair ask price.
             pair_ask_price = self.pair.get_pair_ask_price(self.ka, self.pair.name)
             print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
-            # Create the Order object
+            # Create the Order object.
             order = Order.buy_limit_order(
                 current_date,
                 self.pair.name,
@@ -69,9 +69,9 @@ class DCA:
                 self.pair.lot_decimals,
                 self.pair.quote_decimals,
             )
-            # Send the buyorder to Kraken API and print information
+            # Send buy order to Kraken API and print information.
             self.send_buy_limit_order(order)
-            # Save order information to CSV file
+            # Save order information to CSV file.
             order.save_order_csv(self.orders_filepath)
             print("Order information saved to CSV.")
         else:
@@ -108,11 +108,11 @@ class DCA:
         balance = self.ka.get_balance()
         try:
             pair_base_balance = float(balance.get(self.pair.base))
-        except TypeError:  # When there is no pair base balance on Kraken account
+        except TypeError:  # When there is no pair base balance on Kraken account.
             pair_base_balance = 0
         try:
             pair_quote_balance = float(balance.get(self.pair.quote))
-        except TypeError:  # When there is no pair quote balance on Kraken account
+        except TypeError:  # When there is no pair quote balance on Kraken account.
             pair_quote_balance = 0
         print(
             f"Pair balances: {pair_quote_balance} {self.pair.quote}, {pair_base_balance} {self.pair.base}."
@@ -134,7 +134,7 @@ class DCA:
             self.extract_pair_orders(open_orders, self.pair.name, self.pair.alt_name)
         )
 
-        # Get daily closed orders
+        # Get daily closed orders.
         day_datetime = current_utc_day_datetime()
         current_day_unix = datetime_as_utc_unix(day_datetime)
         closed_orders = self.ka.get_closed_orders(

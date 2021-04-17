@@ -82,7 +82,7 @@ class KrakenApi:
         """
         # Cryptographic hash algorithms
         api_sha256 = hashlib.sha256(api_nonce.encode() + api_post_data)
-        # Decode API private key from base64 format displayed in account management
+        # Decode API private key from base64 format displayed in account management.
         try:
             api_secret = base64.b64decode(self.api_private_key)
         except binascii.Error as e:
@@ -92,9 +92,9 @@ class KrakenApi:
             f"/0/private/{api_method}".encode() + api_sha256.digest(),
             hashlib.sha512,
         )
-        # Encode signature into base64 format used in API-Sign value
+        # Encode signature into base64 format used in API-Sign value.
         api_signature = base64.b64encode(api_hmac.digest())
-        # API authentication signature for use in API-Sign HTTP header
+        # API authentication signature for use in API-Sign HTTP header.
         api_signature = api_signature.decode()
         return api_signature
 
@@ -131,13 +131,13 @@ class KrakenApi:
             request = Request(api_path, data=api_post_data)
         elif public_method:
             request = Request(api_path)
-        else:  # Handle API authentication for private user methods
+        else:  # Handle API authentication for private user methods.
             api_nonce = self.create_api_nonce()
-            # Create POST data
+            # Create POST data.
             api_post_data = self.create_api_post_data(post_inputs, api_nonce)
             # Generate the request
             request = Request(api_path, data=api_post_data)
-            # Adding HTTP headers to request
+            # Adding HTTP headers to request.
             api_signature = self.create_api_signature(
                 api_nonce, api_post_data, api_method
             )
@@ -152,11 +152,11 @@ class KrakenApi:
         :param request: Request object to send to Kraken API
         :return: Kraken API's response as dict.
         """
-        # Request the api
+        # Request the api.
         data = urlopen(request).read()
-        # Decode the API response
+        # Decode the API response.
         data = self.extract_response_data(data)
-        # Raise an error if Kraken extracted response is a string
+        # Raise an error if Kraken extracted response is a string.
         if type(data) == str:
             raise ValueError(f"Kraken API error -> {data}")
         return data

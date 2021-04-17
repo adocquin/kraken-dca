@@ -124,10 +124,10 @@ class Order:
         try:
             history = pd.read_csv(orders_filepath)
             history = history.append(self.__dict__, ignore_index=True)
-        # No order history yet
+        # No order history yet.
         except (FileNotFoundError, pd.errors.EmptyDataError):
             history = pd.DataFrame(self.__dict__, index=[0])
-        # Bad history file format
+        # Bad history file format.
         except (pd.errors.ParserError, IsADirectoryError) as e:
             raise ValueError(f"Can't save order history ->  {e}")
         history.to_csv(orders_filepath, index=False)

@@ -152,7 +152,9 @@ class Order:
                 math.floor(order_volume / 1.0026 * decimals) / decimals
             )
         except ZeroDivisionError:
-            raise ZeroDivisionError("Order set_order_volume -> pair_price must not be 0.")
+            raise ZeroDivisionError(
+                "Order set_order_volume -> pair_price must not be 0."
+            )
         return order_volume_fee_adjusted
 
     @staticmethod

@@ -10,7 +10,6 @@ class TestDCA:
     test_orders_filepath = "tests/fixtures/orders.csv"
     dca: DCA
 
-    @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_pair_from_kraken.yaml")
     def setup(self):
         # Initialize DCA test object - Fake keys.
         ka = KrakenApi(
@@ -18,7 +17,7 @@ class TestDCA:
             "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY18UQEgOHzBIEsqg78BZJCEhvFIzw1Q==",
         )
         # Initialize the Pair object
-        pair = Pair.get_pair_from_kraken(ka, "XETHZEUR")
+        pair = Pair("XETHZEUR", "ETHEUR", "XETH", "ZEUR", 2, 8, 4, 0.005)
         # Initialize the DCA object
         self.dca = DCA(ka, pair, 20, self.test_orders_filepath)
 

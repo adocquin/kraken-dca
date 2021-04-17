@@ -1,4 +1,4 @@
-name: Pull request and push on main tests
+name: Main Unit Testing
 on:
   push:
     branches:

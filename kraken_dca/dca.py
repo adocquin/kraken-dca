@@ -7,7 +7,7 @@ from .utils import (
     current_utc_day_datetime,
     datetime_as_utc_unix,
 )
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class DCA:
@@ -16,6 +16,7 @@ class DCA:
     """
 
     ka: KrakenApi
+    delay: int
     pair: Pair
     amount: float
     orders_filepath: str
@@ -23,6 +24,7 @@ class DCA:
     def __init__(
         self,
         ka: KrakenApi,
+        delay: int,
         pair: Pair,
         amount: float,
         orders_filepath: str = "orders.csv",
@@ -31,10 +33,12 @@ class DCA:
         Initialize the DCA object.
 
         :param ka: KrakenApi object.
+        :param delay: DCA days delay between buy orders.
         :param pair: Pair to dollar cost average as string.
         :param amount: Amount to dollar cost average as float.
         """
         self.ka = ka
+        self.delay = delay
         self.pair = pair
         self.amount = float(amount)
         self.orders_filepath = orders_filepath
@@ -75,7 +79,7 @@ class DCA:
             order.save_order_csv(self.orders_filepath)
             print("Order information saved to CSV.")
         else:
-            print("Already DCA today.")
+            print("Already DCA.")
 
     def get_system_time(self) -> datetime:
         """
@@ -135,10 +139,10 @@ class DCA:
         )
 
         # Get daily closed orders.
-        day_datetime = current_utc_day_datetime()
-        current_day_unix = datetime_as_utc_unix(day_datetime)
+        start_day_datetime = current_utc_day_datetime() - timedelta(days=self.delay - 1)
+        start_day_unix = datetime_as_utc_unix(start_day_datetime)
         closed_orders = self.ka.get_closed_orders(
-            {"start": current_day_unix, "closetime": "open"}
+            {"start": start_day_unix, "closetime": "open"}
         )
         daily_closed_orders = len(
             self.extract_pair_orders(closed_orders, self.pair.name, self.pair.alt_name)

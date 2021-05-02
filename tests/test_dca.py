@@ -19,10 +19,12 @@ class TestDCA:
         # Initialize the Pair object.
         pair = Pair("XETHZEUR", "ETHEUR", "XETH", "ZEUR", 2, 8, 4, 0.005)
         # Initialize the DCA object.
-        self.dca = DCA(ka, pair, 20, self.test_orders_filepath)
+        self.dca = DCA(ka, 1, pair, 20, self.test_orders_filepath)
 
     def test_init(self):
         assert type(self.dca.ka) == KrakenApi
+        assert type(self.dca.delay) == int
+        assert self.dca.delay == 1
         assert type(self.dca.pair) == Pair
         assert type(self.dca.amount) == float
         assert self.dca.amount == 20
@@ -61,7 +63,7 @@ class TestDCA:
         test_output = (
             "Hi, current configuration: DCA pair: XETHZEUR, DCA amount: 20.0.\nIt's 2021-04-16 18:54:53 on "
             "Kraken, 2021-04-16 18:54:53 on system.\nCurrent trade balance: 16524.7595 ZUSD.\nPair "
-            "balances: 359.728 ZEUR, 0.128994332 XETH.\nAlready DCA today.\n"
+            "balances: 359.728 ZEUR, 0.128994332 XETH.\nAlready DCA.\n"
         )
         assert captured.out == test_output
 
@@ -157,6 +159,7 @@ class TestDCA:
             0.001,
             1.9608,
             0.0052,
+            20.0,
         )
         with pytest.raises(ValueError) as e_info:
             self.dca.send_buy_limit_order(order)
@@ -179,6 +182,7 @@ class TestDCA:
             0.01029256,
             19.9481,
             0.0519,
+            20.0,
         )
         self.dca.send_buy_limit_order(order)
         captured = capfd.readouterr()

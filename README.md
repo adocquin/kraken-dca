@@ -2,8 +2,8 @@
 Kraken-DCA is a python program to automate
 [Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp) on 
 [Kraken](https://kraken.com) exchange.<br>
-At every launch, if no DCA pair order was already passed in the current day for the specified pair in the configuration 
-file, it will create a buy limit order at current pair ask price for the specified amount in configurationn file.
+At every launch, if no DCA pair order was already passed for the pair and delay in configuration 
+file, it will create a buy limit order at current pair ask price for the specified amount.
 
 Order history is saved in CSV format
 
@@ -16,7 +16,7 @@ The program will need a Kraken public and private API key with permissions to:
 API keys can be created from the [API page](https://www.kraken.com/u/security/api) of your Kraken account.
 
 # Orders
-The pair and the amount to DCA per day need to be specified in configuration file.
+The pair and the amount to buy need to be specified in the configuration file.
 
 ## What are the order settings ?
 A buy limit taker order is created by the program at its execution, 0.26% fee are assumed.<br>
@@ -71,11 +71,13 @@ api:
   public_key: "KRAKEN_API_PUBLIC_KEY"
   private_key: "KRAKEN_API_PRIVATE_KEY"
 
-# Pair to DCA and corresponding amount per day.
+# DCA days delay, pair to DCA and corresponding amount to buy.
 dca:
+  delay: 2
   pair: "XETHZEUR"
   amount: 20
 ```
+- Delay is the number of days between buy orders. Set to 1 to DCA each day, 7 once per week.
 - Available pairs for pair field can be found [here](https://api.kraken.com/0/public/AssetPairs) on *altname*.
 - Amount of quote asset to sell to buy base asset.
 

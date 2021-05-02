@@ -16,6 +16,7 @@ class Pair:
     quote: str
     pair_decimals: int
     lot_decimals: int
+    quote_decimals: int
     order_min: float
 
     def __init__(

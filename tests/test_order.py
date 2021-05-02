@@ -21,6 +21,7 @@ class TestOrder:
             0.00957589,
             19.9481,
             0.0519,
+            round(19.9481 + 0.0519, 4),
         )
         self.ka = KrakenApi(
             "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ",
@@ -49,7 +50,7 @@ class TestOrder:
         assert type(self.order.fee) == float
         assert self.order.fee == 0.0519
         assert type(self.order.total_price) == float
-        assert self.order.total_price == 19.9481 + 0.0519
+        assert self.order.total_price == 20.0
 
     def test_buy_limit_order(self):
         self.order = Order.buy_limit_order(

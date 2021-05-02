@@ -36,6 +36,7 @@ class Order:
         volume: float,
         price: float,
         fee: float,
+        total_price: float,
     ) -> None:
         """
         Initialize the Order object.
@@ -52,6 +53,7 @@ class Order:
         :param price: Order price.
         :param fee: Order fee.
         :param pair_price: Order pair price.
+        :param total_price: Total price of the order (order price + fee).
         """
         self.date = date
         self.pair = pair
@@ -62,7 +64,7 @@ class Order:
         self.volume = volume
         self.price = price
         self.fee = fee
-        self.total_price = price + fee
+        self.total_price = total_price
 
     @classmethod
     def buy_limit_order(
@@ -92,8 +94,18 @@ class Order:
         order_type = "limit"
         # Pay fee in quote asset.
         o_flags = "fciq"
+        total_price = round(price + fee, quote_decimals)
         return cls(
-            date, pair, type, order_type, o_flags, pair_price, volume, price, fee
+            date,
+            pair,
+            type,
+            order_type,
+            o_flags,
+            pair_price,
+            volume,
+            price,
+            fee,
+            total_price,
         )
 
     def send_order(self, ka: KrakenApi) -> None:

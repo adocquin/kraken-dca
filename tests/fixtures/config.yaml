@@ -3,7 +3,8 @@ api:
   public_key: "KRAKEN_API_PUBLIC_KEY"
   private_key: "KRAKEN_API_PRIVATE_KEY"
 
-# Pair to DCA and corresponding amount per day.
+# DCA days delay, pair to DCA and corresponding amount to buy.
 dca:
+  delay: 1
   pair: "XETHZEUR"
   amount: 20

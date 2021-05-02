@@ -11,7 +11,7 @@ if __name__ == "__main__":
         # configuration file and data from Kraken.
         pair = Pair.get_pair_from_kraken(ka, config.pair)
         # Initialize the DCA object.
-        dca = DCA(ka, pair, config.amount)
+        dca = DCA(ka, config.delay, pair, config.amount)
         # Execute DCA logic.
         dca.handle_dca_logic()
     except Exception as e:

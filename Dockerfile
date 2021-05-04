@@ -11,7 +11,7 @@ COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
 # Copy application files
-COPY kraken_dca/ kraken_dca/
+COPY krakendca/ krakendca/
 COPY config.yaml config.yaml
 COPY __main__.py __main__.py
 

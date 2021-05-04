@@ -147,11 +147,13 @@ crontab -e
 
 More crontab execution frequency options: https://crontab.guru/
 
+## License
+[GPL-3.0](https://github.com/FuturBroke/kraken-dca/blob/main/README.md)
+
 # How to contribute
-Thanks for your interest in contributing to the project. You can contribute freely to the project by creating an issue, 
-fork it or create a pull request.
-Before issuing a pull request, make sure the changes did not break any existing functionality by running unit tests in 
-the Kraken-DCA base directory:
+Thanks for your interest in contributing to the project. You can contribute freely by creating an issue, fork or create 
+a pull request. Before issuing a pull request, make sure the changes did not break any existing functionality by 
+running unit tests in the base directory:
 ```sh
 pytest
 ```

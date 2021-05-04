@@ -1,5 +1,5 @@
 from typing import TypeVar
-from .kraken_api import KrakenApi
+from krakenapi import KrakenApi
 from .utils import find_nested_dictionary
 
 T = TypeVar("T", bound="Pair")

@@ -1,4 +1,4 @@
-from kraken_dca import Config
+from krakendca import Config
 from unittest import mock
 import pytest
 

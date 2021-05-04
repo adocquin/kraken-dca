@@ -1,4 +1,5 @@
-from kraken_dca import Config, KrakenApi, Pair, DCA
+from krakendca import Config, Pair, DCA
+from krakenapi import KrakenApi
 
 
 if __name__ == "__main__":

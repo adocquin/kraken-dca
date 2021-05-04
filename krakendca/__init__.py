@@ -1,6 +1,5 @@
 from .config import Config
 from .dca import DCA
-from .kraken_api import KrakenApi
 from .order import Order
 from .pair import Pair
 from .utils import (

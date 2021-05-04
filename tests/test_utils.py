@@ -1,4 +1,4 @@
-from kraken_dca import (
+from krakendca import (
     utc_unix_time_datetime,
     current_utc_datetime,
     current_utc_day_datetime,

@@ -1,4 +1,5 @@
-from kraken_dca import Order, KrakenApi
+from krakendca import Order
+from krakenapi import KrakenApi
 from datetime import datetime
 import vcr
 import pandas as pd

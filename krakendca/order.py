@@ -2,7 +2,7 @@ import math
 from typing import TypeVar
 from datetime import datetime
 import pandas as pd
-from .kraken_api import KrakenApi
+from krakenapi import KrakenApi
 
 T = TypeVar("T", bound="Order")
 

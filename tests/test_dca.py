@@ -1,4 +1,5 @@
-from kraken_dca import DCA, KrakenApi, Pair, Order
+from krakendca import DCA, Pair, Order
+from krakenapi import KrakenApi
 import vcr
 import pytest
 from freezegun import freeze_time

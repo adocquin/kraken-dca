@@ -1,4 +1,4 @@
-from .kraken_api import KrakenApi
+from krakenapi import KrakenApi
 from .order import Order
 from .pair import Pair
 from .utils import (

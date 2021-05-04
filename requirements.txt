@@ -2,6 +2,7 @@ attrs==20.3.0
 freezegun==1.1.0
 idna==3.1
 iniconfig==1.1.1
+krakenapi==1.0.0a1
 multidict==5.1.0
 numpy==1.20.2
 packaging==20.9

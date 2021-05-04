@@ -1,4 +1,5 @@
-from kraken_dca import Pair, KrakenApi
+from krakendca import Pair
+from krakenapi import KrakenApi
 import vcr
 import pytest
 

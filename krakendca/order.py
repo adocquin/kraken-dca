@@ -141,7 +141,7 @@ class Order:
             history = pd.DataFrame(self.__dict__, index=[0])
         # Bad history file format.
         except (pd.errors.ParserError, IsADirectoryError) as e:
-            raise ValueError(f"Can't save order history ->  {e}")
+            raise ValueError(f"Can't save order history -> {e}")
         history.to_csv(orders_filepath, index=False)
 
     @staticmethod

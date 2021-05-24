@@ -26,11 +26,11 @@ def test_config_properties():
     # Test object properties are correctly assigned.
     config = Config("config.yaml")
     assert type(config.api_public_key) == str
-    assert config.api_public_key
+    assert config.api_public_key == "KRAKEN_API_PUBLIC_KEY"
     assert type(config.api_private_key) == str
-    assert config.api_private_key
+    assert config.api_private_key == "KRAKEN_API_PRIVATE_KEY"
     assert type(config.pair) == str
-    assert config.pair
+    assert config.pair == "XETHZEUR"
     assert type(config.amount) == float
     assert config.amount > 0
 

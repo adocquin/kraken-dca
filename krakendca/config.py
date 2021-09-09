@@ -8,9 +8,7 @@ class Config:
 
     api_public_key: str
     api_private_key: str
-    delay: int
-    pair: str
-    amount: float
+    dca_pairs: list
 
     def __init__(self, config_file: str) -> None:
         """
@@ -20,26 +18,48 @@ class Config:
         """
         try:
             with open(config_file, "r") as stream:
-                try:
-                    config = yaml.load(stream, Loader=yaml.SafeLoader)
-                    self.api_public_key = config.get("api").get("public_key")
-                    self.api_private_key = config.get("api").get("private_key")
-                    self.delay = config.get("dca").get("delay")
-                    self.pair = config.get("dca").get("pair")
-                    self.amount = float(config.get("dca").get("amount"))
-                except (ValueError, TypeError, AttributeError, yaml.YAMLError) as e:
-                    raise ValueError(f"Configuration file incorrectly formatted: {e}")
+                config = yaml.load(stream, Loader=yaml.SafeLoader)
+            self.api_public_key = config.get("api").get("public_key")
+            self.api_private_key = config.get("api").get("private_key")
+            self.dca_pairs = config.get("dca_pairs")
+            self.__check_configuration()
+            for dca_pair in self.dca_pairs:
+                self.__check_dca_pair_configuration(dca_pair)
         except EnvironmentError:
             raise FileNotFoundError("Configuration file not found.")
-        if not self.api_public_key:
-            raise TypeError("Please provide your Kraken API public key.")
-        elif not self.api_private_key:
-            raise TypeError("Please provide your Kraken API private key.")
-        elif not self.delay or type(self.delay) is not int or self.delay <= 0:
-            raise TypeError("Please set the DCA days delay as a number > 0.")
-        elif not self.pair:
-            raise TypeError("Please provide the pair to dollar cost average.")
-        elif not self.amount or type(self.amount) is not float or self.amount <= 0:
-            raise TypeError(
-                "Please provide an amount > 0 to daily dollar cost average."
-            )
+
+    def __check_configuration(self):
+        """
+        Check Config attributes and raise an error in case of missing
+        parameters in configuration file.
+        """
+        try:
+            if not self.api_public_key:
+                raise ValueError("Please provide your Kraken API public key.")
+            if not self.api_private_key:
+                raise ValueError("Please provide your Kraken API private key.")
+            if not self.dca_pairs:
+                raise ValueError("No DCA pairs specified.")
+        except (ValueError, AttributeError, yaml.YAMLError) as e:
+            raise ValueError(f"Configuration file incorrectly formatted: {e}")
+
+    @staticmethod
+    def __check_dca_pair_configuration(dca_pair: dict):
+        """
+        Check DCA pair configuration parameters are currently specified.
+
+        :param dca_pair: Dictionary with pair to DCA, delay in days as integer and
+        amount of quote asset to make the limit buy order with.
+        """
+        if not dca_pair.get("pair"):
+            raise ValueError("Please provide the pair to dollar cost average.")
+        delay = dca_pair.get("delay")
+        if not delay or type(delay) is not int or delay <= 0:
+            raise ValueError("Please set the DCA days delay as a number > 0.")
+        try:
+            dca_pair["amount"] = float(dca_pair.get("amount"))
+        except ValueError:
+            print("Please provide an amount > 0 to DCA.")
+        amount = dca_pair.get("amount")
+        if not amount or type(amount) is not float or amount <= 0:
+            raise ValueError("Please provide an amount > 0 to DCA.")

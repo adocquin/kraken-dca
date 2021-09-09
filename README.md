@@ -127,7 +127,7 @@ python __main__.py
 ```
 ### Automate DCA through cron
 You can automate the execution by using cron on unix systems.
-To execute the program every hour (it will only buy if no DCA air order was done the current day) run in a shell:
+To execute the program every hour (it will only buy if no DCA pair order was done the current day) run in a shell:
 ```sh
 crontab -e
 ```

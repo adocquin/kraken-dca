@@ -1,9 +1,9 @@
 # Kraken-DCA
-Kraken-DCA is a python program to automate
-[Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp) on 
-[Kraken](https://kraken.com) exchange.<br>
-At every launch, if no DCA pair order was already passed for the pair and delay in configuration 
-file, it will create a buy limit order at current pair ask price for the specified amount.
+Kraken-DCA is a python program to automate pairs
+[Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp)
+on as many pairs as you want on [Kraken](https://kraken.com) exchange.<br>
+At every launch, if no DCA pair order was already passed for each pair and delay in 
+configuration file, it will create a buy limit order at current pair ask price for the specified amount.
 
 Order history is saved in CSV format
 
@@ -61,7 +61,7 @@ Order history is saved in CSV format with following information per order:
 Order history is by default saved in *orders.csv* in Kraken-DCA base directory, 
 the output file can be changed through docker image execution as described below.
 
-# Usage
+# How to run it
 ## Configuration file
 If you don't use docker you must edit the default *config.yaml* file.
 
@@ -71,15 +71,23 @@ api:
   public_key: "KRAKEN_API_PUBLIC_KEY"
   private_key: "KRAKEN_API_PRIVATE_KEY"
 
-# DCA days delay, pair to DCA and corresponding amount to buy.
-dca:
-  delay: 2
-  pair: "XETHZEUR"
-  amount: 20
+# DCA pairs configuration. You can add as many pairs as you want.
+# pair: Name of the pair (list of available pairs: https://api.kraken.com/0/public/AssetPairs)
+# delay: Delay in days between each buy limit order.
+# amount: Amount of the order in quote asset.
+dca_pairs:
+  - pair: "XETHZEUR"
+    delay: 1
+    amount: 15
+  - pair: "XXBTZEUR"
+    delay: 3
+    amount: 20
 ```
+- In api, public_key and private_key correspond to your Kraken API key information.
 - Delay is the number of days between buy orders. Set to 1 to DCA each day, 7 once per week.
 - Available pairs for pair field can be found [here](https://api.kraken.com/0/public/AssetPairs) on *altname*.
-- Amount of quote asset to sell to buy base asset.
+- Amount is the amount of quote asset to sell to buy base asset.
+- You can specify as many pairs as you want in the dca_pairs list.
 
 More information on 
 [Kraken API official documentation](https://support.kraken.com/hc/en-us/articles/360000920306-Ticker-pairs).
@@ -151,9 +159,10 @@ More crontab execution frequency options: https://crontab.guru/
 [GPL-3.0](https://github.com/FuturBroke/kraken-dca/blob/main/README.md)
 
 # How to contribute
-Thanks for your interest in contributing to the project. You can contribute freely by creating an issue, fork or create 
-a pull request. Before issuing a pull request, make sure the changes did not break any existing functionality by 
-running unit tests in the base directory:
+Thanks for your interest in contributing to the project. You can contribute freely by 
+creating an issue, fork or create a pull request. Before issuing a pull request, make 
+sure the changes did not break any existing functionality by running unit tests in the 
+base directory:
 ```sh
 pytest
 ```

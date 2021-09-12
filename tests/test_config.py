@@ -1,3 +1,4 @@
+from yaml.scanner import ScannerError
 from krakendca import Config
 from unittest import mock
 import pytest
@@ -40,8 +41,8 @@ def test_config_properties():
     assert config.api_private_key == "KRAKEN_API_PRIVATE_KEY"
     assert type(config.dca_pairs) == list
     assert len(config.dca_pairs) == 2
-    assert_dca_pair(config.dca_pairs[0], "XETHZEUR", 1, 20)
-    assert_dca_pair(config.dca_pairs[1], "XBTUSDT", 3, 20)
+    assert_dca_pair(config.dca_pairs[0], "XETHZEUR", 1, 15)
+    assert_dca_pair(config.dca_pairs[1], "XXBTZEUR", 3, 20)
 
 
 def mock_config_error(config: str, error_type: type) -> str:
@@ -70,6 +71,11 @@ def test_config_errors():
     e_info_value = mock_config_error(correct_config, FileNotFoundError)
     assert "Configuration file not found." in e_info_value
 
+    # Test raise ScannerError.
+    config_scanner_error = correct_config.replace("api:", "api")
+    e_info_value = mock_config_error(config_scanner_error, ScannerError)
+    assert "Configuration file incorrectly formatted:" in e_info_value
+
     # Test missing public key.
     config_empty_api_public_key = correct_config.replace(
         'public_key: "KRAKEN_API_PUBLIC_KEY"', ""
@@ -84,22 +90,27 @@ def test_config_errors():
     e_info_value = mock_config_error(config_empty_api_private_key, ValueError)
     assert "Please provide your Kraken API private key." in e_info_value
 
-    # # Test missing pair.
-    # config_empty_pair = correct_config.replace('pair: "XETHZEUR"', "")
-    # e_info_value = mock_config_error(config_empty_pair, ValueError)
-    # assert "Please provide the pair to dollar cost average." in e_info_value
-    #
-    # # Test missing amount.
-    # config_missing_amount = correct_config.replace("amount: 20", "")
-    # e_info_value = mock_config_error(config_missing_amount, ValueError)
-    # assert "Configuration file incorrectly formatted:" in e_info_value
-    #
-    # # Test amount = 0.
-    # config_zero_amount = correct_config.replace("amount: 20", "amount: 0")
-    # e_info_value = mock_config_error(config_zero_amount, ValueError)
-    # assert "Please provide an amount > 0 to daily dollar cost average." in e_info_value
-    #
-    # # Test amount < 0.
-    # config_below_zero_amount = correct_config.replace("amount: 20", "amount: -100")
-    # e_info_value = mock_config_error(config_below_zero_amount, ValueError)
-    # assert "Please provide an amount > 0 to daily dollar cost average." in e_info_value
+    # Test missing pairs
+    config_missing_pairs = correct_config.replace("dca_pairs:", "dca:")
+    e_info_value = mock_config_error(config_missing_pairs, ValueError)
+    assert "No DCA pairs specified." in e_info_value
+
+    # Test missing pair name.
+    config_empty_pair = correct_config.replace('pair: "XETHZEUR"', "")
+    e_info_value = mock_config_error(config_empty_pair, ValueError)
+    assert "Please provide the pair to dollar cost average." in e_info_value
+
+    # Test missing amount.
+    config_missing_amount = correct_config.replace("amount: 20", "")
+    e_info_value = mock_config_error(config_missing_amount, ValueError)
+    assert "Configuration file incorrectly formatted:" in e_info_value
+
+    # Test amount = 0.
+    config_zero_amount = correct_config.replace("amount: 20", "amount: 0")
+    e_info_value = mock_config_error(config_zero_amount, ValueError)
+    assert "Please provide an amount > 0 to DCA." in e_info_value
+
+    # Test amount < 0.
+    config_below_zero_amount = correct_config.replace("amount: 20", "amount: -100")
+    e_info_value = mock_config_error(config_below_zero_amount, ValueError)
+    assert "Please provide an amount > 0 to DCA." in e_info_value

@@ -32,8 +32,9 @@ class KrakenDCA:
         and data from Kraken.
         """
         print("Hi, current DCA configuration:")
+        asset_pairs = self.ka.get_asset_pairs()
         for dca_pair in self.config.dca_pairs:
-            pair = Pair.get_pair_from_kraken(self.ka, dca_pair.get("pair"))
+            pair = Pair.get_pair_from_kraken(self.ka, asset_pairs, dca_pair.get("pair"))
             self.dcas_list.append(DCA(
                 self.ka, dca_pair.get("delay"), pair, dca_pair.get("amount")
             ))

@@ -1,4 +1,7 @@
 import yaml
+from yaml.scanner import ScannerError
+
+CONFIG_ERROR_MSG: str = "Configuration file incorrectly formatted"
 
 
 class Config:
@@ -27,6 +30,8 @@ class Config:
                 self.__check_dca_pair_configuration(dca_pair)
         except EnvironmentError:
             raise FileNotFoundError("Configuration file not found.")
+        except ScannerError as e:
+            raise ScannerError(CONFIG_ERROR_MSG + f": {e}")
 
     def __check_configuration(self):
         """
@@ -38,10 +43,10 @@ class Config:
                 raise ValueError("Please provide your Kraken API public key.")
             if not self.api_private_key:
                 raise ValueError("Please provide your Kraken API private key.")
-            if not self.dca_pairs:
+            if not self.dca_pairs or type(self.dca_pairs) is not list:
                 raise ValueError("No DCA pairs specified.")
-        except (ValueError, AttributeError, yaml.YAMLError) as e:
-            raise ValueError(f"Configuration file incorrectly formatted: {e}")
+        except ValueError as e:
+            raise ValueError(CONFIG_ERROR_MSG + f": {e}")
 
     @staticmethod
     def __check_dca_pair_configuration(dca_pair: dict):
@@ -51,15 +56,18 @@ class Config:
         :param dca_pair: Dictionary with pair to DCA, delay in days as integer and
         amount of quote asset to make the limit buy order with.
         """
-        if not dca_pair.get("pair"):
-            raise ValueError("Please provide the pair to dollar cost average.")
-        delay = dca_pair.get("delay")
-        if not delay or type(delay) is not int or delay <= 0:
-            raise ValueError("Please set the DCA days delay as a number > 0.")
         try:
-            dca_pair["amount"] = float(dca_pair.get("amount"))
-        except ValueError:
-            print("Please provide an amount > 0 to DCA.")
-        amount = dca_pair.get("amount")
-        if not amount or type(amount) is not float or amount <= 0:
-            raise ValueError("Please provide an amount > 0 to DCA.")
+            if not dca_pair.get("pair"):
+                raise ValueError("Please provide the pair to dollar cost average.")
+            delay = dca_pair.get("delay")
+            if not delay or type(delay) is not int or delay <= 0:
+                raise ValueError("Please set the DCA days delay as a number > 0.")
+            try:
+                dca_pair["amount"] = float(dca_pair.get("amount"))
+            except TypeError:
+                raise ValueError("Please provide an amount > 0 to DCA.")
+            amount = dca_pair.get("amount")
+            if not amount or type(amount) is not float or amount <= 0:
+                raise ValueError("Please provide an amount > 0 to DCA.")
+        except ValueError as e:
+            raise ValueError(CONFIG_ERROR_MSG + f": {e}")

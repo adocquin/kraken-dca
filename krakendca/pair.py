@@ -52,15 +52,16 @@ class Pair:
         self.order_min = order_min
 
     @classmethod
-    def get_pair_from_kraken(cls, ka: KrakenApi, pair: str) -> T:
+    def get_pair_from_kraken(cls, ka: KrakenApi, asset_pairs: dict,  pair: str) -> T:
         """
         Initialize the Pair object using KrakenAPI and provided pair.
 
         :param ka: KrakenApi object.
+        :param asset_pairs: Dictionary of available pairs on Kraken got through the API.
         :param pair: Pair to dollar cost average as string.
         :return: Instanced Pair object.
         """
-        pair_information = cls.get_pair_information(ka, pair)
+        pair_information = cls.get_pair_information(asset_pairs, pair)
         alt_name = pair_information.get("altname")
         base = pair_information.get("base")
         quote = pair_information.get("quote")
@@ -81,15 +82,14 @@ class Pair:
         )
 
     @staticmethod
-    def get_pair_information(ka: KrakenApi, pair: str) -> dict:
+    def get_pair_information(asset_pairs: dict, pair: str) -> dict:
         """
         Return pair information from Kraken API.
 
-        :param ka: KrakenAPI object.
+        :param asset_pairs: Dictionary of available pairs on Kraken got through the API.
         :param pair: Pair to find.
         :return: Dict of pair information.
         """
-        asset_pairs = ka.get_asset_pairs()
         pair_information = find_nested_dictionary(asset_pairs, pair)
         if not pair_information:
             available_pairs = [pair for pair in asset_pairs]

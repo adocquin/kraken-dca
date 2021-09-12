@@ -26,25 +26,22 @@ class KrakenDCA:
         self.ka = ka
         self.dcas_list = []
 
-    def initialize_dca(self):
+    def initialize_pairs_dca(self):
         """
-        Check if pairs exist and initialize DCA objects List
+        Instantiate Pair and DCA objects from pairs specified in configuration file
+        and data from Kraken.
         """
         print("Hi, current DCA configuration:")
         for dca_pair in self.config.dca_pairs:
-            # Initialize the Pair object from pair specified in configuration
-            # file and data from Kraken.
             pair = Pair.get_pair_from_kraken(self.ka, dca_pair.get("pair"))
-            # Initialize the DCA objects.
             self.dcas_list.append(DCA(
                 self.ka, dca_pair.get("delay"), pair, dca_pair.get("amount")
             ))
 
-    def handle_dca(self):
+    def handle_pairs_dca(self):
         """
+        Iterate though DCA objects list and execute DCA logic..
         Handle pairs Dollar Cost Averaging.
         """
-        # Iterate though DCA objects list and launch DCA logic.
         for dca in self.dcas_list:
-            # Execute DCA logic.
             dca.handle_dca_logic()

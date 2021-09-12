@@ -41,7 +41,7 @@ class TestDCA:
             self.dca.handle_dca_logic()
         captured = capfd.readouterr()
         test_output = (
-            "Hi, current configuration: DCA pair: XETHZEUR, DCA amount: 20.0.\nIt's 2021-04-15 21:33:28 on "
+            "Pair: XETHZEUR, delay: 1, amount: 20.0.\nIt's 2021-04-15 21:33:28 on "
             "Kraken, 2021-04-15 21:33:28 on system.\nCurrent trade balance: 1650.3006 ZUSD.\nPair balances: "
             "39.728 ZEUR, 0.109598362 XETH.\nDidn't DCA already today.\nCurrent XETHZEUR ask price: "
             "2083.16.\nCreate a 19.9481ZEUR buy limit order of 0.00957589XETH at 2083.16ZEUR.\nFee "
@@ -62,7 +62,7 @@ class TestDCA:
             self.dca.handle_dca_logic()
         captured = capfd.readouterr()
         test_output = (
-            "Hi, current configuration: DCA pair: XETHZEUR, DCA amount: 20.0.\nIt's 2021-04-16 18:54:53 on "
+            "Pair: XETHZEUR, delay: 1, amount: 20.0.\nIt's 2021-04-16 18:54:53 on "
             "Kraken, 2021-04-16 18:54:53 on system.\nCurrent trade balance: 16524.7595 ZUSD.\nPair "
             "balances: 359.728 ZEUR, 0.128994332 XETH.\nAlready DCA.\n"
         )
@@ -188,7 +188,7 @@ class TestDCA:
         self.dca.send_buy_limit_order(order)
         captured = capfd.readouterr()
         test_output = (
-            "Hi, current configuration: DCA pair: XETHZEUR, DCA amount: 20.0.\nCreate a 19.9481ZEUR buy "
+            "Pair: XETHZEUR, delay: 1, amount: 20.0.\nCreate a 19.9481ZEUR buy "
             "limit order of 0.01029256XETH at 1938.11ZEUR.\nFee expected: 0.0519ZEUR (0.26% taker "
             "fee).\nTotal price expected: 0.01029256XETH for 20.0ZEUR.\nOrder successfully created.\nTXID: "
             "OUHXFN-RTP6W-ART4VP\nDescription: buy 0.01029256 ETHEUR @ limit 1938.11\n"

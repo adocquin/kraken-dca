@@ -3,17 +3,15 @@ api:
   public_key: "KRAKEN_API_PUBLIC_KEY"
   private_key: "KRAKEN_API_PRIVATE_KEY"
 
-# DCA pairs configuration.
+# DCA pairs configuration. You can add as many pairs as you want.
 # pair: Name of the pair (list of available pairs: https://api.kraken.com/0/public/AssetPairs)
 # delay: Delay in days between each buy limit order.
 # amount: Amount of the order in quote asset.
 dca_pairs:
   - pair: "XETHZEUR"
     delay: 1
-    amount: 10
+    amount: 20
   - pair: "XBTUSDT"
     delay: 3
-    amount: 10
-  - pair: "LINKXBT"
-    delay: 7
-    amount: 0.001
+    amount: 20
+

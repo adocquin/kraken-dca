@@ -42,9 +42,7 @@ class DCA:
         self.pair = pair
         self.amount = float(amount)
         self.orders_filepath = orders_filepath
-        print(
-            f"Hi, current configuration: DCA pair: {self.pair.name}, DCA amount: {self.amount}."
-        )
+        print(f"Pair: {self.pair.name}, delay: {self.delay}, amount: {self.amount}.")
 
     def handle_dca_logic(self) -> None:
         """
@@ -95,7 +93,8 @@ class DCA:
         lag = (current_date - kraken_date).seconds
         if lag > 1:
             raise OSError(
-                "Too much lag -> Check your internet connection speed or synchronize your system time."
+                "Too much lag -> Check your internet connection speed "
+                "or synchronize your system time."
             )
         return current_date
 
@@ -119,11 +118,13 @@ class DCA:
         except TypeError:  # When there is no pair quote balance on Kraken account.
             pair_quote_balance = 0
         print(
-            f"Pair balances: {pair_quote_balance} {self.pair.quote}, {pair_base_balance} {self.pair.base}."
+            f"Pair balances: {pair_quote_balance} {self.pair.quote}, "
+            f"{pair_base_balance} {self.pair.base}."
         )
         if pair_quote_balance < self.amount:
             raise ValueError(
-                f"Insufficient funds to buy {self.amount} {self.pair.quote} of {self.pair.base}"
+                f"Insufficient funds to buy {self.amount} "
+                f"{self.pair.quote} of {self.pair.base}"
             )
 
     def count_pair_daily_orders(self) -> int:
@@ -178,14 +179,17 @@ class DCA:
         """
         if order.volume < self.pair.order_min:
             raise ValueError(
-                f"Too low volume to buy {self.pair.base}: current {order.volume}, minimum {self.pair.order_min}."
+                f"Too low volume to buy {self.pair.base}: current {order.volume}, "
+                f"minimum {self.pair.order_min}."
             )
         print(
-            f"Create a {order.price}{self.pair.quote} buy limit order of {order.volume}{self.pair.base} at {order.pair_price}{self.pair.quote}."
+            f"Create a {order.price}{self.pair.quote} buy limit order of "
+            f"{order.volume}{self.pair.base} at {order.pair_price}{self.pair.quote}."
         )
         print(f"Fee expected: {order.fee}{self.pair.quote} (0.26% taker fee).")
         print(
-            f"Total price expected: {order.volume}{self.pair.base} for {order.total_price}{self.pair.quote}."
+            f"Total price expected: {order.volume}{self.pair.base} for "
+            f"{order.total_price}{self.pair.quote}."
         )
         order.send_order(self.ka)
         print(f"Order successfully created.")

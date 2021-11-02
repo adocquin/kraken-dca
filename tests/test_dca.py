@@ -195,3 +195,8 @@ class TestDCA:
             "OUHXFN-RTP6W-ART4VP\nDescription: buy 0.01029256 ETHEUR @ limit 1938.11\n"
         )
         assert captured.out == test_output
+
+    @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_limit_factor.yaml")
+    def test_limit_factor(self):
+        self.dca.limit_factor = 0.9
+        assert self.dca.get_limit_price() == 3506.409

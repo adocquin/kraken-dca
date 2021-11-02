@@ -19,6 +19,7 @@ class DCA:
     delay: int
     pair: Pair
     amount: float
+    limit_factor: float
     orders_filepath: str
 
     def __init__(
@@ -28,6 +29,7 @@ class DCA:
         pair: Pair,
         amount: float,
         orders_filepath: str = "orders.csv",
+        limit_factor: float = 1
     ) -> None:
         """
         Initialize the DCA object.
@@ -41,6 +43,7 @@ class DCA:
         self.delay = delay
         self.pair = pair
         self.amount = float(amount)
+        self.limit_factor = float(limit_factor)
         self.orders_filepath = orders_filepath
         print(f"Pair: {self.pair.name}, delay: {self.delay}, amount: {self.amount}.")
 
@@ -59,15 +62,13 @@ class DCA:
         daily_pair_orders = self.count_pair_daily_orders()
         if daily_pair_orders == 0:
             print("Didn't DCA already today.")
-            # Get current pair ask price.
-            pair_ask_price = self.pair.get_pair_ask_price(self.ka, self.pair.name)
-            print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
+            limit_price = self.get_limit_price()
             # Create the Order object.
             order = Order.buy_limit_order(
                 current_date,
                 self.pair.name,
                 self.amount,
-                pair_ask_price,
+                limit_price,
                 self.pair.lot_decimals,
                 self.pair.quote_decimals,
             )
@@ -78,6 +79,21 @@ class DCA:
             print("Order information saved to CSV.")
         else:
             print("Already DCA.")
+
+    def get_limit_price(self):
+        """Calculates the wanted limit price from the current ask price and the limit_factor
+
+        :return: The limit price
+        """
+        # Get current pair ask price.
+        pair_ask_price = self.pair.get_pair_ask_price(self.ka, self.pair.name)
+        print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
+        if round(self.limit_factor, 5) == 1.0:
+            limit_price = pair_ask_price
+        else:
+            limit_price = pair_ask_price * self.limit_factor
+            print(f"Calculated limit price (with limit_factor={self.limit_factor:.4f}): {limit_price}")
+        return limit_price
 
     def get_system_time(self) -> datetime:
         """

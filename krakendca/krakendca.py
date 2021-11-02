@@ -36,7 +36,8 @@ class KrakenDCA:
         for dca_pair in self.config.dca_pairs:
             pair = Pair.get_pair_from_kraken(self.ka, asset_pairs, dca_pair.get("pair"))
             self.dcas_list.append(DCA(
-                self.ka, dca_pair.get("delay"), pair, dca_pair.get("amount")
+                self.ka, dca_pair.get("delay"), pair, dca_pair.get("amount"),
+                limit_factor=dca_pair.get("limit_factor", 1)
             ))
 
     def handle_pairs_dca(self):

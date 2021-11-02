@@ -88,6 +88,8 @@ dca_pairs:
 - Available pairs for pair field can be found [here](https://api.kraken.com/0/public/AssetPairs) on *altname*.
 - Amount is the amount of quote asset to sell to buy base asset.
 - You can specify as many pairs as you want in the dca_pairs list.
+- Set a `limit_factor` if you want to place the buy order that is different from the current market price.
+  E.g., `limit_factor: 0.95` would set the limit price 5% below the market price.
 
 More information on 
 [Kraken API official documentation](https://support.kraken.com/hc/en-us/articles/360000920306-Ticker-pairs).

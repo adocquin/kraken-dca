@@ -91,7 +91,7 @@ class DCA:
         if round(self.limit_factor, 5) == 1.0:
             limit_price = pair_ask_price
         else:
-            limit_price = pair_ask_price * self.limit_factor
+            limit_price = round(pair_ask_price * self.limit_factor, 1)
             print(f"Calculated limit price (with limit_factor={self.limit_factor:.4f}): {limit_price}")
         return limit_price
 

@@ -11,4 +11,3 @@ if __name__ == "__main__":
     kdca = KrakenDCA(config, ka)
     kdca.initialize_pairs_dca()
     kdca.handle_pairs_dca()
-

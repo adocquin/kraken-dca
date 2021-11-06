@@ -75,10 +75,14 @@ api:
 # pair: Name of the pair (list of available pairs: https://api.kraken.com/0/public/AssetPairs)
 # delay: Delay in days between each buy limit order.
 # amount: Amount of the order in quote asset.
+# limit_factor (optional): Create the limit order at a price of current price
+#                          multiplied by specified factor (up to 5 digits).
+# E.g., limit_factor = 0.95 creates a limit order 5% below market price
 dca_pairs:
   - pair: "XETHZEUR"
     delay: 1
     amount: 15
+    limit_factor: 0.98
   - pair: "XXBTZEUR"
     delay: 3
     amount: 20
@@ -88,7 +92,8 @@ dca_pairs:
 - Available pairs for pair field can be found [here](https://api.kraken.com/0/public/AssetPairs) on *altname*.
 - Amount is the amount of quote asset to sell to buy base asset.
 - You can specify as many pairs as you want in the dca_pairs list.
-- Set a `limit_factor` if you want to place the buy order that is different from the current market price.
+- Set a `limit_factor` if you want to place the buy order that is different from the 
+  current market price (up to 5 digits).<br>
   E.g., `limit_factor: 0.95` would set the limit price 5% below the market price.
 
 More information on 

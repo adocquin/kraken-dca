@@ -30,6 +30,8 @@ class TestDCA:
         assert type(self.dca.pair) == Pair
         assert type(self.dca.amount) == float
         assert self.dca.amount == 20
+        assert type(self.dca.limit_factor) == float
+        assert self.dca.limit_factor == 1
         assert self.dca.orders_filepath == self.test_orders_filepath
 
     @freeze_time("2021-04-15 21:33:28.069731")
@@ -199,4 +201,6 @@ class TestDCA:
     @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_limit_factor.yaml")
     def test_limit_factor(self):
         self.dca.limit_factor = 0.9
-        assert self.dca.get_limit_price() == 3506.4
+        assert self.dca.get_limit_price(3896.01) == 3506.41
+        self.dca.limit_factor = 0.999999
+        assert self.dca.get_limit_price(3896.01) == 3896.01

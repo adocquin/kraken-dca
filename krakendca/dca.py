@@ -29,7 +29,7 @@ class DCA:
         pair: Pair,
         amount: float,
         orders_filepath: str = "orders.csv",
-        limit_factor: float = 1
+        limit_factor: float = 1,
     ) -> None:
         """
         Initialize the DCA object.
@@ -62,7 +62,10 @@ class DCA:
         daily_pair_orders = self.count_pair_daily_orders()
         if daily_pair_orders == 0:
             print("Didn't DCA already today.")
-            limit_price = self.get_limit_price()
+            # Get current pair ask price.
+            pair_ask_price = self.pair.get_pair_ask_price(self.ka, self.pair.name)
+            print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
+            limit_price = self.get_limit_price(pair_ask_price)
             # Create the Order object.
             order = Order.buy_limit_order(
                 current_date,
@@ -80,19 +83,20 @@ class DCA:
         else:
             print("Already DCA.")
 
-    def get_limit_price(self):
-        """Calculates the wanted limit price from the current ask price and the limit_factor
+    def get_limit_price(self, pair_ask_price: float) -> float:
+        """
+        Calculates wanted limit price from current ask price and limit_factor.
 
+        :param pair_ask_price: Pair ask price to adjust li;it price from.
         :return: The limit price
         """
-        # Get current pair ask price.
-        pair_ask_price = self.pair.get_pair_ask_price(self.ka, self.pair.name)
-        print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
         if round(self.limit_factor, 5) == 1.0:
             limit_price = pair_ask_price
         else:
-            limit_price = round(pair_ask_price * self.limit_factor, 1)
-            print(f"Calculated limit price (with limit_factor={self.limit_factor:.4f}): {limit_price}")
+            limit_price = round(pair_ask_price * self.limit_factor, 2)
+            print(
+                f"Factor adjusted limit price ({self.limit_factor:.4f}): {limit_price}."
+            )
         return limit_price
 
     def get_system_time(self) -> datetime:

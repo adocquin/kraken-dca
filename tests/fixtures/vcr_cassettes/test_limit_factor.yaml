@@ -1,0 +1,50 @@
+interactions:
+  - request:
+      body: pair=XETHZEUR
+      headers:
+        Connection:
+          - close
+        Content-Length:
+          - '13'
+        Content-Type:
+          - application/x-www-form-urlencoded
+        Host:
+          - api.kraken.com
+        User-Agent:
+          - Python-urllib/3.8
+      method: POST
+      uri: https://api.kraken.com/0/public/Ticker
+    response:
+      body:
+        string: '{"error":[],"result":{"XETHZEUR":{"a":["3896.01000","54","54.000"],"b":["3896.00000","1","1.000"],"c":["3896.00000","0.01289350"],"v":["13252.90999721","14339.17068685"],"p":["3838.30816","3829.30482"],"t":[20470,22511],"l":["3700.00000","3690.00000"],"h":["3913.02000","3913.02000"],"o":"3729.23000"}}}'
+      headers:
+        CF-Cache-Status:
+          - DYNAMIC
+        CF-RAY:
+          - 6a8036490b280746-FRA
+        Connection:
+          - close
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Tue, 02 Nov 2021 20:46:24 GMT
+        Expect-CT:
+          - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+        Server:
+          - cloudflare
+        Set-Cookie:
+          - __cf_bm=yvnjJaYTlqqvrgbQUObBpPK_9B7DPalBHlf.kAwetDA-1635885984-0-ATG59S5EJ4tqwg2AtcDhs/509EHUsJWZ3F7YTvUSykyTB928Ps+tANmqYn+/200ttJBUBHiJUpEbQoH9lLixOww=;
+            path=/; expires=Tue, 02-Nov-21 21:16:24 GMT; domain=.kraken.com; HttpOnly;
+            Secure; SameSite=None
+        Transfer-Encoding:
+          - chunked
+        cache-control:
+          - no-cache,max-age=0
+        referrer-policy:
+          - no-referrer-when-downgrade
+        strict-transport-security:
+          - max-age=15768000
+      status:
+        code: 200
+        message: OK
+version: 1

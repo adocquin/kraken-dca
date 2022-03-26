@@ -1,7 +1,8 @@
 import vcr
 from freezegun import freeze_time
-from krakendca import Config, KrakenDCA, DCA
 from krakenapi import KrakenApi
+
+from krakendca import Config, KrakenDCA, DCA
 
 
 class TestKrakenDCA:
@@ -32,18 +33,18 @@ class TestKrakenDCA:
         assert self.kdca.ka == self.ka
 
     def assert_kdca_pair(
-        self,
-        dca_pair: DCA,
-        amount: float,
-        delay: int,
-        alt_name: str,
-        base: str,
-        lot_decimals: int,
-        name: str,
-        order_min: float,
-        pair_decimals: int,
-        quote: str,
-        quote_decimals: int,
+            self,
+            dca_pair: DCA,
+            amount: float,
+            delay: int,
+            alt_name: str,
+            base: str,
+            lot_decimals: int,
+            name: str,
+            order_min: float,
+            pair_decimals: int,
+            quote: str,
+            quote_decimals: int,
     ):
         assert dca_pair.amount == amount
         assert dca_pair.delay == delay
@@ -88,11 +89,36 @@ class TestKrakenDCA:
 
     @freeze_time("2021-09-12 19:50:08")
     @vcr.use_cassette(
-        "tests/fixtures/vcr_cassettes/test_handle_dca_pairs.yaml",
+        "tests/fixtures/vcr_cassettes/test_handle_pairs_dca.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_handle_dca_pairs(self, capfd):
+    def test_handle_pairs_dca(self, capfd):
         self.kdca.handle_pairs_dca()
         captured = capfd.readouterr()
         assert "buy 0.00519042 ETHEUR @ limit 2882.44" in captured.out
         assert "buy 0.00051336 XBTEUR @ limit 38857.2" in captured.out
+
+    @freeze_time("2022-03-26 18:37:46")
+    @vcr.use_cassette(
+        "tests/fixtures/vcr_cassettes/test_handle_pars_dca_max_price.yaml",
+        filter_headers=["API-Key", "API-Sign"],
+    )
+    def test_handle_pairs_dca_max_price(self, capfd):
+        self.kdca.dcas_list.pop()
+        self.kdca.dcas_list[0].max_price = 0
+        self.kdca.handle_pairs_dca()
+        captured = capfd.readouterr()
+        assert "No DCA for XETHZEUR: Limit price (2797.99) greater " \
+               "than maximum price (0)." in captured.out
+
+    @freeze_time("2022-03-26 18:37:46")
+    @vcr.use_cassette(
+        "tests/fixtures/vcr_cassettes/test_handle_pars_dca_max_price.yaml",
+        filter_headers=["API-Key", "API-Sign"],
+    )
+    def test_handle_pairs_dca_limit_factor(self, capfd):
+        self.kdca.dcas_list.pop()
+        self.kdca.dcas_list[0].max_price = 0
+        self.kdca.handle_pairs_dca()
+        captured = capfd.readouterr()
+        assert "Factor adjusted limit price (0.9850): 2797.99." in captured.out

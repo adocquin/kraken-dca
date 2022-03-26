@@ -1,6 +1,7 @@
 import math
-from typing import TypeVar
 from datetime import datetime
+from typing import TypeVar
+
 import pandas as pd
 from krakenapi import KrakenApi
 
@@ -26,17 +27,17 @@ class Order:
     description: str
 
     def __init__(
-        self,
-        date: datetime,
-        pair: str,
-        type: str,
-        order_type: str,
-        o_flags: str,
-        pair_price: float,
-        volume: float,
-        price: float,
-        fee: float,
-        total_price: float,
+            self,
+            date: datetime,
+            pair: str,
+            type: str,
+            order_type: str,
+            o_flags: str,
+            pair_price: float,
+            volume: float,
+            price: float,
+            fee: float,
+            total_price: float,
     ) -> None:
         """
         Initialize the Order object.
@@ -68,13 +69,13 @@ class Order:
 
     @classmethod
     def buy_limit_order(
-        cls,
-        date: datetime,
-        pair: str,
-        amount: float,
-        pair_price: float,
-        lot_decimals: int,
-        quote_decimals: int,
+            cls,
+            date: datetime,
+            pair: str,
+            amount: float,
+            pair_price: float,
+            lot_decimals: int,
+            quote_decimals: int,
     ) -> T:
         """
         Create a limit order for specified dca pair and amount.
@@ -146,7 +147,7 @@ class Order:
 
     @staticmethod
     def set_order_volume(
-        amount: float, pair_price: float, lot_decimals: float
+            amount: float, pair_price: float, lot_decimals: float
     ) -> float:
         """
         Define order volume for specified DCA amount,
@@ -162,10 +163,11 @@ class Order:
         """
         decimals = 10 ** lot_decimals
         try:
-            order_volume = math.floor(amount / pair_price * decimals) / decimals
+            order_volume = math.floor(
+                amount / pair_price * decimals) / decimals
             # Adjust amount to the 0.26% taker fee on Kraken
             order_volume_fee_adjusted = (
-                math.floor(order_volume / 1.0026 * decimals) / decimals
+                    math.floor(order_volume / 1.0026 * decimals) / decimals
             )
         except ZeroDivisionError:
             raise ZeroDivisionError(
@@ -175,7 +177,7 @@ class Order:
 
     @staticmethod
     def estimate_order_price(
-        volume: float, pair_price: float, quote_decimals: int
+            volume: float, pair_price: float, quote_decimals: int
     ) -> float:
         """
         Get order price for specified order volume
@@ -192,7 +194,7 @@ class Order:
 
     @staticmethod
     def estimate_order_fee(
-        volume: float, pair_price: float, quote_decimals: int
+            volume: float, pair_price: float, quote_decimals: int
     ) -> float:
         """
         Return order fee based on the 0.026%

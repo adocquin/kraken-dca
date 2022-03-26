@@ -1,10 +1,12 @@
-from krakendca import DCA, Pair, Order
-from krakenapi import KrakenApi
-import vcr
-import pytest
-from freezegun import freeze_time
-from datetime import datetime
 import os
+from datetime import datetime
+
+import pytest
+import vcr
+from freezegun import freeze_time
+from krakenapi import KrakenApi
+
+from krakendca import DCA, Pair, Order
 
 
 class TestDCA:
@@ -21,7 +23,11 @@ class TestDCA:
         # Initialize the Pair object.
         pair = Pair("XETHZEUR", "ETHEUR", "XETH", "ZEUR", 2, 8, 4, 0.005)
         # Initialize the DCA object.
-        self.dca = DCA(ka, 1, pair, 20, self.test_orders_filepath)
+        self.dca = DCA(ka,
+                       1,
+                       pair,
+                       20,
+                       orders_filepath=self.test_orders_filepath)
 
     def test_init(self):
         assert type(self.dca.ka) == KrakenApi
@@ -38,19 +44,26 @@ class TestDCA:
     def test_handle_dca_logic(self, capfd):
         # Test normal execution
         with vcr.use_cassette(
-            "tests/fixtures/vcr_cassettes/test_handle_dca_logic.yaml",
-            filter_headers=["API-Key", "API-Sign"],
+                "tests/fixtures/vcr_cassettes/test_handle_dca_logic.yaml",
+                filter_headers=["API-Key", "API-Sign"],
         ):
             self.dca.handle_dca_logic()
         captured = capfd.readouterr()
         test_output = (
-            "Pair: XETHZEUR, delay: 1, amount: 20.0.\nIt's 2021-04-15 21:33:28 on "
-            "Kraken, 2021-04-15 21:33:28 on system.\nCurrent trade balance: 1650.3006 ZUSD.\nPair balances: "
-            "39.728 ZEUR, 0.109598362 XETH.\nDidn't DCA already today.\nCurrent XETHZEUR ask price: "
-            "2083.16.\nCreate a 19.9481ZEUR buy limit order of 0.00957589XETH at 2083.16ZEUR.\nFee "
-            "expected: 0.0519ZEUR (0.26% taker fee).\nTotal price expected: 0.00957589XETH for "
-            "20.0ZEUR.\nOrder successfully created.\nTXID: OCYS4K-OILOE-36HPAE\nDescription: buy 0.00957589 "
-            "ETHEUR @ limit 2083.16\nOrder information saved to CSV.\n"
+            "It's 2021-04-15 21:33:28 on Kraken, 2021-04-15 21:33:28 on "
+            "system.\n"
+            "Current trade balance: 1650.3006 ZUSD.\n"
+            "Pair balances: 39.728 ZEUR, 0.109598362 XETH.\n"
+            "Didn't DCA already today.\n"
+            "Current XETHZEUR ask price: 2083.16.\n"
+            "Create a 19.9481ZEUR buy limit order of 0.00957589XETH at "
+            "2083.16ZEUR.\n"
+            "Fee expected: 0.0519ZEUR (0.26% taker fee).\n"
+            "Total price expected: 0.00957589XETH for 20.0ZEUR.\n"
+            "Order successfully created.\n"
+            "TXID: OCYS4K-OILOE-36HPAE\n"
+            "Description: buy 0.00957589 ETHEUR @ limit 2083.16\n"
+            "Order information saved to CSV.\n"
         )
         os.remove(self.test_orders_filepath)
         assert captured.out == test_output
@@ -59,30 +72,36 @@ class TestDCA:
     def test_handle_dca_logic_error(self, capfd):
         # Test execution while already DCA.
         with vcr.use_cassette(
-            "tests/fixtures/vcr_cassettes/test_handle_dca_logic_error.yaml",
-            filter_headers=["API-Key", "API-Sign"],
+                "tests/fixtures/vcr_cassettes/test_handle_dca_logic_error.yaml",
+                filter_headers=["API-Key", "API-Sign"],
         ):
             self.dca.handle_dca_logic()
         captured = capfd.readouterr()
         test_output = (
-            "Pair: XETHZEUR, delay: 1, amount: 20.0.\nIt's 2021-04-16 18:54:53 on "
-            "Kraken, 2021-04-16 18:54:53 on system.\nCurrent trade balance: 16524.7595 ZUSD.\nPair "
-            "balances: 359.728 ZEUR, 0.128994332 XETH.\nAlready DCA.\n"
+            "It's 2021-04-16 18:54:53 on Kraken, 2021-04-16 18:54:53 on "
+            "system.\n"
+            "Current trade balance: 16524.7595 ZUSD.\n"
+            "Pair balances: 359.728 ZEUR, 0.128994332 XETH.\n"
+            "No DCA for XETHZEUR: Already placed an order today.\n"
         )
         assert captured.out == test_output
 
     def test_get_system_time(self):
         # Test with system time in the past.
         with freeze_time("2012-01-13 23:10:34.069731"):
-            with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml"):
+            with vcr.use_cassette(
+                    "tests/fixtures/vcr_cassettes/test_get_time.yaml"):
                 with pytest.raises(OSError) as e_info:
                     self.dca.get_system_time()
-        error_message = "Too much lag -> Check your internet connection speed or synchronize your system time."
+        error_message = "Too much lag -> Check your internet connection " \
+                        "speed or synchronize your system time."
         assert error_message in str(e_info.value)
         # Test with correct system time
-        test_date = datetime.strptime("2021-04-09 20:47:40", "%Y-%m-%d %H:%M:%S")
+        test_date = datetime.strptime("2021-04-09 20:47:40",
+                                      "%Y-%m-%d %H:%M:%S")
         with freeze_time(test_date):
-            with vcr.use_cassette("tests/fixtures/vcr_cassettes/test_get_time.yaml"):
+            with vcr.use_cassette(
+                    "tests/fixtures/vcr_cassettes/test_get_time.yaml"):
                 date = self.dca.get_system_time()
         assert date == test_date
 
@@ -93,7 +112,8 @@ class TestDCA:
     def test_check_account_balance(self):
         with pytest.raises(ValueError) as e_info:
             self.dca.check_account_balance()
-        assert "Insufficient funds to buy 20.0 ZEUR of XETH" in str(e_info.value)
+        assert "Insufficient funds to buy 20.0 ZEUR of XETH" in str(
+            e_info.value)
 
     @vcr.use_cassette(
         "tests/fixtures/vcr_cassettes/test_count_pair_daily_orders.yaml",
@@ -137,7 +157,8 @@ class TestDCA:
         }
 
         # Test with existing pair order.
-        pair_orders = self.dca.extract_pair_orders(orders, "XETHZEUR", "ETHEUR")
+        pair_orders = self.dca.extract_pair_orders(orders, "XETHZEUR",
+                                                   "ETHEUR")
         assert type(pair_orders) == dict
         assert len(pair_orders) == 1
         key = next(iter(pair_orders))
@@ -147,7 +168,8 @@ class TestDCA:
         assert type(value) == dict
 
         # Test with non-existing pair order.
-        pair_orders = self.dca.extract_pair_orders(orders, "XETHZUSD", "ETHUSD")
+        pair_orders = self.dca.extract_pair_orders(orders, "XETHZUSD",
+                                                   "ETHUSD")
         assert type(pair_orders) == dict
         assert len(pair_orders) == 0
 
@@ -191,11 +213,13 @@ class TestDCA:
         self.dca.send_buy_limit_order(order)
         captured = capfd.readouterr()
         test_output = (
-            "Pair: XETHZEUR, delay: 1, amount: 20.0.\nCreate a 19.9481ZEUR buy "
-            "limit order of 0.01029256XETH at 1938.11ZEUR.\nFee expected: 0.0519ZEUR (0.26% taker "
-            "fee).\nTotal price expected: 0.01029256XETH for 20.0ZEUR.\nOrder successfully created.\nTXID: "
-            "OUHXFN-RTP6W-ART4VP\nDescription: buy 0.01029256 ETHEUR @ limit 1938.11\n"
-        )
+            "Create a 19.9481ZEUR buy limit order of 0.01029256XETH at "
+            "1938.11ZEUR.\n"
+            "Fee expected: 0.0519ZEUR (0.26% taker fee).\n"
+            "Total price expected: 0.01029256XETH for 20.0ZEUR.\n"
+            "Order successfully created.\n"
+            "TXID: OUHXFN-RTP6W-ART4VP\n"
+            "Description: buy 0.01029256 ETHEUR @ limit 1938.11\n")
         assert captured.out == test_output
 
     @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_limit_factor.yaml")

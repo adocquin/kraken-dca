@@ -1,7 +1,9 @@
-from yaml.scanner import ScannerError
-from krakendca import Config
 from unittest import mock
+
 import pytest
+from yaml.scanner import ScannerError
+
+from krakendca import Config
 
 
 def get_correct_config() -> str:
@@ -23,13 +25,24 @@ def test_default_config_file_is_correct():
     assert config == correct_config
 
 
-def assert_dca_pair(dca_pair: dict, pair: str, delay: int, amount: float):
+def assert_dca_pair(dca_pair: dict,
+                    pair: str,
+                    delay: int,
+                    amount: float,
+                    limit_factor: float = None,
+                    max_price: float = None):
     assert type(dca_pair.get("pair")) == str
     assert dca_pair.get("pair") == pair
     assert type(dca_pair.get("delay")) == int
     assert dca_pair.get("delay") == delay
     assert type(dca_pair.get("amount")) == float
     assert dca_pair.get("amount") == amount
+    if limit_factor:
+        assert type(dca_pair.get("limit_factor")) == float
+        assert dca_pair.get("limit_factor") == limit_factor
+    if max_price:
+        assert type(dca_pair.get("max_price")) == float
+        assert dca_pair.get("max_price") == max_price
 
 
 def test_config_properties():
@@ -41,7 +54,7 @@ def test_config_properties():
     assert config.api_private_key == "KRAKEN_API_PRIVATE_KEY"
     assert type(config.dca_pairs) == list
     assert len(config.dca_pairs) == 2
-    assert_dca_pair(config.dca_pairs[0], "XETHZEUR", 1, 15)
+    assert_dca_pair(config.dca_pairs[0], "XETHZEUR", 1, 15, 0.985, 2900.10)
     assert_dca_pair(config.dca_pairs[1], "XXBTZEUR", 3, 20)
 
 
@@ -111,6 +124,25 @@ def test_config_errors():
     assert "Please provide an amount > 0 to DCA." in e_info_value
 
     # Test amount < 0.
-    config_below_zero_amount = correct_config.replace("amount: 20", "amount: -100")
+    config_below_zero_amount = correct_config.replace("amount: 20",
+                                                      "amount: -100")
     e_info_value = mock_config_error(config_below_zero_amount, ValueError)
     assert "Please provide an amount > 0 to DCA." in e_info_value
+
+    # Test limit_factor is not a number.
+    config_below_zero_amount = correct_config.replace("limit_factor: 0.985",
+                                                      "limit_factor: error")
+    e_info_value = mock_config_error(config_below_zero_amount, ValueError)
+    assert "limit_factor option must be a number up to 5 digits." in e_info_value
+
+    # Test limit_factor have more than 5 digits.
+    config_below_zero_amount = correct_config.replace("limit_factor: 0.985",
+                                                      "limit_factor: 0.985123")
+    e_info_value = mock_config_error(config_below_zero_amount, ValueError)
+    assert "limit_factor option must be a number up to 5 digits." in e_info_value
+
+    # Test max_price is not a number.
+    config_below_zero_amount = correct_config.replace("max_price: 2900.10",
+                                                      "max_price: error")
+    e_info_value = mock_config_error(config_below_zero_amount, ValueError)
+    assert "max_price must be a number." in e_info_value

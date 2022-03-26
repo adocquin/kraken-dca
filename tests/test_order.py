@@ -1,10 +1,12 @@
-from krakendca import Order
-from krakenapi import KrakenApi
-from datetime import datetime
-import vcr
-import pandas as pd
 import os
+from datetime import datetime
+
+import pandas as pd
 import pytest
+import vcr
+from krakenapi import KrakenApi
+
+from krakendca import Order
 
 
 class TestOrder:

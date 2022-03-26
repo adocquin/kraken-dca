@@ -1,5 +1,7 @@
 from typing import TypeVar
+
 from krakenapi import KrakenApi
+
 from .utils import find_nested_dictionary
 
 T = TypeVar("T", bound="Pair")
@@ -20,15 +22,15 @@ class Pair:
     order_min: float
 
     def __init__(
-        self,
-        name: str,
-        alt_name: str,
-        base: str,
-        quote: str,
-        pair_decimals: int,
-        lot_decimals: int,
-        quote_decimals: int,
-        order_min: float,
+            self,
+            name: str,
+            alt_name: str,
+            base: str,
+            quote: str,
+            pair_decimals: int,
+            lot_decimals: int,
+            quote_decimals: int,
+            order_min: float,
     ) -> None:
         """
         Initialize the Pair object.
@@ -52,7 +54,8 @@ class Pair:
         self.order_min = order_min
 
     @classmethod
-    def get_pair_from_kraken(cls, ka: KrakenApi, asset_pairs: dict,  pair: str) -> T:
+    def get_pair_from_kraken(cls, ka: KrakenApi, asset_pairs: dict,
+                             pair: str) -> T:
         """
         Initialize the Pair object using KrakenAPI and provided pair.
 
@@ -126,5 +129,6 @@ class Pair:
         :return: Current pair ask price.
         """
         pair_ticker_information = ka.get_pair_ticker(pair_name)
-        pair_ask_price = float(pair_ticker_information.get(pair_name).get("a")[0])
+        pair_ask_price = float(
+            pair_ticker_information.get(pair_name).get("a")[0])
         return pair_ask_price

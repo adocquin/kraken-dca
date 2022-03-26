@@ -1,4 +1,7 @@
+from datetime import datetime, timedelta
+
 from krakenapi import KrakenApi
+
 from .order import Order
 from .pair import Pair
 from .utils import (
@@ -7,7 +10,6 @@ from .utils import (
     current_utc_day_datetime,
     datetime_as_utc_unix,
 )
-from datetime import datetime, timedelta
 
 
 class DCA:
@@ -19,17 +21,19 @@ class DCA:
     delay: int
     pair: Pair
     amount: float
-    limit_factor: float
     orders_filepath: str
+    limit_factor: float
+    max_price: float
 
     def __init__(
-        self,
-        ka: KrakenApi,
-        delay: int,
-        pair: Pair,
-        amount: float,
-        orders_filepath: str = "orders.csv",
-        limit_factor: float = 1,
+            self,
+            ka: KrakenApi,
+            delay: int,
+            pair: Pair,
+            amount: float,
+            limit_factor: float = 1,
+            max_price: float = -1,
+            orders_filepath: str = "orders.csv",
     ) -> None:
         """
         Initialize the DCA object.
@@ -38,14 +42,26 @@ class DCA:
         :param delay: DCA days delay between buy orders.
         :param pair: Pair to dollar cost average as string.
         :param amount: Amount to dollar cost average as float.
+        :param limit_factor: Price limit factor as float.
+        :param max_price: Maximum price as float.
+        :param orders_filepath: Orders save file path as String.
         """
         self.ka = ka
         self.delay = delay
         self.pair = pair
         self.amount = float(amount)
         self.limit_factor = float(limit_factor)
+        self.max_price = float(max_price)
         self.orders_filepath = orders_filepath
-        print(f"Pair: {self.pair.name}, delay: {self.delay}, amount: {self.amount}.")
+
+    def __str__(self) -> str:
+        desc: str = f"Pair {self.pair.name}: delay: {self.delay}, " \
+                    f"amount: {self.amount}"
+        if self.limit_factor != 1:
+            desc += f", limit_factor: {self.limit_factor}"
+        if self.max_price != -1:
+            desc += f", max_price: {self.max_price}"
+        return desc
 
     def handle_dca_logic(self) -> None:
         """
@@ -57,31 +73,37 @@ class DCA:
         current_date = self.get_system_time()
         # Check Kraken account balance.
         self.check_account_balance()
-        # Create a buy limit order for specified
-        # pair and quote amount if didn't DCA today.
-        daily_pair_orders = self.count_pair_daily_orders()
-        if daily_pair_orders == 0:
-            print("Didn't DCA already today.")
-            # Get current pair ask price.
-            pair_ask_price = self.pair.get_pair_ask_price(self.ka, self.pair.name)
-            print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
-            limit_price = self.get_limit_price(pair_ask_price)
-            # Create the Order object.
-            order = Order.buy_limit_order(
-                current_date,
-                self.pair.name,
-                self.amount,
-                limit_price,
-                self.pair.lot_decimals,
-                self.pair.quote_decimals,
-            )
-            # Send buy order to Kraken API and print information.
-            self.send_buy_limit_order(order)
-            # Save order information to CSV file.
-            order.save_order_csv(self.orders_filepath)
-            print("Order information saved to CSV.")
-        else:
-            print("Already DCA.")
+        # Check if didn't already DCA today
+        if self.count_pair_daily_orders() != 0:
+            print(f"No DCA for {self.pair.name}: Already placed an order "
+                  f"today.")
+            return
+        print("Didn't DCA already today.")
+        # Get current pair ask price.
+        pair_ask_price = self.pair.get_pair_ask_price(self.ka,
+                                                      self.pair.name)
+        print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
+        # Get limit price based on limit_factor
+        limit_price = self.get_limit_price(pair_ask_price)
+        # Reject DCA if limit_price greater than max_price
+        if self.max_price != -1 and limit_price > self.max_price:
+            print(f"No DCA for {self.pair.name}: Limit price ({limit_price}) "
+                  f"greater than maximum price ({self.max_price}).")
+            return
+        # Create the Order object.
+        order = Order.buy_limit_order(
+            current_date,
+            self.pair.name,
+            self.amount,
+            limit_price,
+            self.pair.lot_decimals,
+            self.pair.quote_decimals,
+        )
+        # Send buy order to Kraken API and print information.
+        self.send_buy_limit_order(order)
+        # Save order information to CSV file.
+        order.save_order_csv(self.orders_filepath)
+        print("Order information saved to CSV.")
 
     def get_limit_price(self, pair_ask_price: float) -> float:
         """
@@ -131,11 +153,13 @@ class DCA:
         balance = self.ka.get_balance()
         try:
             pair_base_balance = float(balance.get(self.pair.base))
-        except TypeError:  # When there is no pair base balance on Kraken account.
+        # No pair base balance on Kraken account.
+        except TypeError:
             pair_base_balance = 0
         try:
             pair_quote_balance = float(balance.get(self.pair.quote))
-        except TypeError:  # When there is no pair quote balance on Kraken account.
+        # No pair quote balance on Kraken account.
+        except TypeError:
             pair_quote_balance = 0
         print(
             f"Pair balances: {pair_quote_balance} {self.pair.quote}, "
@@ -156,24 +180,28 @@ class DCA:
         # Get current open orders.
         open_orders = self.ka.get_open_orders()
         daily_open_orders = len(
-            self.extract_pair_orders(open_orders, self.pair.name, self.pair.alt_name)
+            self.extract_pair_orders(open_orders, self.pair.name,
+                                     self.pair.alt_name)
         )
 
         # Get daily closed orders.
-        start_day_datetime = current_utc_day_datetime() - timedelta(days=self.delay - 1)
+        start_day_datetime = current_utc_day_datetime() - timedelta(
+            days=self.delay - 1)
         start_day_unix = datetime_as_utc_unix(start_day_datetime)
         closed_orders = self.ka.get_closed_orders(
             {"start": start_day_unix, "closetime": "open"}
         )
         daily_closed_orders = len(
-            self.extract_pair_orders(closed_orders, self.pair.name, self.pair.alt_name)
+            self.extract_pair_orders(closed_orders, self.pair.name,
+                                     self.pair.alt_name)
         )
         # Sum the count of closed and daily open orders for the DCA pair.
         pair_daily_orders = daily_closed_orders + daily_open_orders
         return pair_daily_orders
 
     @staticmethod
-    def extract_pair_orders(orders: dict, pair: str, pair_alt_name: str) -> dict:
+    def extract_pair_orders(orders: dict, pair: str,
+                            pair_alt_name: str) -> dict:
         """
         Filter orders passed as dictionary on specific
         pair and return the nested dictionary.
@@ -187,7 +215,7 @@ class DCA:
             order_id: order_infos
             for order_id, order_infos in orders.items()
             if order_infos.get("descr").get("pair") == pair
-            or order_infos.get("descr").get("pair") == pair_alt_name
+               or order_infos.get("descr").get("pair") == pair_alt_name
         }
         return pair_orders
 

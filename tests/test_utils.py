@@ -1,3 +1,9 @@
+from datetime import datetime
+
+import pytest
+import pytz
+from freezegun import freeze_time
+
 from krakendca import (
     utc_unix_time_datetime,
     current_utc_datetime,
@@ -5,10 +11,6 @@ from krakendca import (
     datetime_as_utc_unix,
     find_nested_dictionary,
 )
-from datetime import datetime
-import pytest
-from freezegun import freeze_time
-import pytz
 
 
 def test_utc_unix_time_datetime():

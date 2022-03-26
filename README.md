@@ -77,12 +77,15 @@ api:
 # amount: Amount of the order in quote asset.
 # limit_factor (optional): Create the limit order at a price of current price
 #                          multiplied by specified factor (up to 5 digits).
+# max_price (optional): Maximum price to create a limit order, after looking at
+#                       limit_factor if set (up to 2 digits).
 # E.g., limit_factor = 0.95 creates a limit order 5% below market price
 dca_pairs:
   - pair: "XETHZEUR"
     delay: 1
     amount: 15
-    limit_factor: 0.98
+    limit_factor: 0.985
+    max_price: 2900.10
   - pair: "XXBTZEUR"
     delay: 3
     amount: 20
@@ -95,6 +98,8 @@ dca_pairs:
 - Set a `limit_factor` if you want to place the buy order that is different from the 
   current market price (up to 5 digits).<br>
   E.g., `limit_factor: 0.95` would set the limit price 5% below the market price.
+- Set a `max_price` if you want to define a maximum price in quote pair to create a 
+  limit buy order (after using `limit_factor` if defined).
 
 More information on 
 [Kraken API official documentation](https://support.kraken.com/hc/en-us/articles/360000920306-Ticker-pairs).

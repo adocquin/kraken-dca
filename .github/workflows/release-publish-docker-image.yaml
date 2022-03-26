@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/futurbroke/kraken-dca:${{ env.IMAGE_TAG }}, ghcr.io/futurbroke/kraken-dca:latest
+          tags: ghcr.io/adocquin/kraken-dca:${{ env.IMAGE_TAG }}, ghcr.io/adocquin/kraken-dca:latest
 
       # Push to DockerHub
       - name: Login to DockerHub

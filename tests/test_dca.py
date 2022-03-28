@@ -225,6 +225,8 @@ class TestDCA:
     @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_limit_factor.yaml")
     def test_limit_factor(self):
         self.dca.limit_factor = 0.9
-        assert self.dca.get_limit_price(3896.01) == 3506.41
+        assert self.dca.get_limit_price(3896.01, 2) == 3506.41
         self.dca.limit_factor = 0.999999
-        assert self.dca.get_limit_price(3896.01) == 3896.01
+        assert self.dca.get_limit_price(3896.01, 1) == 3896.01
+        self.dca.limit_factor = 0.98
+        assert self.dca.get_limit_price(3896.01, 1) == 3818.1

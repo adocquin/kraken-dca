@@ -84,7 +84,8 @@ class DCA:
                                                       self.pair.name)
         print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
         # Get limit price based on limit_factor
-        limit_price = self.get_limit_price(pair_ask_price)
+        limit_price = self.get_limit_price(pair_ask_price,
+                                           self.pair.pair_decimals)
         # Reject DCA if limit_price greater than max_price
         if self.max_price != -1 and limit_price > self.max_price:
             print(f"No DCA for {self.pair.name}: Limit price ({limit_price}) "
@@ -105,19 +106,24 @@ class DCA:
         order.save_order_csv(self.orders_filepath)
         print("Order information saved to CSV.")
 
-    def get_limit_price(self, pair_ask_price: float) -> float:
+    def get_limit_price(self,
+                        pair_ask_price: float,
+                        pair_decimals: int) -> float:
         """
         Calculates wanted limit price from current ask price and limit_factor.
 
-        :param pair_ask_price: Pair ask price to adjust li;it price from.
+        :param pair_ask_price: Pair ask price to adjust limit price from.
+        :param pair_decimals: Pair maximum number of decimals for price.
         :return: The limit price
         """
         if round(self.limit_factor, 5) == 1.0:
             limit_price = pair_ask_price
         else:
-            limit_price = round(pair_ask_price * self.limit_factor, 2)
+            limit_price = round(pair_ask_price * self.limit_factor,
+                                pair_decimals)
             print(
-                f"Factor adjusted limit price ({self.limit_factor:.4f}): {limit_price}."
+                f"Factor adjusted limit price ({self.limit_factor:.4f})"
+                f": {limit_price}."
             )
         return limit_price
 

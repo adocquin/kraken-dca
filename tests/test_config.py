@@ -6,22 +6,23 @@ from yaml.scanner import ScannerError
 from krakendca import Config
 
 
-def get_correct_config() -> str:
+def get_config() -> str:
     """
-    Open correct config.yaml file in tests/fixtures folder and return content as string.
+    Open correct config.yaml file in tests/fixtures folder and return
+    content as string.
 
     :return: Correct config.yaml file content as string.
     """
     with open("tests/fixtures/config.yaml", "r") as stream:
-        correct_config = stream.read()
-    return correct_config
-
-
-def test_default_config_file_is_correct():
-    # Test if config.yaml has changed.
-    correct_config = get_correct_config()
-    with open("config.yaml", "r") as stream:
         config = stream.read()
+    return config
+
+
+def test_default_config_file_is_correct() -> None:
+    """Test if config.yaml has changed."""
+    correct_config: str = get_config()
+    with open("config.yaml", "r") as stream:
+        config: str = stream.read()
     assert config == correct_config
 
 
@@ -30,7 +31,7 @@ def assert_dca_pair(dca_pair: dict,
                     delay: int,
                     amount: float,
                     limit_factor: float = None,
-                    max_price: float = None):
+                    max_price: float = None) -> None:
     assert type(dca_pair.get("pair")) == str
     assert dca_pair.get("pair") == pair
     assert type(dca_pair.get("delay")) == int
@@ -45,7 +46,7 @@ def assert_dca_pair(dca_pair: dict,
         assert dca_pair.get("max_price") == max_price
 
 
-def test_config_properties():
+def test_config_properties() -> None:
     # Test object properties are correctly assigned.
     config = Config("config.yaml")
     assert type(config.api_public_key) == str
@@ -72,77 +73,107 @@ def mock_config_error(config: str, error_type: type) -> str:
             mock_open.side_effect = FileNotFoundError()
         with pytest.raises(error_type) as e_info:
             Config("config.yaml")
-    e_info_value = str(e_info.value)
-    return e_info_value
+    e_info: str = str(e_info.value)
+    return e_info
 
 
-def test_config_errors():
-    # Load test config.yaml file.
-    correct_config = get_correct_config()
+class TestConfig:
+    """ Test Config class """
+    config: str
 
-    # Test raise FileNotFoundError.
-    e_info_value = mock_config_error(correct_config, FileNotFoundError)
-    assert "Configuration file not found." in e_info_value
+    def setup(self) -> None:
+        """Load test config.yaml file."""
+        self.config = get_config()
 
-    # Test raise ScannerError.
-    config_scanner_error = correct_config.replace("api:", "api")
-    e_info_value = mock_config_error(config_scanner_error, ScannerError)
-    assert "Configuration file incorrectly formatted:" in e_info_value
+    def test_raise_file_not_found_error(self) -> None:
+        """Test raise FileNotFoundError."""
+        e_info: str = mock_config_error(self.config, FileNotFoundError)
+        assert "Configuration file not found." in e_info
 
-    # Test missing public key.
-    config_empty_api_public_key = correct_config.replace(
-        'public_key: "KRAKEN_API_PUBLIC_KEY"', ""
-    )
-    e_info_value = mock_config_error(config_empty_api_public_key, ValueError)
-    assert "Please provide your Kraken API public key." in e_info_value
+    def test_raise_scanner_error(self) -> None:
+        """Test raise ScannerError."""
+        bad_config: str = self.config.replace("api:", "api")
+        e_info: str = mock_config_error(bad_config, ScannerError)
+        assert "Configuration file incorrectly formatted:" in e_info
 
-    # Test missing private key.
-    config_empty_api_private_key = correct_config.replace(
-        'private_key: "KRAKEN_API_PRIVATE_KEY"', ""
-    )
-    e_info_value = mock_config_error(config_empty_api_private_key, ValueError)
-    assert "Please provide your Kraken API private key." in e_info_value
+    def test_missing_public_key(self) -> None:
+        """Test missing public key."""
+        bad_config: str = self.config.replace(
+            'public_key: "KRAKEN_API_PUBLIC_KEY"', ""
+        )
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "Please provide your Kraken API public key." in e_info
 
-    # Test missing pairs
-    config_missing_pairs = correct_config.replace("dca_pairs:", "dca:")
-    e_info_value = mock_config_error(config_missing_pairs, ValueError)
-    assert "No DCA pairs specified." in e_info_value
+    def test_missing_private_key(self) -> None:
+        """Test missing private key."""
+        bad_config: str = self.config.replace(
+            'private_key: "KRAKEN_API_PRIVATE_KEY"', ""
+        )
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "Please provide your Kraken API private key." in e_info
 
-    # Test missing pair name.
-    config_empty_pair = correct_config.replace('pair: "XETHZEUR"', "")
-    e_info_value = mock_config_error(config_empty_pair, ValueError)
-    assert "Please provide the pair to dollar cost average." in e_info_value
+    def test_missing_pairs(self) -> None:
+        """Test missing pairs."""
+        bad_config: str = self.config.replace("dca_pairs:", "dca:")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "No DCA pairs specified." in e_info
 
-    # Test missing amount.
-    config_missing_amount = correct_config.replace("amount: 20", "")
-    e_info_value = mock_config_error(config_missing_amount, ValueError)
-    assert "Configuration file incorrectly formatted:" in e_info_value
+    def test_missing_pair_name(self) -> None:
+        """Test missing pair name."""
+        bad_config: str = self.config.replace('pair: "XETHZEUR"', "")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "Please provide the pair to dollar cost average." in e_info
 
-    # Test amount = 0.
-    config_zero_amount = correct_config.replace("amount: 20", "amount: 0")
-    e_info_value = mock_config_error(config_zero_amount, ValueError)
-    assert "Please provide an amount > 0 to DCA." in e_info_value
+    def test_missing_amount(self) -> None:
+        """Test missing amount."""
+        bad_config: str = self.config.replace("amount: 20", "")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "Configuration file incorrectly formatted:" in e_info
 
-    # Test amount < 0.
-    config_below_zero_amount = correct_config.replace("amount: 20",
-                                                      "amount: -100")
-    e_info_value = mock_config_error(config_below_zero_amount, ValueError)
-    assert "Please provide an amount > 0 to DCA." in e_info_value
+    def test_delay_below_zero(self) -> None:
+        """Test delay < 0."""
+        bad_config: str = self.config.replace("delay: 1",
+                                              "delay: -100")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "Please set the DCA days delay as a number > 0." in e_info
 
-    # Test limit_factor is not a number.
-    config_below_zero_amount = correct_config.replace("limit_factor: 0.985",
-                                                      "limit_factor: error")
-    e_info_value = mock_config_error(config_below_zero_amount, ValueError)
-    assert "limit_factor option must be a number up to 5 digits." in e_info_value
+    def test_delay_not_int(self) -> None:
+        """Test delay is not an int."""
+        bad_config: str = self.config.replace("delay: 1",
+                                              "delay: error")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "Please set the DCA days delay as a number > 0." in e_info
 
-    # Test limit_factor have more than 5 digits.
-    config_below_zero_amount = correct_config.replace("limit_factor: 0.985",
-                                                      "limit_factor: 0.985123")
-    e_info_value = mock_config_error(config_below_zero_amount, ValueError)
-    assert "limit_factor option must be a number up to 5 digits." in e_info_value
+    def test_zero_amount(self) -> None:
+        """Test amount = 0."""
+        bad_config: str = self.config.replace("amount: 20", "amount: 0")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "Please provide an amount > 0 to DCA." in e_info
 
-    # Test max_price is not a number.
-    config_below_zero_amount = correct_config.replace("max_price: 2900.10",
-                                                      "max_price: error")
-    e_info_value = mock_config_error(config_below_zero_amount, ValueError)
-    assert "max_price must be a number." in e_info_value
+    def test_amount_below_zero(self) -> None:
+        """Test amount < 0."""
+        bad_config: str = self.config.replace("amount: 20",
+                                              "amount: -100")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "Please provide an amount > 0 to DCA." in e_info
+
+    def test_limit_factor_is_not_a_number(self) -> None:
+        """Test limit_factor is not a number."""
+        bad_config: str = self.config.replace("limit_factor: 0.985",
+                                              "limit_factor: error")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "limit_factor option must be a number up to 5 digits." in e_info
+
+    def test_limit_factor_must_have_five_digits(self) -> None:
+        """Test limit_factor have more than 5 digits."""
+        bad_config: str = self.config.replace("limit_factor: 0.985",
+                                              "limit_factor: 0.985123")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "limit_factor option must be a number up to 5 digits." in e_info
+
+    def test_max_price_is_not_a_number(self) -> None:
+        """Test max_price is not a number."""
+        bad_config: str = self.config.replace("max_price: 2900.10",
+                                              "max_price: error")
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "max_price must be a number." in e_info

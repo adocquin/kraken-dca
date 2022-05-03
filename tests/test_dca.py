@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from unittest.mock import patch
 
 import pytest
 import vcr
@@ -10,6 +11,7 @@ from krakendca import DCA, Pair, Order
 
 
 class TestDCA:
+    """ Test DCA class """
     dca: DCA
     test_orders_filepath = "tests/fixtures/orders.csv"
 
@@ -42,7 +44,7 @@ class TestDCA:
 
     @freeze_time("2021-04-15 21:33:28.069731")
     def test_handle_dca_logic(self, capfd):
-        # Test normal execution
+        """Test normal execution."""
         with vcr.use_cassette(
                 "tests/fixtures/vcr_cassettes/test_handle_dca_logic.yaml",
                 filter_headers=["API-Key", "API-Sign"],
@@ -70,7 +72,7 @@ class TestDCA:
 
     @freeze_time("2021-04-16 18:54:53.069731")
     def test_handle_dca_logic_error(self, capfd):
-        # Test execution while already DCA.
+        """Test execution while already DCA."""
         with vcr.use_cassette(
                 "tests/fixtures/vcr_cassettes/test_handle_dca_logic_error.yaml",
                 filter_headers=["API-Key", "API-Sign"],
@@ -87,7 +89,7 @@ class TestDCA:
         assert captured.out == test_output
 
     def test_get_system_time(self):
-        # Test with system time in the past.
+        """Test with system time in the past."""
         with freeze_time("2012-01-13 23:10:34.069731"):
             with vcr.use_cassette(
                     "tests/fixtures/vcr_cassettes/test_get_time.yaml"):
@@ -109,9 +111,35 @@ class TestDCA:
         "tests/fixtures/vcr_cassettes/test_check_account_balance.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_check_account_balance(self):
+    def test_check_account_balance_insufficient(self):
         with pytest.raises(ValueError) as e_info:
             self.dca.check_account_balance()
+        assert "Insufficient funds to buy 20.0 ZEUR of XETH" in str(
+            e_info.value)
+
+    @vcr.use_cassette(
+        "tests/fixtures/vcr_cassettes/test_check_account_balance.yaml",
+        filter_headers=["API-Key", "API-Sign"],
+    )
+    def test_check_account_balance_no_pair_base(self):
+        with patch.object(target=KrakenApi,
+                          attribute="get_balance",
+                          return_value={"ZEUR": "0.0"}):
+            with pytest.raises(ValueError) as e_info:
+                self.dca.check_account_balance()
+        assert "Insufficient funds to buy 20.0 ZEUR of XETH" in str(
+            e_info.value)
+
+    @vcr.use_cassette(
+        "tests/fixtures/vcr_cassettes/test_check_account_balance.yaml",
+        filter_headers=["API-Key", "API-Sign"],
+    )
+    def test_check_account_balance_no_pair_quote(self):
+        with patch.object(target=KrakenApi,
+                          attribute="get_balance",
+                          return_value={"XETH": 8.02e-07}):
+            with pytest.raises(ValueError) as e_info:
+                self.dca.check_account_balance()
         assert "Insufficient funds to buy 20.0 ZEUR of XETH" in str(
             e_info.value)
 

@@ -1,4 +1,5 @@
 import vcr
+from _pytest.capture import CaptureFixture
 from freezegun import freeze_time
 from krakenapi import KrakenApi
 
@@ -18,8 +19,8 @@ class TestKrakenDCA:
         # Initialize DCA test object - Fake keys.
         self.ka = KrakenApi(
             "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ",
-            "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY18UQEgOHzBIEsqg78B"
-            "ZJCEhvFIzw1Q==",
+            "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY"
+            "18UQEgOHzBIEsqg78BZJCEhvFIzw1Q=="
         )
         # Initialize Config object
         self.config = Config("tests/fixtures/config.yaml")
@@ -28,7 +29,7 @@ class TestKrakenDCA:
         # Instantiate KrakenDCA DCA pairs.
         self.kdca.initialize_pairs_dca()
 
-    def test_init(self):
+    def test_init(self) -> None:
         assert self.kdca.config == self.config
         assert self.kdca.ka == self.ka
 
@@ -59,32 +60,32 @@ class TestKrakenDCA:
         assert dca_pair.pair.quote == quote
         assert dca_pair.pair.quote_decimals == quote_decimals
 
-    def test_initialize_pairs_dca(self):
+    def test_initialize_pairs_dca(self) -> None:
         self.assert_kdca_pair(
-            self.kdca.dcas_list[0],
-            15.0,
-            1,
-            "ETHEUR",
-            "XETH",
-            8,
-            "XETHZEUR",
-            0.004,
-            2,
-            "ZEUR",
-            4,
+            dca_pair=self.kdca.dcas_list[0],
+            amount=15.0,
+            delay=1,
+            alt_name="ETHEUR",
+            base="XETH",
+            lot_decimals=8,
+            name="XETHZEUR",
+            order_min=0.004,
+            pair_decimals=2,
+            quote="ZEUR",
+            quote_decimals=4,
         )
         self.assert_kdca_pair(
-            self.kdca.dcas_list[1],
-            20.0,
-            3,
-            "XBTEUR",
-            "XXBT",
-            8,
-            "XXBTZEUR",
-            0.0001,
-            1,
-            "ZEUR",
-            4,
+            dca_pair=self.kdca.dcas_list[1],
+            amount=20.0,
+            delay=3,
+            alt_name="XBTEUR",
+            base="XXBT",
+            lot_decimals=8,
+            name="XXBTZEUR",
+            order_min=0.0001,
+            pair_decimals=1,
+            quote="ZEUR",
+            quote_decimals=4,
         )
 
     @freeze_time("2021-09-12 19:50:08")
@@ -92,7 +93,7 @@ class TestKrakenDCA:
         "tests/fixtures/vcr_cassettes/test_handle_pairs_dca.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_handle_pairs_dca(self, capfd):
+    def test_handle_pairs_dca(self, capfd: CaptureFixture) -> None:
         self.kdca.handle_pairs_dca()
         captured = capfd.readouterr()
         assert "buy 0.00519042 ETHEUR @ limit 2882.44" in captured.out
@@ -103,7 +104,7 @@ class TestKrakenDCA:
         "tests/fixtures/vcr_cassettes/test_handle_pars_dca_max_price.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_handle_pairs_dca_max_price(self, capfd):
+    def test_handle_pairs_dca_max_price(self, capfd: CaptureFixture) -> None:
         self.kdca.dcas_list.pop()
         self.kdca.dcas_list[0].max_price = 0
         self.kdca.handle_pairs_dca()
@@ -116,7 +117,8 @@ class TestKrakenDCA:
         "tests/fixtures/vcr_cassettes/test_handle_pars_dca_max_price.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_handle_pairs_dca_limit_factor(self, capfd):
+    def test_handle_pairs_dca_limit_factor(self,
+                                           capfd: CaptureFixture) -> None:
         self.kdca.dcas_list.pop()
         self.kdca.dcas_list[0].max_price = 0
         self.kdca.handle_pairs_dca()

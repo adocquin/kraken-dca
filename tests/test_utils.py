@@ -13,7 +13,7 @@ from krakendca import (
 )
 
 
-def test_utc_unix_time_datetime():
+def test_utc_unix_time_datetime() -> None:
     # Test utc unix time in second.
     date_test = utc_unix_time_datetime(1617721936)
     date = datetime(2021, 4, 6, 15, 12, 16)
@@ -36,20 +36,20 @@ def test_utc_unix_time_datetime():
 
 
 @freeze_time("2012-01-14 18:10:34.089891", tz_offset=2)
-def test_current_utc_datetime():
+def test_current_utc_datetime() -> None:
     # Test current time in utc without microseconds.
     date = datetime(2012, 1, 14, 18, 10, 34)
     assert current_utc_datetime() == date
 
 
 @freeze_time("2012-01-13 23:10:34.069731", tz_offset=2)
-def test_current_utc_day_datetime():
+def test_current_utc_day_datetime() -> None:
     # Test current time truncated to utc day.
     date = datetime(2012, 1, 13)
     assert current_utc_day_datetime() == date
 
 
-def test_datetime_as_utc_unix():
+def test_datetime_as_utc_unix() -> None:
     # Test utc datetime correctly transformed to unix unix time.
     date = datetime(2021, 4, 6, 17, 12, 16, 0, pytz.timezone("UTC"))
     assert datetime_as_utc_unix(date) == 1617729136
@@ -59,7 +59,7 @@ def test_datetime_as_utc_unix():
     assert datetime_as_utc_unix(date) == 1617729136
 
 
-def test_find_nested_dictionary():
+def test_find_nested_dictionary() -> None:
     dictionary = {
         "dict1": {},
         "dict2": {"key1": "value1", "key2": "value2"},

@@ -1,4 +1,6 @@
 # Kraken-DCA
+[![Coverage Status](https://coveralls.io/repos/github/adocquin/kraken-dca/badge.svg)](https://coveralls.io/github/adocquin/kraken-dca)
+
 Kraken-DCA is a python program to automate pairs
 [Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp)
 on as many pairs as you want on [Kraken](https://kraken.com) exchange.<br>

@@ -24,7 +24,6 @@ jobs:
       - name: Test with pytest
         run: pytest -vv --cov krakendca/
       - name: Push test coverage to coveralls
-        run: |
-          coveralls --service=github --finish
+        run: coveralls --service=github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

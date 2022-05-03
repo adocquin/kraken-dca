@@ -233,12 +233,14 @@ class DCA:
         """
         if order.volume < self.pair.order_min:
             raise ValueError(
-                f"Too low volume to buy {self.pair.base}: current {order.volume}, "
+                f"Too low volume to buy {self.pair.base}: "
+                f"current {order.volume}, "
                 f"minimum {self.pair.order_min}."
             )
         print(
             f"Create a {order.price}{self.pair.quote} buy limit order of "
-            f"{order.volume}{self.pair.base} at {order.pair_price}{self.pair.quote}."
+            f"{order.volume}{self.pair.base} at "
+            f"{order.pair_price}{self.pair.quote}."
         )
         print(f"Fee expected: {order.fee}{self.pair.quote} (0.26% taker fee).")
         print(

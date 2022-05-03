@@ -9,12 +9,12 @@ class TestPair:
     pair: Pair
     ka: KrakenApi
 
-    def setup(self):
+    def setup(self) -> None:
         self.pair = Pair("XETHZEUR", "ETHEUR", "XETH", "ZEUR", 2, 8, 4, 0.005)
         self.ka = KrakenApi("api_public_key", "api_private_key")
 
     @staticmethod
-    def assert_xethzeur_pair(pair: Pair):
+    def assert_xethzeur_pair(pair: Pair) -> None:
         assert type(pair.name) == str
         assert pair.name == "XETHZEUR"
         assert type(pair.alt_name) == str
@@ -32,17 +32,17 @@ class TestPair:
         assert type(pair.order_min) == float
         assert pair.order_min == 0.005
 
-    def test_init(self):
+    def test_init(self) -> None:
         self.assert_xethzeur_pair(self.pair)
 
     @vcr.use_cassette(
         "tests/fixtures/vcr_cassettes/test_get_pair_from_kraken.yaml")
-    def test_get_pair_from_kraken(self):
+    def test_get_pair_from_kraken(self) -> None:
         asset_pairs = self.ka.get_asset_pairs()
         pair = Pair.get_pair_from_kraken(self.ka, asset_pairs, "XETHZEUR")
         self.assert_xethzeur_pair(pair)
 
-    def test_get_pair_information(self):
+    def test_get_pair_information(self) -> None:
         # Test with existing pair.
         with vcr.use_cassette(
                 "tests/fixtures/vcr_cassettes/test_get_asset_pairs.yaml"):
@@ -100,7 +100,7 @@ class TestPair:
         error_message = "Fake pair not available on Kraken. Available pairs:"
         assert error_message in str(e_info.value)
 
-    def test_get_asset_information(self):
+    def test_get_asset_information(self) -> None:
         # Test with existing asset.
         with vcr.use_cassette(
                 "tests/fixtures/vcr_cassettes/test_get_assets.yaml"):
@@ -122,7 +122,7 @@ class TestPair:
         error_message = "Fake asset not available on Kraken. Available assets:"
         assert error_message in str(e_info.value)
 
-    def test_get_ask_price(self):
+    def test_get_ask_price(self) -> None:
         # Test with existing pair.
         with vcr.use_cassette(
                 "tests/fixtures/vcr_cassettes/test_get_pair_ticker.yaml"):

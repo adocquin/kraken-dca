@@ -11,9 +11,9 @@ from krakendca import Order
 
 class TestOrder:
     order: Order
-    test_orders_filepath = "tests/fixtures/orders.csv"
+    test_orders_filepath: str = "tests/fixtures/orders.csv"
 
-    def setup(self):
+    def setup(self) -> None:
         self.order = Order(
             datetime.strptime("2021-04-15 21:33:28", "%Y-%m-%d %H:%M:%S"),
             "XETHZEUR",
@@ -28,10 +28,11 @@ class TestOrder:
         )
         self.ka = KrakenApi(
             "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ",
-            "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY18UQEgOHzBIEsqg78BZJCEhvFIzw1Q==",
+            "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY18UQEgOHz"
+            "BIEsqg78BZJCEhvFIzw1Q=="
         )
 
-    def test_init(self):
+    def test_init(self) -> None:
         assert type(self.order.date) == datetime
         assert self.order.date == datetime.strptime(
             "2021-04-15 21:33:28", "%Y-%m-%d %H:%M:%S"
@@ -55,14 +56,14 @@ class TestOrder:
         assert type(self.order.total_price) == float
         assert self.order.total_price == 20.0
 
-    def test_buy_limit_order(self):
+    def test_buy_limit_order(self) -> None:
         self.order = Order.buy_limit_order(
-            datetime.strptime("2021-04-15 21:33:28", "%Y-%m-%d %H:%M:%S"),
-            "XETHZEUR",
-            20,
-            2083.16,
-            8,
-            4,
+            date=datetime.strptime("2021-04-15 21:33:28", "%Y-%m-%d %H:%M:%S"),
+            pair="XETHZEUR",
+            amount=20,
+            pair_price=2083.16,
+            lot_decimals=8,
+            quote_decimals=4,
         )
         assert type(self.order.fee) == float
         assert self.order.fee == 0.0519
@@ -87,14 +88,14 @@ class TestOrder:
         "tests/fixtures/vcr_cassettes/test_create_order.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_send_order(self):
+    def test_send_order(self) -> None:
         self.order.send_order(self.ka)
         assert type(self.order.txid) == str
         assert self.order.txid == "OUHXFN-RTP6W-ART4VP"
         assert type(self.order.description) == str
         assert self.order.description == "buy 0.01029256 ETHEUR @ limit 1938.11"
 
-    def test_save_order_csv(self):
+    def test_save_order_csv(self) -> None:
         self.order.txid = "OCYS4K-OILOE-36HPAE"
         self.order.description = "buy 0.00957589 ETHEUR @ limit 2083.16"
 
@@ -113,7 +114,7 @@ class TestOrder:
         os.rmdir(self.test_orders_filepath)
         assert "Can't save order history ->" in str(e_info.value)
 
-    def test_set_order_volume(self):
+    def test_set_order_volume(self) -> None:
         # Test with valid parameters.
         order_volume = Order.set_order_volume(20, 1802.82, 8)
         assert type(order_volume) == float
@@ -125,13 +126,13 @@ class TestOrder:
             e_info.value
         )
 
-    def test_estimate_order_price(self):
+    def test_estimate_order_price(self) -> None:
         # Test with valid parameters.
         order_price = Order.estimate_order_price(0.01105373, 1802.82, 2)
         assert type(order_price) == float
         assert order_price == 19.93
 
-    def test_estimate_order_fee(self):
+    def test_estimate_order_fee(self) -> None:
         # Test with valid parameters.
         order_fee = Order.estimate_order_fee(0.01105373, 1802.82, 2)
         assert type(order_fee) == float

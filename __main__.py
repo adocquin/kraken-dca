@@ -6,7 +6,7 @@ from krakendca import Config, KrakenDCA
 
 if __name__ == "__main__":
     # Get parameters from configuration file.
-    current_directory: str = os.getcwd()
+    current_directory: str = os.path.dirname(os.path.realpath(__file__))
     config_file: str = current_directory + "/config.yaml"
     config: Config = Config(config_file)
     # Initialize the KrakenAPI object.

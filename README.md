@@ -1,5 +1,9 @@
 # Kraken-DCA
+![main-unit-testing workflow](https://github.com/adocquin/kraken-dca/actions/workflows/main-unit-testing.yaml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/adocquin/kraken-dca/badge.svg)](https://coveralls.io/github/adocquin/kraken-dca)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/krakenapi)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![GitHub](https://img.shields.io/github/license/adocquin/kraken-dca)
 
 Kraken-DCA is a python program to automate pairs
 [Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp)

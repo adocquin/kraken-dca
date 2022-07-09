@@ -1,4 +1,5 @@
 # Kraken-DCA
+![Docker Pulls](https://img.shields.io/docker/pulls/futurbroke/kraken-dca)
 ![main-unit-testing workflow](https://github.com/adocquin/kraken-dca/actions/workflows/main-unit-testing.yaml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/adocquin/kraken-dca/badge.svg)](https://coveralls.io/github/adocquin/kraken-dca)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/krakenapi)

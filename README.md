@@ -6,13 +6,32 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![GitHub](https://img.shields.io/github/license/adocquin/kraken-dca)
 
+**Automate Dollar Cost Averaging on Kraken exchange**
+
+# 📖 Table of Contents
+1. ➤ [About the project](#about-the-project)
+2. ➤ [Orders](#orders)
+    - [What are the order settings ?](#what-are-the-order-settings-?)
+    - [How are price, volume and fee computed ?](#how-are-price,-volume-and-fee-computed-?)
+    - [How is order history saved ?](#how-is-order-history-saved-?)
+3. ➤ [How to run it](#how-to-run-it)
+    - [Configuration file](#configuration-file)
+    - [Docker image](#docker-image)
+    - [Usage without Docker](#usage-without-docker)
+      - [Launch Kraken-DCA](#launch-kraken-dca)
+      - [Automate DCA through cron](#automate-dca-through-cron)
+4. ➤ [License](#license)
+5. ➤ [How to contribute](#how-to-contribute)
+
+# 🔍 About the project
+
 Kraken-DCA is a python program to automate pairs
 [Dollar Cost Averaging](https://www.investopedia.com/terms/d/dollarcostaveraging.asp)
 on as many pairs as you want on [Kraken](https://kraken.com) exchange.<br>
 At every launch, if no DCA pair order was already passed for each pair and delay in 
 configuration file, it will create a buy limit order at current pair ask price for the specified amount.
 
-Order history is saved in CSV format
+Order history is saved in CSV format.
 
 The program will need a Kraken public and private API key with permissions to:
 - Consult funds
@@ -22,16 +41,16 @@ The program will need a Kraken public and private API key with permissions to:
 
 API keys can be created from the [API page](https://www.kraken.com/u/security/api) of your Kraken account.
 
-# Orders
+# 📒 Orders
 The pair and the amount to buy need to be specified in the configuration file.
 
-## What are the order settings ?
+## 🔧 What are the order settings ?
 A buy limit taker order is created by the program at its execution, 0.26% fee are assumed.<br>
 Orders are created only if no one were created during the current day for the specified pair and are immediately 
 executed.<br>
 Pair quote asset are used to pay Kraken fee.
 
-## How are price, volume and fee computed ?
+## 📊 How are price, volume and fee computed ?
 **Limit price**: The pair ask price at the moment of the program execution.
 
 **Volume**: The order volume is the amount*price truncated down to the pair lot decimals, then adjusted to volume/1.0026
@@ -49,7 +68,7 @@ Kraken documentation:
 - [Assets info](https://api.kraken.com/0/public/Assets)
 - [Tradable asset paird](https://api.kraken.com/0/public/AssetPairs)
 
-## How is order history saved ?
+## 💾 How is order history saved ?
 
 Order history is saved in CSV format with following information per order:
 - **date**: Order date.
@@ -68,8 +87,8 @@ Order history is saved in CSV format with following information per order:
 Order history is by default saved in *orders.csv* in Kraken-DCA base directory, 
 the output file can be changed through docker image execution as described below.
 
-# How to run it
-## Configuration file
+# 🏃How to run it
+## 🔨 Configuration file
 If you don't use docker you must edit the default *config.yaml* file.
 
 ```yaml
@@ -111,7 +130,7 @@ dca_pairs:
 More information on 
 [Kraken API official documentation](https://support.kraken.com/hc/en-us/articles/360000920306-Ticker-pairs).
 
-## Docker image
+## 🐳 Docker image
 You can download the image directly from [Docker Hub](https://hub.docker.com/) using:
 ```sh
 docker pull futurbroke/kraken-dca:latest
@@ -141,9 +160,9 @@ docker kill kraken-dca
 docker rm kraken-dca
 ```
 
-## Usage without Docker
+## 👀 Usage without Docker
 You must specify your configuration in a *config.yaml* file in the *Kraken-DCA* root folder.
-### Launch Kraken-DCA
+### 🐍 Launch Kraken-DCA
 You can launch the program from the folder where you downloaded the repository folder using:
 ```sh
 python kraken-dca
@@ -152,7 +171,7 @@ Or inside Kraken-DCA base directory using:
 ```sh
 python __main__.py
 ```
-### Automate DCA through cron
+### 📅 Automate DCA through cron
 You can automate the execution by using cron on unix systems.
 To execute the program every hour (it will only buy if no DCA pair order was done the current day) run in a shell:
 ```sh
@@ -174,10 +193,13 @@ crontab -e
 
 More crontab execution frequency options: https://crontab.guru/
 
-## License
-[GPL-3.0](https://github.com/FuturBroke/kraken-dca/blob/main/README.md)
+# 📜 License
+Kraken-DCA  is distributed under the terms of the GNU General Public License v3.0. A
+complete version of the license is available in the [LICENSE.md](https://github.com/FuturBroke/kraken-dca/blob/main/README.md) in
+this repository. Any contribution made to this project will be licensed under
+the GNU General Public License v3.0.
 
-# How to contribute
+# 🙋‍♀️ How to contribute
 Thanks for your interest in contributing to the project. You can contribute freely by 
 creating an issue, fork or create a pull request. Before issuing a pull request, make 
 sure the changes did not break any existing functionality by running unit tests in the 

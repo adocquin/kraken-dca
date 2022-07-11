@@ -1,3 +1,4 @@
+"""Utilities functions module."""
 from datetime import datetime, timezone
 
 

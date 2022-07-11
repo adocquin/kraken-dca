@@ -1,3 +1,4 @@
+"""Dollar Cost Averaging module."""
 from datetime import datetime, timedelta
 
 from krakenapi import KrakenApi
@@ -259,6 +260,6 @@ class DCA:
             f"{order.total_price}{self.pair.quote}."
         )
         order.send_order(self.ka)
-        print(f"Order successfully created.")
+        print("Order successfully created.")
         print(f"TXID: {order.txid}")
         print(f"Description: {order.description}")

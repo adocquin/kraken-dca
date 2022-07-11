@@ -1,15 +1,15 @@
+"""utils.py tests module."""
 from datetime import datetime
 
 import pytest
 import pytz
 from freezegun import freeze_time
-
-from krakendca import (
-    utc_unix_time_datetime,
+from krakendca.utils import (
     current_utc_datetime,
     current_utc_day_datetime,
     datetime_as_utc_unix,
     find_nested_dictionary,
+    utc_unix_time_datetime,
 )
 
 

@@ -2,7 +2,8 @@ import os
 
 from krakenapi import KrakenApi
 
-from krakendca import Config, KrakenDCA
+from krakendca.config import Config
+from krakendca.krakendca import KrakenDCA
 
 if __name__ == "__main__":
     # Get parameters from configuration file.

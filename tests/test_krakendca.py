@@ -1,9 +1,11 @@
+"""krakendca.py tests module."""
 import vcr
 from _pytest.capture import CaptureFixture
 from freezegun import freeze_time
 from krakenapi import KrakenApi
-
-from krakendca import Config, KrakenDCA, DCA
+from krakendca.config import Config
+from krakendca.dca import DCA
+from krakendca.krakendca import KrakenDCA
 
 
 class TestKrakenDCA:
@@ -20,7 +22,7 @@ class TestKrakenDCA:
         self.ka = KrakenApi(
             "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ",
             "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY"
-            "18UQEgOHzBIEsqg78BZJCEhvFIzw1Q=="
+            "18UQEgOHzBIEsqg78BZJCEhvFIzw1Q==",
         )
         # Initialize Config object
         self.config = Config("tests/fixtures/config.yaml")
@@ -34,18 +36,18 @@ class TestKrakenDCA:
         assert self.kdca.ka == self.ka
 
     def assert_kdca_pair(
-            self,
-            dca_pair: DCA,
-            amount: float,
-            delay: int,
-            alt_name: str,
-            base: str,
-            lot_decimals: int,
-            name: str,
-            order_min: float,
-            pair_decimals: int,
-            quote: str,
-            quote_decimals: int,
+        self,
+        dca_pair: DCA,
+        amount: float,
+        delay: int,
+        alt_name: str,
+        base: str,
+        lot_decimals: int,
+        name: str,
+        order_min: float,
+        pair_decimals: int,
+        quote: str,
+        quote_decimals: int,
     ):
         assert dca_pair.amount == amount
         assert dca_pair.delay == delay
@@ -109,16 +111,19 @@ class TestKrakenDCA:
         self.kdca.dcas_list[0].max_price = 0
         self.kdca.handle_pairs_dca()
         captured = capfd.readouterr()
-        assert "No DCA for XETHZEUR: Limit price (2797.99) greater " \
-               "than maximum price (0)." in captured.out
+        assert (
+            "No DCA for XETHZEUR: Limit price (2797.99) greater "
+            "than maximum price (0)." in captured.out
+        )
 
     @freeze_time("2022-03-26 18:37:46")
     @vcr.use_cassette(
         "tests/fixtures/vcr_cassettes/test_handle_pars_dca_max_price.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_handle_pairs_dca_limit_factor(self,
-                                           capfd: CaptureFixture) -> None:
+    def test_handle_pairs_dca_limit_factor(
+        self, capfd: CaptureFixture
+    ) -> None:
         self.kdca.dcas_list.pop()
         self.kdca.dcas_list[0].max_price = 0
         self.kdca.handle_pairs_dca()

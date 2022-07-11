@@ -1,3 +1,4 @@
+"""Configuration module."""
 import yaml
 from yaml.scanner import ScannerError
 
@@ -90,8 +91,10 @@ class Config:
                         raise ValueError
                     dca_pair["limit_factor"]: float = limit_factor
                 except ValueError:
-                    raise ValueError("limit_factor option must be a number "
-                                     "up to 5 digits.")
+                    raise ValueError(
+                        "limit_factor option must be a number "
+                        "up to 5 digits."
+                    )
 
             # max_price
             if dca_pair.get("max_price"):
@@ -99,8 +102,6 @@ class Config:
                     max_price: float = float(dca_pair.get("max_price"))
                     dca_pair["max_price"]: float = max_price
                 except ValueError:
-                    raise ValueError(
-                        "max_price must be a number."
-                    )
+                    raise ValueError("max_price must be a number.")
         except ValueError as e:
             raise ValueError(CONFIG_ERROR_MSG + f": {e}")

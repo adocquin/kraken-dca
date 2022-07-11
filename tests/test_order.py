@@ -1,3 +1,4 @@
+"""order.py tests module."""
 import os
 from datetime import datetime
 
@@ -5,8 +6,7 @@ import pandas as pd
 import pytest
 import vcr
 from krakenapi import KrakenApi
-
-from krakendca import Order
+from krakendca.order import Order
 
 
 class TestOrder:
@@ -29,7 +29,7 @@ class TestOrder:
         self.ka = KrakenApi(
             "R6/OvXmIQEv1E8nyJd7+a9Zmaf84yJ7uifwe2yj5BgV1N+lgqURsxQwQ",
             "MWZ9lFF/mreK4Fdk/SEpFLvVn//nbKUbCytGShSwvCvYlgRkn4K8i7VY18UQEgOHz"
-            "BIEsqg78BZJCEhvFIzw1Q=="
+            "BIEsqg78BZJCEhvFIzw1Q==",
         )
 
     def test_init(self) -> None:
@@ -93,7 +93,10 @@ class TestOrder:
         assert type(self.order.txid) == str
         assert self.order.txid == "OUHXFN-RTP6W-ART4VP"
         assert type(self.order.description) == str
-        assert self.order.description == "buy 0.01029256 ETHEUR @ limit 1938.11"
+        assert (
+            self.order.description == "buy 0.01029256 ETHEUR "
+            "@ limit 1938.11"
+        )
 
     def test_save_order_csv(self) -> None:
         self.order.txid = "OCYS4K-OILOE-36HPAE"

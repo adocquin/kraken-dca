@@ -1,3 +1,4 @@
+"""Pair object module."""
 from typing import TypeVar
 
 from krakenapi import KrakenApi
@@ -22,15 +23,15 @@ class Pair:
     order_min: float
 
     def __init__(
-            self,
-            name: str,
-            alt_name: str,
-            base: str,
-            quote: str,
-            pair_decimals: int,
-            lot_decimals: int,
-            quote_decimals: int,
-            order_min: float,
+        self,
+        name: str,
+        alt_name: str,
+        base: str,
+        quote: str,
+        pair_decimals: int,
+        lot_decimals: int,
+        quote_decimals: int,
+        order_min: float,
     ) -> None:
         """
         Initialize the Pair object.
@@ -54,13 +55,15 @@ class Pair:
         self.order_min = order_min
 
     @classmethod
-    def get_pair_from_kraken(cls, ka: KrakenApi, asset_pairs: dict,
-                             pair: str) -> T:
+    def get_pair_from_kraken(
+        cls, ka: KrakenApi, asset_pairs: dict, pair: str
+    ) -> T:
         """
         Initialize the Pair object using KrakenAPI and provided pair.
 
         :param ka: KrakenApi object.
-        :param asset_pairs: Dictionary of available pairs on Kraken got through the API.
+        :param asset_pairs: Dictionary of available pairs on Kraken
+        got through the API.
         :param pair: Pair to dollar cost average as string.
         :return: Instanced Pair object.
         """
@@ -89,7 +92,8 @@ class Pair:
         """
         Return pair information from Kraken API.
 
-        :param asset_pairs: Dictionary of available pairs on Kraken got through the API.
+        :param asset_pairs: Dictionary of available pairs on Kraken
+        got through the API.
         :param pair: Pair to find.
         :return: Dict of pair information.
         """
@@ -97,7 +101,8 @@ class Pair:
         if not pair_information:
             available_pairs = [pair for pair in asset_pairs]
             raise ValueError(
-                f"{pair} pair not available on Kraken. Available pairs: {available_pairs}."
+                f"{pair} pair not available on Kraken. "
+                f"Available pairs: {available_pairs}."
             )
         return pair_information
 
@@ -115,7 +120,8 @@ class Pair:
         if not asset_information:
             available_assets = [asset for asset in assets]
             raise ValueError(
-                f"{asset} asset not available on Kraken. Available assets: {available_assets}."
+                f"{asset} asset not available on Kraken. "
+                f"Available assets: {available_assets}."
             )
         return asset_information
 
@@ -130,5 +136,6 @@ class Pair:
         """
         pair_ticker_information = ka.get_pair_ticker(pair_name)
         pair_ask_price = float(
-            pair_ticker_information.get(pair_name).get("a")[0])
+            pair_ticker_information.get(pair_name).get("a")[0]
+        )
         return pair_ask_price

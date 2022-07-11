@@ -1,4 +1,5 @@
-from typing import List, Dict, Any
+"""Main KrakenDCA object module."""
+from typing import Any, Dict, List
 
 from krakenapi import KrakenApi
 
@@ -37,16 +38,16 @@ class KrakenDCA:
         print("Hi, current configuration:")
         asset_pairs: Dict[str, Any] = self.ka.get_asset_pairs()
         for dca_pair in self.config.dca_pairs:
-            pair: Pair = Pair.get_pair_from_kraken(self.ka,
-                                                   asset_pairs,
-                                                   dca_pair.get("pair"))
+            pair: Pair = Pair.get_pair_from_kraken(
+                self.ka, asset_pairs, dca_pair.get("pair")
+            )
             dca: DCA = DCA(
                 self.ka,
                 dca_pair.get("delay"),
                 pair,
                 dca_pair.get("amount"),
                 limit_factor=dca_pair.get("limit_factor", 1),
-                max_price=dca_pair.get("max_price", -1)
+                max_price=dca_pair.get("max_price", -1),
             )
             print(dca)
             self.dcas_list.append(dca)

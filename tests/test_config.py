@@ -1,9 +1,9 @@
+"""config.py tests module."""
 from unittest import mock
 
 import pytest
+from krakendca.config import Config
 from yaml.scanner import ScannerError
-
-from krakendca import Config
 
 
 def get_config() -> str:
@@ -26,12 +26,14 @@ def test_default_config_file_is_correct() -> None:
     assert config == correct_config
 
 
-def assert_dca_pair(dca_pair: dict,
-                    pair: str,
-                    delay: int,
-                    amount: float,
-                    limit_factor: float = None,
-                    max_price: float = None) -> None:
+def assert_dca_pair(
+    dca_pair: dict,
+    pair: str,
+    delay: int,
+    amount: float,
+    limit_factor: float = None,
+    max_price: float = None,
+) -> None:
     assert type(dca_pair.get("pair")) == str
     assert dca_pair.get("pair") == pair
     assert type(dca_pair.get("delay")) == int
@@ -78,7 +80,8 @@ def mock_config_error(config: str, error_type: type) -> str:
 
 
 class TestConfig:
-    """ Test Config class """
+    """Test Config class"""
+
     config: str
 
     def setup(self) -> None:
@@ -132,15 +135,13 @@ class TestConfig:
 
     def test_delay_below_zero(self) -> None:
         """Test delay < 0."""
-        bad_config: str = self.config.replace("delay: 1",
-                                              "delay: -100")
+        bad_config: str = self.config.replace("delay: 1", "delay: -100")
         e_info: str = mock_config_error(bad_config, ValueError)
         assert "Please set the DCA days delay as a number > 0." in e_info
 
     def test_delay_not_int(self) -> None:
         """Test delay is not an int."""
-        bad_config: str = self.config.replace("delay: 1",
-                                              "delay: error")
+        bad_config: str = self.config.replace("delay: 1", "delay: error")
         e_info: str = mock_config_error(bad_config, ValueError)
         assert "Please set the DCA days delay as a number > 0." in e_info
 
@@ -152,28 +153,30 @@ class TestConfig:
 
     def test_amount_below_zero(self) -> None:
         """Test amount < 0."""
-        bad_config: str = self.config.replace("amount: 20",
-                                              "amount: -100")
+        bad_config: str = self.config.replace("amount: 20", "amount: -100")
         e_info: str = mock_config_error(bad_config, ValueError)
         assert "Please provide an amount > 0 to DCA." in e_info
 
     def test_limit_factor_is_not_a_number(self) -> None:
         """Test limit_factor is not a number."""
-        bad_config: str = self.config.replace("limit_factor: 0.985",
-                                              "limit_factor: error")
+        bad_config: str = self.config.replace(
+            "limit_factor: 0.985", "limit_factor: error"
+        )
         e_info: str = mock_config_error(bad_config, ValueError)
         assert "limit_factor option must be a number up to 5 digits." in e_info
 
     def test_limit_factor_must_have_five_digits(self) -> None:
         """Test limit_factor have more than 5 digits."""
-        bad_config: str = self.config.replace("limit_factor: 0.985",
-                                              "limit_factor: 0.985123")
+        bad_config: str = self.config.replace(
+            "limit_factor: 0.985", "limit_factor: 0.985123"
+        )
         e_info: str = mock_config_error(bad_config, ValueError)
         assert "limit_factor option must be a number up to 5 digits." in e_info
 
     def test_max_price_is_not_a_number(self) -> None:
         """Test max_price is not a number."""
-        bad_config: str = self.config.replace("max_price: 2900.10",
-                                              "max_price: error")
+        bad_config: str = self.config.replace(
+            "max_price: 2900.10", "max_price: error"
+        )
         e_info: str = mock_config_error(bad_config, ValueError)
         assert "max_price must be a number." in e_info

@@ -270,8 +270,9 @@ class DCA:
 
         def is_similiar_amount(order_info):
             try:
-                order_amount = float(order_info.get("cost"))
-            except (ValueError, TypeError) as e:
+                price = float(order_info["descr"]["price"])
+                order_amount = float(order_info.get("vol")) * price
+            except (ValueError, TypeError, KeyError) as e:
                 print(
                     f'Cannot convert "cost"={repr(order_info.get("const"))} '
                     f"of order to float: {e}"

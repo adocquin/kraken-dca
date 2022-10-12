@@ -112,7 +112,7 @@ class TestDCA:
             "system.\n"
             "Current trade balance: 1650.3006 ZUSD.\n"
             "Pair balances: 39.728 ZEUR, 0.109598362 XETH.\n"
-            "Ignoring an existing/closed order of 33.33\n"
+            "Ignoring an existing/closed order of 33.2435240208\n"
             "Didn't DCA already today.\n"
             "Current XETHZEUR ask price: 2083.16.\n"
             "Create a 19.9481ZEUR buy limit order of 0.00957589XETH at "

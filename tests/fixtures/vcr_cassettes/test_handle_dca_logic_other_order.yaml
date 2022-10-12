@@ -215,8 +215,8 @@ interactions:
     uri: https://api.kraken.com/0/private/ClosedOrders
   response:
     body:
-      string: '{"error":[],"result":{"closed":{"OPVTXZ-5RISJ-CKZVHH":{"refid":null,"userref":0,"status":"closed","reason":null,"opentm":1618593523.7609,"closetm":1618593523.7627,"starttm":0,"expiretm":0,"descr":{"pair":"ETHEUR","type":"buy","ordertype":"limit","price":"2031.36","price2":"0","leverage":"none","order":"buy
-        0.00982008 ETHEUR @ limit 2031.36","close":""},"vol":"0.00982008","vol_exec":"0.00982008","cost":"33.33","fee":"0.05","price":"2031.36","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq"}},"count":1}}'
+      string: '{"error":[],"result":{"closed":{"OPVTXZ-5RISJ-CKZVHH":{"refid":null,"userref":0,"status":"closed","reason":null,"opentm":1618593523.7609,"closetm":1618593523.7627,"starttm":0,"expiretm":0,"descr":{"pair":"ETHEUR","type":"buy","ordertype":"limit","price":"3385.26","price2":"0","leverage":"none","order":"buy
+        0.00982008 ETHEUR @ limit 2031.36","close":""},"vol":"0.00982008","vol_exec":"0.00982008","cost":"33.24","fee":"0.05","price":"2031.36","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq"}},"count":1}}'
     headers:
       CF-Cache-Status:
       - DYNAMIC

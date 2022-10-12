@@ -276,7 +276,7 @@ class DCA:
                     f'Cannot convert "cost"={repr(order_info.get("const"))} '
                     f"of order to float: {e}"
                 )
-                return False
+                return True  # don't skip in order to avoid repeating orders.
             include_order = amount * 0.99 < order_amount < amount * 1.01
             if not include_order:
                 print(f"Ignoring an existing/closed order of {order_amount}")

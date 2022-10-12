@@ -273,10 +273,7 @@ class DCA:
                 price = float(order_info["descr"]["price"])
                 order_amount = float(order_info.get("vol")) * price
             except (ValueError, TypeError, KeyError) as e:
-                print(
-                    f'Cannot convert "cost"={repr(order_info.get("const"))} '
-                    f"of order to float: {e}"
-                )
+                print(f"Cannot figure out order amount of {order_info}: {e}")
                 return True  # don't skip in order to avoid repeating orders.
             include_order = amount * 0.99 < order_amount < amount * 1.01
             if not include_order:

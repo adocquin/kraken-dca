@@ -90,6 +90,42 @@ class TestDCA:
         )
         assert captured.out == test_output
 
+    @freeze_time("2021-04-15 21:33:28.069731")
+    def test_handle_dca_logic_ignore_other_orders(self, capfd):
+        """Test execution with other orders present that are ignored."""
+
+        # ARRANGE
+        self.dca.ignore_differing_orders = True
+
+        # ACT
+        with vcr.use_cassette(
+            "tests/fixtures/vcr_cassettes/test_handle_dca_logic_other_order"
+            ".yaml",
+            filter_headers=["API-Key", "API-Sign"],
+        ):
+            self.dca.handle_dca_logic()
+        captured = capfd.readouterr()
+
+        # ASSERT
+        test_output = (
+            "It's 2021-04-15 21:33:28 on Kraken, 2021-04-15 21:33:28 on "
+            "system.\n"
+            "Current trade balance: 1650.3006 ZUSD.\n"
+            "Pair balances: 39.728 ZEUR, 0.109598362 XETH.\n"
+            "Ignoring an existing/closed order of 33.33\n"
+            "Didn't DCA already today.\n"
+            "Current XETHZEUR ask price: 2083.16.\n"
+            "Create a 19.9481ZEUR buy limit order of 0.00957589XETH at "
+            "2083.16ZEUR.\n"
+            "Fee expected: 0.0519ZEUR (0.26% taker fee).\n"
+            "Total price expected: 0.00957589XETH for 20.0ZEUR.\n"
+            "Order successfully created.\n"
+            "TXID: XYZS4K-OILOE-36ABCD\n"
+            "Description: buy 0.00957589 ETHEUR @ limit 2083.16\n"
+            "Order information saved to CSV.\n"
+        )
+        assert captured.out == test_output
+
     def test_get_system_time(self):
         """Test with system time in the past."""
         with freeze_time("2012-01-13 23:10:34.069731"):

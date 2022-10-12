@@ -1,0 +1,355 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection:
+      - close
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: GET
+    uri: https://api.kraken.com/0/public/Time
+  response:
+    body:
+      string: '{"error":[],"result":{"unixtime":1618522408,"rfc1123":"Thu, 15 Apr
+        21 21:33:28 +0000"}}'
+    headers:
+      CF-Cache-Status:
+      - MISS
+      CF-RAY:
+      - 64084ad638d5ee48-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 15 Apr 2021 21:33:28 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dd7e0e02e4a53d3eb3684dcf96f0a3ded1618522407; expires=Sat, 15-May-21
+        21:33:27 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=f3a1e3ce6c534173f853547f7893ecc3d2541655-1618522408-1800-AT0UF/P7iC1MCY4651h4xNTuVvaGkSsLmqJwd3fj9mLDNyG8RpUCCcL7y4bTJ44jTLVN4Hk0YPzQT743lrwS7Wc=;
+        path=/; expires=Thu, 15-Apr-21 22:03:28 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - no-cache,max-age=0
+      cf-request-id:
+      - 09790d19e60000ee48ca1c7000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: nonce=1618522408160
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '19'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/private/TradeBalance
+  response:
+    body:
+      string: '{"error":[],"result":{"eb":"1650.3006","tb":"76.9161","m":"0.0000","n":"0.0000","c":"0.0000","v":"0.0000","e":"76.9161","mf":"76.9161"}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 64084adbdcaf088f-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 15 Apr 2021 21:33:28 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d7ece43cae4999108dc7ba0878a8ff10d1618522408; expires=Sat, 15-May-21
+        21:33:28 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=8f09671d7f59aa31ad04c9f4a6ad7dda456bd9a8-1618522408-1800-ARyN3pxoTDXNqmGS7yGOTvmUCSg6bWhsgVN0hKsPRW2msqRdHnm3TKMl9Q+Y3oZrmeeH7hTRQ4h/pVAd0QtehXo=;
+        path=/; expires=Thu, 15-Apr-21 22:03:28 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 09790d1d6b0000088f41827000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: nonce=1618522408609
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '19'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/private/Balance
+  response:
+    body:
+      string: '{"error":[],"result":{"ZEUR":"39.7280","XXBT":"0.0000002600","XETH":"0.1095983620","ADA":"0.00000001","XTZ":"0.00000080","LINK":"0.0000000000","YFI":"0.0000000100","UNI":"0.0000000000","AAVE":"0.0000000400","ETH2.S":"0.6236700000","ETH2":"0.0342686830","GRT":"0.0000000000"}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 64084adeebfdee5c-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 15 Apr 2021 21:33:29 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d6548c41f065e55048f33a853b0f184cd1618522408; expires=Sat, 15-May-21
+        21:33:28 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=6216c3c8d67b50edd1e0eef023e8c03c75e09cbe-1618522409-1800-AfNja9wkcsPUTcvxCE3CJNQVGfvM/o6oTs+iSxvM/qnWPcML8f6snVDr11Vzmqkh0NASaN0Q1rv5zbVqEm5RQj8=;
+        path=/; expires=Thu, 15-Apr-21 22:03:29 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 09790d1f4e0000ee5c78900000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: nonce=1618522409030
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '19'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/private/OpenOrders
+  response:
+    body:
+      string: '{"error":[],"result":{"open":{}}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 64084ae08f193323-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 15 Apr 2021 21:33:29 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dc4548c70fde1b781d7d65dfc5ed8ad5c1618522409; expires=Sat, 15-May-21
+        21:33:29 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=9cda4f2ef9e8c3792c10bbceb914f2f04bf40086-1618522409-1800-ASMhoEv2zkKsMLYvmPAsYa4QJBi960cfe74dYlC3gi/DHHfzYoQIq+DZNe+zKmCG9hjLL8A8sZz8V8IrYa7sQSo=;
+        path=/; expires=Thu, 15-Apr-21 22:03:29 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 09790d2059000033236622e000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: start=1618444800&closetime=open&nonce=1618522409249
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '51'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/private/ClosedOrders
+  response:
+    body:
+      string: '{"error":[],"result":{"closed":{"OPVTXZ-5RISJ-CKZVHH":{"refid":null,"userref":0,"status":"closed","reason":null,"opentm":1618593523.7609,"closetm":1618593523.7627,"starttm":0,"expiretm":0,"descr":{"pair":"ETHEUR","type":"buy","ordertype":"limit","price":"2031.36","price2":"0","leverage":"none","order":"buy
+        0.00982008 ETHEUR @ limit 2031.36","close":""},"vol":"0.00982008","vol_exec":"0.00982008","cost":"33.33","fee":"0.05","price":"2031.36","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq"}},"count":1}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 64084ae1fb523313-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 15 Apr 2021 21:33:29 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d41104434bf78b80d9524c89b3a40e59d1618522409; expires=Sat, 15-May-21
+        21:33:29 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=d5f820c2f8c92c7ec1efd7d08effe5985acf6d54-1618522409-1800-AS2wVABaowNdQ6vc07/kgrNZpypoAQesV1bketcG+wO5eVmpPcVbxQv0aAWtjRktOqHFQdQ6ch2eKfuKnM9djHM=;
+        path=/; expires=Thu, 15-Apr-21 22:03:29 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 09790d2138000033132e195000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: pair=XETHZEUR
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/public/Ticker
+  response:
+    body:
+      string: '{"error":[],"result":{"XETHZEUR":{"a":["2083.16000","1","1.000"],"b":["2083.15000","4","4.000"],"c":["2083.12000","0.00000485"],"v":["31444.18466921","37070.79436618"],"p":["2055.19663","2050.46677"],"t":[28594,32925],"l":["2006.00000","2004.45000"],"h":["2091.00000","2091.00000"],"o":"2031.74000"}}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 64084ae36af0a8c7-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 15 Apr 2021 21:33:29 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=ddf08045d2968c910110f8eca816921311618522409; expires=Sat, 15-May-21
+        21:33:29 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=ad132f838556a2b7bcf47673e425fa45062f3ef2-1618522409-1800-ATZ3ZCxg0GbHBPJaQzKc4yVdeNyhVGexhthi+PjLxH/VbAZEAKwZv6w3HUCP4gdOgSWl4AUg/VQAUe+qABk6xsw=;
+        path=/; expires=Thu, 15-Apr-21 22:03:29 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - no-cache,max-age=0
+      cf-request-id:
+      - 09790d22240000a8c79eadf000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: pair=XETHZEUR&type=buy&ordertype=limit&price=2083.16&volume=0.00957589&oflags=fciq&nonce=1618522409705
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '102'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: POST
+    uri: https://api.kraken.com/0/private/AddOrder
+  response:
+    body:
+      string: '{"error":[],"result":{"descr":{"order":"buy 0.00957589 ETHEUR @ limit
+        2083.16"},"txid":["XYZS4K-OILOE-36ABCD"]}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 64084ae4c980ee3b-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 15 Apr 2021 21:33:29 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d6699c293e40f2acb09adb32723117c2e1618522409; expires=Sat, 15-May-21
+        21:33:29 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=7cf24820f026a62664e9276b122bc6effbddebc1-1618522409-1800-AfeGcx/vI4uKuMAMUxZm0jnx8WTsqs8VMZ9odj97MhYUdrcreGmhLgWOQfeDtzg5yN7irDk5+VpgpKkdpNtsVtA=;
+        path=/; expires=Thu, 15-Apr-21 22:03:29 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 09790d23000000ee3b3d253000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

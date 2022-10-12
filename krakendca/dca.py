@@ -1,5 +1,6 @@
 """Dollar Cost Averaging module."""
 from datetime import datetime, timedelta
+from typing import Optional
 
 from krakenapi import KrakenApi
 
@@ -25,6 +26,7 @@ class DCA:
     orders_filepath: str
     limit_factor: float
     max_price: float
+    ignore_differing_orders: bool
 
     def __init__(
         self,
@@ -34,6 +36,7 @@ class DCA:
         amount: float,
         limit_factor: float = 1,
         max_price: float = -1,
+        ignore_differing_orders: bool = False,
         orders_filepath: str = "orders.csv",
     ) -> None:
         """
@@ -45,6 +48,10 @@ class DCA:
         :param amount: Amount to dollar cost average as float.
         :param limit_factor: Price limit factor as float.
         :param max_price: Maximum price as float.
+        :param ignore_differing_orders: Other open orders or orders in
+                                        the history are ignored if they
+                                        have an amount that differs more
+                                        than 1% from this DCA's amount.
         :param orders_filepath: Orders save file path as String.
         """
         self.ka = ka
@@ -53,6 +60,7 @@ class DCA:
         self.amount = float(amount)
         self.limit_factor = float(limit_factor)
         self.max_price = float(max_price)
+        self.ignore_differing_orders = bool(ignore_differing_orders)
         self.orders_filepath = orders_filepath
 
     def __str__(self) -> str:
@@ -191,11 +199,12 @@ class DCA:
 
         :return: Count of daily orders for the dollar cost averaged pair.
         """
+        filter_amount = self.amount if self.ignore_differing_orders else None
         # Get current open orders.
         open_orders = self.ka.get_open_orders()
         daily_open_orders = len(
             self.extract_pair_orders(
-                open_orders, self.pair.name, self.pair.alt_name
+                open_orders, self.pair.name, self.pair.alt_name, filter_amount
             )
         )
 
@@ -209,7 +218,10 @@ class DCA:
         )
         daily_closed_orders = len(
             self.extract_pair_orders(
-                closed_orders, self.pair.name, self.pair.alt_name
+                closed_orders,
+                self.pair.name,
+                self.pair.alt_name,
+                filter_amount,
             )
         )
         # Sum the count of closed and daily open orders for the DCA pair.
@@ -218,7 +230,10 @@ class DCA:
 
     @staticmethod
     def extract_pair_orders(
-        orders: dict, pair: str, pair_alt_name: str
+        orders: dict,
+        pair: str,
+        pair_alt_name: str,
+        filter_amount: Optional[float] = None,
     ) -> dict:
         """
         Filter orders passed as dictionary on specific
@@ -227,6 +242,8 @@ class DCA:
         :param orders: Orders as dictionary.
         :param pair: Specific pair to filter on.
         :param pair_alt_name: Specific pair alternative name to filter on.
+        :param filter_amount: Set to an order amount if any other amounts
+                              should be disregarded.
         :return: Filtered orders dictionary on specific pair.
         """
         pair_orders = {
@@ -235,7 +252,37 @@ class DCA:
             if order_infos.get("descr").get("pair") == pair
             or order_infos.get("descr").get("pair") == pair_alt_name
         }
+        if filter_amount is not None:
+            # Disregard any orders that have a differing amount
+            pair_orders = DCA.filter_ignored_orders(pair_orders, filter_amount)
         return pair_orders
+
+    @staticmethod
+    def filter_ignored_orders(pair_orders: dict, amount: float) -> dict:
+        """
+        Removes any order for the pair_orders dict that have an amount
+        (=order_info['cost']) that differs by more than 1% of the given amount.
+
+        :param pair_orders: Dict of orders of a currency pair.
+        :param amount: Amount of interest that is kept in the result (+-1%)
+        :return: Filtered dictionary
+        """
+
+        def is_similiar_amount(order_info):
+            try:
+                order_amount = float(order_info.get("cost"))
+            except (ValueError, TypeError) as e:
+                print(
+                    f'Cannot convert "cost"={repr(order_info.get("const"))} '
+                    f"of order to float: {e}"
+                )
+                return False
+            include_order = amount * 0.99 < order_amount < amount * 1.01
+            if not include_order:
+                print(f"Ignoring an existing/closed order of {order_amount}")
+            return include_order
+
+        return {k: v for k, v in pair_orders.items() if is_similiar_amount(v)}
 
     def send_buy_limit_order(self, order: Order) -> None:
         """

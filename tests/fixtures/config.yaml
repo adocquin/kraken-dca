@@ -11,6 +11,10 @@ api:
 #                          multiplied by specified factor (up to 5 digits).
 # max_price (optional): Maximum price to create a limit order, after looking at
 #                       limit_factor if set (up to 2 digits).
+# ignore_differing_orders: May be set to True to ignore any set open or
+#                          or closed orders within the time delay that differ more
+#                          than 1% in the desired amount. This allows to have manually
+#                          set limit orders while still DCAing.
 # E.g., limit_factor = 0.95 creates a limit order 5% below market price
 dca_pairs:
   - pair: "XETHZEUR"
@@ -21,3 +25,4 @@ dca_pairs:
   - pair: "XXBTZEUR"
     delay: 3
     amount: 20
+    ignore_differing_orders: True

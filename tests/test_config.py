@@ -33,6 +33,7 @@ def assert_dca_pair(
     amount: float,
     limit_factor: float = None,
     max_price: float = None,
+    ignore_differing_orders: bool = False,
 ) -> None:
     assert type(dca_pair.get("pair")) == str
     assert dca_pair.get("pair") == pair
@@ -46,6 +47,10 @@ def assert_dca_pair(
     if max_price:
         assert type(dca_pair.get("max_price")) == float
         assert dca_pair.get("max_price") == max_price
+    if ignore_differing_orders:
+        assert (
+            dca_pair.get("ignore_differing_orders") == ignore_differing_orders
+        )
 
 
 def test_config_properties() -> None:
@@ -58,7 +63,9 @@ def test_config_properties() -> None:
     assert type(config.dca_pairs) == list
     assert len(config.dca_pairs) == 2
     assert_dca_pair(config.dca_pairs[0], "XETHZEUR", 1, 15, 0.985, 2900.10)
-    assert_dca_pair(config.dca_pairs[1], "XXBTZEUR", 3, 20)
+    assert_dca_pair(
+        config.dca_pairs[1], "XXBTZEUR", 3, 20, ignore_differing_orders=True
+    )
 
 
 def mock_config_error(config: str, error_type: type) -> str:
@@ -180,3 +187,11 @@ class TestConfig:
         )
         e_info: str = mock_config_error(bad_config, ValueError)
         assert "max_price must be a number." in e_info
+
+    def test_ignore_differing_orders_is_not_boolean(self) -> None:
+        """Test ignore_differing_orders is not boolean."""
+        bad_config: str = self.config.replace(
+            "ignore_differing_orders: True", "ignore_differing_orders: error"
+        )
+        e_info: str = mock_config_error(bad_config, ValueError)
+        assert "ignore_differing_orders must be a boolean." in e_info

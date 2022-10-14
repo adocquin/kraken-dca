@@ -48,8 +48,8 @@ class KrakenDCA:
                 dca_pair.get("amount"),
                 limit_factor=dca_pair.get("limit_factor", 1),
                 max_price=dca_pair.get("max_price", -1),
-                ignore_differing_orders=bool(
-                    dca_pair.get("ignore_differing_orders", False)
+                ignore_differing_orders=dca_pair.get(
+                    "ignore_differing_orders", False
                 ),
             )
             print(dca)

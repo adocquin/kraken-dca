@@ -60,7 +60,7 @@ class DCA:
         self.amount = float(amount)
         self.limit_factor = float(limit_factor)
         self.max_price = float(max_price)
-        self.ignore_differing_orders = bool(ignore_differing_orders)
+        self.ignore_differing_orders = ignore_differing_orders
         self.orders_filepath = orders_filepath
 
     def __str__(self) -> str:
@@ -270,7 +270,7 @@ class DCA:
 
         def is_similiar_amount(order_info):
             try:
-                price = float(order_info["descr"]["price"])
+                price = float(order_info.get("descr").get("price"))
                 order_amount = float(order_info.get("vol")) * price
             except (ValueError, TypeError, KeyError) as e:
                 print(f"Cannot figure out order amount of {order_info}: {e}")

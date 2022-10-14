@@ -104,6 +104,10 @@ api:
 #                          multiplied by specified factor (up to 5 digits).
 # max_price (optional): Maximum price to create a limit order, after looking at
 #                       limit_factor if set (up to 2 digits).
+# ignore_differing_orders (optional): May be set to True to ignore any set open or
+#                          closed orders within the time delay that differ more than 1%
+#                          tin the desired amount. This allows to have manually set
+#                          limit orders while still DCAing.
 # E.g., limit_factor = 0.95 creates a limit order 5% below market price
 dca_pairs:
   - pair: "XETHZEUR"
@@ -114,6 +118,7 @@ dca_pairs:
   - pair: "XXBTZEUR"
     delay: 3
     amount: 20
+    ignore_differing_orders: True
 ```
 - In api, public_key and private_key correspond to your Kraken API key information.
 - Delay is the number of days between buy orders. Set to 1 to DCA each day, 7 once per week.
@@ -125,6 +130,9 @@ dca_pairs:
   E.g., `limit_factor: 0.95` would set the limit price 5% below the market price.
 - Set a `max_price` if you want to define a maximum price in quote pair to create a 
   limit buy order (after using `limit_factor` if defined).
+- Set `ignore_differing_orders` to `True` to ignore orders within the time delay that 
+  differ more than 1% in the desired amount. This allows to have manually set limit
+  orders while still DCAing.
 
 More information on 
 [Kraken API official documentation](https://support.kraken.com/hc/en-us/articles/360000920306-Ticker-pairs).

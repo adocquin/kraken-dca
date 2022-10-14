@@ -253,6 +253,37 @@ class TestDCA:
         assert type(pair_orders) == dict
         assert len(pair_orders) == 0
 
+    def test_filter_ignored_orders(self):
+        """Test filtering of ignored orders."""
+        orders = {
+            "1": {
+                "descr": {
+                    "price": "1.00",
+                },
+                "vol": "500.00000000",
+            }
+        }
+        # Test with ignored orders.
+        filtered_orders = self.dca.filter_ignored_orders(orders, 500)
+        assert type(filtered_orders) == dict
+        assert len(filtered_orders) == 1
+
+        # Test with no ignored orders.
+        filtered_orders = self.dca.filter_ignored_orders({}, 600)
+        assert type(filtered_orders) == dict
+        assert len(filtered_orders) == 0
+
+        # Test with no orders.
+        filtered_orders = self.dca.filter_ignored_orders({}, 500)
+        assert type(filtered_orders) == dict
+        assert len(filtered_orders) == 0
+
+        # Test with raised error.
+        orders["1"]["descr"]["price"] = "test"
+        filtered_orders = self.dca.filter_ignored_orders(orders, 500)
+        assert type(filtered_orders) == dict
+        assert len(filtered_orders) == 1
+
     def test_send_buy_limit_order_error(self):
         # Test error with order volume < pair minimum volume.
         order = Order(

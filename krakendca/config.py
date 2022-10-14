@@ -103,5 +103,13 @@ class Config:
                     dca_pair["max_price"]: float = max_price
                 except ValueError:
                     raise ValueError("max_price must be a number.")
+
+            if dca_pair.get("ignore_differing_orders"):
+                if not isinstance(
+                    dca_pair.get("ignore_differing_orders"), bool
+                ):
+                    raise ValueError(
+                        "ignore_differing_orders must be a boolean."
+                    )
         except ValueError as e:
             raise ValueError(CONFIG_ERROR_MSG + f": {e}")

@@ -12,7 +12,7 @@ RUN pip3 install -r requirements.txt
 
 # Copy application files
 COPY krakendca/ krakendca/
-COPY config.yaml config.yaml
+COPY config-sample.yaml config.yaml
 COPY __main__.py __main__.py
 
 # Create order history file

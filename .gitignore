@@ -1,6 +1,6 @@
 # PyCharm
 .idea/
 __pycache__/
+config.yaml
 config.yaml.dev
 orders.csv
-

@@ -7,6 +7,7 @@ import pytest
 import vcr
 from freezegun import freeze_time
 from krakenapi import KrakenApi
+
 from krakendca.dca import DCA
 from krakendca.order import Order
 from krakendca.pair import Pair
@@ -45,14 +46,14 @@ class TestDCA:
         assert self.dca.orders_filepath == self.test_orders_filepath
 
     @freeze_time("2021-04-15 21:33:28.069731")
-    def test_handle_dca_logic(self, capfd):
+    def test_handle_dca_logic(self, logging_capture):
         """Test normal execution."""
         with vcr.use_cassette(
             "tests/fixtures/vcr_cassettes/test_handle_dca_logic.yaml",
             filter_headers=["API-Key", "API-Sign"],
         ):
             self.dca.handle_dca_logic()
-        captured = capfd.readouterr()
+        captured = logging_capture.read()
         test_output = (
             "It's 2021-04-15 21:33:28 on Kraken, 2021-04-15 21:33:28 on "
             "system.\n"
@@ -70,17 +71,17 @@ class TestDCA:
             "Order information saved to CSV.\n"
         )
         os.remove(self.test_orders_filepath)
-        assert captured.out == test_output
+        assert captured == test_output
 
     @freeze_time("2021-04-16 18:54:53.069731")
-    def test_handle_dca_logic_error(self, capfd):
+    def test_handle_dca_logic_error(self, logging_capture):
         """Test execution while already DCA."""
         with vcr.use_cassette(
             "tests/fixtures/vcr_cassettes/test_handle_dca_logic_error.yaml",
             filter_headers=["API-Key", "API-Sign"],
         ):
             self.dca.handle_dca_logic()
-        captured = capfd.readouterr()
+        captured = logging_capture.read()
         test_output = (
             "It's 2021-04-16 18:54:53 on Kraken, 2021-04-16 18:54:53 on "
             "system.\n"
@@ -88,10 +89,10 @@ class TestDCA:
             "Pair balances: 359.728 ZEUR, 0.128994332 XETH.\n"
             "No DCA for XETHZEUR: Already placed an order today.\n"
         )
-        assert captured.out == test_output
+        assert captured == test_output
 
     @freeze_time("2021-04-15 21:33:28.069731")
-    def test_handle_dca_logic_ignore_other_orders(self, capfd):
+    def test_handle_dca_logic_ignore_other_orders(self, logging_capture):
         """Test execution with other orders present that are ignored."""
 
         # ARRANGE
@@ -104,7 +105,7 @@ class TestDCA:
             filter_headers=["API-Key", "API-Sign"],
         ):
             self.dca.handle_dca_logic()
-        captured = capfd.readouterr()
+        captured = logging_capture.read()
 
         # ASSERT
         test_output = (
@@ -124,7 +125,7 @@ class TestDCA:
             "Description: buy 0.00957589 ETHEUR @ limit 2083.16\n"
             "Order information saved to CSV.\n"
         )
-        assert captured.out == test_output
+        assert captured == test_output
 
     def test_get_system_time(self):
         """Test with system time in the past."""
@@ -309,7 +310,7 @@ class TestDCA:
         "tests/fixtures/vcr_cassettes/test_create_order.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_send_buy_limit_order(self, capfd):
+    def test_send_buy_limit_order(self, logging_capture):
         # Test valid order
         order = Order(
             datetime.strptime("2021-03-11 23:33:28", "%Y-%m-%d %H:%M:%S"),
@@ -324,7 +325,7 @@ class TestDCA:
             20.0,
         )
         self.dca.send_buy_limit_order(order)
-        captured = capfd.readouterr()
+        captured = logging_capture.read()
         test_output = (
             "Create a 19.9481ZEUR buy limit order of 0.01029256XETH at "
             "1938.11ZEUR.\n"
@@ -334,7 +335,7 @@ class TestDCA:
             "TXID: OUHXFN-RTP6W-ART4VP\n"
             "Description: buy 0.01029256 ETHEUR @ limit 1938.11\n"
         )
-        assert captured.out == test_output
+        assert captured == test_output
 
     @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_limit_factor.yaml")
     def test_limit_factor(self):

@@ -1,3 +1,4 @@
+import logging
 import os
 
 from krakenapi import KrakenApi
@@ -6,6 +7,10 @@ from krakendca.config import Config
 from krakendca.krakendca import KrakenDCA
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)s:%(name)s: %(message)s",
+        level=logging.INFO,
+    )
     # Get parameters from configuration file.
     current_directory: str = os.path.dirname(os.path.realpath(__file__))
     config_file: str = current_directory + "/config.yaml"

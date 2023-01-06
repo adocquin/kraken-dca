@@ -88,7 +88,8 @@ the output file can be changed through docker image execution as described below
 
 # 🔨 Configuration
 Configuration is done through a yaml file.
-If you don't use docker you must edit the default *config.yaml* file provided.
+If you don't use docker you must create a *config.yaml* file. It may be
+copied from *config-sample.yaml* and adjusted to your requirements.
 
 ```yaml
 # Kraken's API public and private keys.

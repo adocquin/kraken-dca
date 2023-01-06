@@ -21,7 +21,7 @@ def get_config() -> str:
 def test_default_config_file_is_correct() -> None:
     """Test if config.yaml has changed."""
     correct_config: str = get_config()
-    with open("config.yaml", "r") as stream:
+    with open("config-sample.yaml", "r") as stream:
         config: str = stream.read()
     assert config == correct_config
 
@@ -55,7 +55,7 @@ def assert_dca_pair(
 
 def test_config_properties() -> None:
     # Test object properties are correctly assigned.
-    config = Config("config.yaml")
+    config = Config("config-sample.yaml")
     assert type(config.api_public_key) == str
     assert config.api_public_key == "KRAKEN_API_PUBLIC_KEY"
     assert type(config.api_private_key) == str
@@ -81,7 +81,7 @@ def mock_config_error(config: str, error_type: type) -> str:
         if error_type == FileNotFoundError:
             mock_open.side_effect = FileNotFoundError()
         with pytest.raises(error_type) as e_info:
-            Config("config.yaml")
+            Config("config-sample.yaml")
     e_info: str = str(e_info.value)
     return e_info
 

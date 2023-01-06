@@ -1,4 +1,5 @@
 """Main KrakenDCA object module."""
+import logging
 from typing import Any, Dict, List
 
 from krakenapi import KrakenApi
@@ -6,6 +7,8 @@ from krakenapi import KrakenApi
 from .config import Config
 from .dca import DCA
 from .pair import Pair
+
+logger = logging.getLogger(__name__)
 
 
 class KrakenDCA:
@@ -35,7 +38,7 @@ class KrakenDCA:
         configuration file and data from Kraken.
         :return: None
         """
-        print("Hi, current configuration:")
+        logger.info("Hi, current configuration:")
         asset_pairs: Dict[str, Any] = self.ka.get_asset_pairs()
         for dca_pair in self.config.dca_pairs:
             pair: Pair = Pair.get_pair_from_kraken(
@@ -52,7 +55,7 @@ class KrakenDCA:
                     "ignore_differing_orders", False
                 ),
             )
-            print(dca)
+            logger.info(dca)
             self.dcas_list.append(dca)
 
     def handle_pairs_dca(self) -> None:
@@ -66,7 +69,7 @@ class KrakenDCA:
         if n_dca > 1:
             pair += "s"
 
-        print(f"DCA ({n_dca} {pair}):")
+        logger.info(f"DCA ({n_dca} {pair}):")
         for dca in self.dcas_list:
-            print(dca)
+            logger.info(dca)
             dca.handle_dca_logic()

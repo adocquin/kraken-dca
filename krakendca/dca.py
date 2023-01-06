@@ -1,4 +1,5 @@
 """Dollar Cost Averaging module."""
+import logging
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -12,6 +13,8 @@ from .utils import (
     datetime_as_utc_unix,
     utc_unix_time_datetime,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class DCA:
@@ -86,22 +89,22 @@ class DCA:
         self.check_account_balance()
         # Check if didn't already DCA today
         if self.count_pair_daily_orders() != 0:
-            print(
+            logger.warning(
                 f"No DCA for {self.pair.name}: Already placed an order "
                 f"today."
             )
             return
-        print("Didn't DCA already today.")
+        logger.info("Didn't DCA already today.")
         # Get current pair ask price.
         pair_ask_price = self.pair.get_pair_ask_price(self.ka, self.pair.name)
-        print(f"Current {self.pair.name} ask price: {pair_ask_price}.")
+        logger.info(f"Current {self.pair.name} ask price: {pair_ask_price}.")
         # Get limit price based on limit_factor
         limit_price = self.get_limit_price(
             pair_ask_price, self.pair.pair_decimals
         )
         # Reject DCA if limit_price greater than max_price
         if self.max_price != -1 and limit_price > self.max_price:
-            print(
+            logger.info(
                 f"No DCA for {self.pair.name}: Limit price ({limit_price}) "
                 f"greater than maximum price ({self.max_price})."
             )
@@ -119,7 +122,7 @@ class DCA:
         self.send_buy_limit_order(order)
         # Save order information to CSV file.
         order.save_order_csv(self.orders_filepath)
-        print("Order information saved to CSV.")
+        logger.info("Order information saved to CSV.")
 
     def get_limit_price(
         self, pair_ask_price: float, pair_decimals: int
@@ -137,7 +140,7 @@ class DCA:
             limit_price = round(
                 pair_ask_price * self.limit_factor, pair_decimals
             )
-            print(
+            logger.info(
                 f"Factor adjusted limit price ({self.limit_factor:.4f})"
                 f": {limit_price}."
             )
@@ -153,7 +156,7 @@ class DCA:
         kraken_time: int = self.ka.get_time()
         kraken_date: datetime = utc_unix_time_datetime(kraken_time)
         current_date: datetime = current_utc_datetime()
-        print(f"It's {kraken_date} on Kraken, {current_date} on system.")
+        logger.info(f"It's {kraken_date} on Kraken, {current_date} on system.")
         lag_in_seconds: float = (current_date - kraken_date).seconds
         if lag_in_seconds > 2:
             raise OSError(
@@ -171,7 +174,7 @@ class DCA:
         :return: None
         """
         trade_balance = self.ka.get_trade_balance().get("eb")
-        print(f"Current trade balance: {trade_balance} ZUSD.")
+        logger.info(f"Current trade balance: {trade_balance} ZUSD.")
         balance = self.ka.get_balance()
         try:
             pair_base_balance = float(balance.get(self.pair.base))
@@ -183,7 +186,7 @@ class DCA:
         # No pair quote balance on Kraken account.
         except TypeError:
             pair_quote_balance = 0
-        print(
+        logger.info(
             f"Pair balances: {pair_quote_balance} {self.pair.quote}, "
             f"{pair_base_balance} {self.pair.base}."
         )
@@ -273,11 +276,15 @@ class DCA:
                 price = float(order_info.get("descr").get("price"))
                 order_amount = float(order_info.get("vol")) * price
             except (ValueError, TypeError, KeyError) as e:
-                print(f"Cannot figure out order amount of {order_info}: {e}")
+                logger.info(
+                    f"Cannot figure out order amount of {order_info}: {e}"
+                )
                 return True  # don't skip in order to avoid repeating orders.
             include_order = amount * 0.99 < order_amount < amount * 1.01
             if not include_order:
-                print(f"Ignoring an existing/closed order of {order_amount}")
+                logger.info(
+                    f"Ignoring an existing/closed order of {order_amount}"
+                )
             return include_order
 
         return {k: v for k, v in pair_orders.items() if is_similiar_amount(v)}
@@ -294,17 +301,19 @@ class DCA:
                 f"current {order.volume}, "
                 f"minimum {self.pair.order_min}."
             )
-        print(
+        logger.info(
             f"Create a {order.price}{self.pair.quote} buy limit order of "
             f"{order.volume}{self.pair.base} at "
             f"{order.pair_price}{self.pair.quote}."
         )
-        print(f"Fee expected: {order.fee}{self.pair.quote} (0.26% taker fee).")
-        print(
+        logger.info(
+            f"Fee expected: {order.fee}{self.pair.quote} (0.26% taker fee)."
+        )
+        logger.info(
             f"Total price expected: {order.volume}{self.pair.base} for "
             f"{order.total_price}{self.pair.quote}."
         )
         order.send_order(self.ka)
-        print("Order successfully created.")
-        print(f"TXID: {order.txid}")
-        print(f"Description: {order.description}")
+        logger.info("Order successfully created.")
+        logger.info(f"TXID: {order.txid}")
+        logger.info(f"Description: {order.description}")

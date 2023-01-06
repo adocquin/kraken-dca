@@ -1,8 +1,8 @@
 """krakendca.py tests module."""
 import vcr
-from _pytest.capture import CaptureFixture
 from freezegun import freeze_time
 from krakenapi import KrakenApi
+
 from krakendca.config import Config
 from krakendca.dca import DCA
 from krakendca.krakendca import KrakenDCA
@@ -95,25 +95,25 @@ class TestKrakenDCA:
         "tests/fixtures/vcr_cassettes/test_handle_pairs_dca.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_handle_pairs_dca(self, capfd: CaptureFixture) -> None:
+    def test_handle_pairs_dca(self, logging_capture) -> None:
         self.kdca.handle_pairs_dca()
-        captured = capfd.readouterr()
-        assert "buy 0.00519042 ETHEUR @ limit 2882.44" in captured.out
-        assert "buy 0.00051336 XBTEUR @ limit 38857.2" in captured.out
+        captured = logging_capture.read()
+        assert "buy 0.00519042 ETHEUR @ limit 2882.44" in captured
+        assert "buy 0.00051336 XBTEUR @ limit 38857.2" in captured
 
     @freeze_time("2022-03-26 18:37:46")
     @vcr.use_cassette(
         "tests/fixtures/vcr_cassettes/test_handle_pars_dca_max_price.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_handle_pairs_dca_max_price(self, capfd: CaptureFixture) -> None:
+    def test_handle_pairs_dca_max_price(self, logging_capture) -> None:
         self.kdca.dcas_list.pop()
         self.kdca.dcas_list[0].max_price = 0
         self.kdca.handle_pairs_dca()
-        captured = capfd.readouterr()
+        captured = logging_capture.read()
         assert (
             "No DCA for XETHZEUR: Limit price (2797.99) greater "
-            "than maximum price (0)." in captured.out
+            "than maximum price (0)." in captured
         )
 
     @freeze_time("2022-03-26 18:37:46")
@@ -121,11 +121,9 @@ class TestKrakenDCA:
         "tests/fixtures/vcr_cassettes/test_handle_pars_dca_max_price.yaml",
         filter_headers=["API-Key", "API-Sign"],
     )
-    def test_handle_pairs_dca_limit_factor(
-        self, capfd: CaptureFixture
-    ) -> None:
+    def test_handle_pairs_dca_limit_factor(self, logging_capture) -> None:
         self.kdca.dcas_list.pop()
         self.kdca.dcas_list[0].max_price = 0
         self.kdca.handle_pairs_dca()
-        captured = capfd.readouterr()
-        assert "Factor adjusted limit price (0.9850): 2797.99." in captured.out
+        captured = logging_capture.read()
+        assert "Factor adjusted limit price (0.9850): 2797.99." in captured
